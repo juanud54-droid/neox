@@ -1,8 +1,6 @@
 // =====================================================================
-// NeoX TACTICAL OS v11.5 - MOTOR COGNITIVO INTEGRADO - PARTE 1 DE 3
+// NeoX TACTICAL OS v11.6 - CODIGO COMPATIBLE GLOBAL - PARTE 1 DE 3
 // =====================================================================
-
-import { GoogleGenAI } from "@google/generative-ai";
 
 // Bóveda cuántica de energía: Tus 5 núcleos API activos e indexados
 const claves = [
@@ -15,33 +13,33 @@ const claves = [
 let idxActual = 0;
 let historial = [];
 
-// Inicializador del cliente nativo oficial de Google (Blindado contra CORS)
-let ai = new GoogleGenAI({ apiKey: claves[idxActual] });
-
-// Lectura de registros de memoria persistente del chasis
+// Inicialización automática de la memoria a largo plazo del chasis
 if (localStorage.getItem("neox_web_history")) {
     historial = JSON.parse(localStorage.getItem("neox_web_history"));
-    setTimeout(() => {
+    setTimeout(function() {
         reconstruirPantalla();
         actualizarBovedaVisual();
     }, 150);
 } else {
-    setTimeout(() => {
-        efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Modulos HUD y puente de red directos acoplados. Esperando directrices...", "neox");
+    setTimeout(function() {
+        efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Protocolo HTTP directo acoplado. Esperando comandos...", "neox");
     }, 500);
 }
 
-// ANCLAJE GLOBAL: Devuelve la vida táctica a los botones de la Sidebar
+// CONMUTADOR MAESTRO DE PANTALLA COMPLETA DIRECTO (SIDEBAR DE ICONOS)
 window.cambiarPantalla = function(screenId, boton) {
-    document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.side-icon-btn').forEach(b => b.classList.remove('active'));
+    // Desactivar todas las pantallas y estilos de la Sidebar
+    document.querySelectorAll('.app-screen').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelectorAll('.side-icon-btn').forEach(function(b) { b.classList.remove('active'); });
     
-    const pantallaObjetivo = document.getElementById(screenId);
-    if (pantallaObjetivo) pantallaObjetivo.classList.add('active');
+    // Activar el monitor seleccionado
+    const pantalla = document.getElementById(screenId);
+    if (pantalla) pantalla.classList.add('active');
     if (boton) boton.classList.add('active');
     
+    // Forzar el rediseño del lienzo de la red neuronal si se entra en ella
     if (screenId === 'screen-neural') {
-        setTimeout(resCanvas, 50);
+        setTimeout(window.resCanvas, 50);
     }
 };
 
@@ -57,14 +55,14 @@ window.limpiarMemoria = function() {
     efectoEscribir("REESTRUCTURACION", "Bancos de memoria a largo plazo purgados de forma segura. Listo.", "neox");
 };
 // =====================================================================
-// NeoX TACTICAL OS v11.5 - MOTOR COGNITIVO INTEGRADO - PARTE 2 DE 3
+// NeoX TACTICAL OS v11.6 - CODIGO COMPATIBLE GLOBAL - PARTE 2 DE 3
 // =====================================================================
 
 function reconstruirPantalla() {
     const box = document.getElementById("chat-box");
     if (!box) return;
     box.innerHTML = "";
-    historial.forEach(m => {
+    historial.forEach(function(m) {
         const div = document.createElement("div");
         div.className = "msg " + (m.role === 'user' ? 'user' : 'neox');
         const pfx = m.role === 'user' ? 'CREADOR' : 'NeoX';
@@ -98,16 +96,16 @@ function actualizarBovedaVisual() {
     const contenedor = document.getElementById("memory-vault-list");
     if (!contenedor) return;
     contenedor.innerHTML = "";
-    const memoriasFiltro = historial.filter(m => m.role === 'model').slice(-5);
+    const memoriasFiltro = historial.filter(function(m) { return m.role === 'model'; }).slice(-5);
     if (memoriasFiltro.length === 0) {
         contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos de memoria vacíos.</div>';
         return;
     }
-    memoriasFiltro.forEach((m, index) => {
+    memoriasFiltro.forEach(function(m, index) {
         const div = document.createElement("div");
         div.className = "memory-item";
         const fragmento = m.text.length > 60 ? m.text.substring(0, 57) + "..." : m.text;
-        div.innerHTML = `<span>[REC_0${index + 1}_INDEX]</span>${fragmento}`;
+        div.innerHTML = '<span>[REC_0' + (index + 1) + '_INDEX]</span>' + fragmento;
         contenedor.appendChild(div);
     });
 }
@@ -123,48 +121,65 @@ window.enviarMensaje = async function() {
     reconstruirPantalla();
     
     document.getElementById("thinking-indicator").style.display = "block";
-    document.querySelectorAll(".bar").forEach(b => b.style.animationDuration = "0.15s");
+    document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.15s"; });
     
-    const promptContexto = "Actua como NeoX, un asistente de IA inteligente y sofisticado, con personalidad exacta a JARVIS de Iron Man. Responde de forma brillante y directa. Historial: " + JSON.stringify(historial.slice(-8)) + " \nMensaje actual del creador: " + texto;
+    const promptContexto = "Actua como NeoX, un asistente de IA inteligente, con personalidad como JARVIS de Iron Man. Responde de forma brillante y directa. Historial: " + JSON.stringify(historial.slice(-8)) + " \nMensaje del creador: " + texto;
     await procesarPeticion(promptContexto);
 };
 
 async function procesarPeticion(promptContexto) {
+    // ENLACE COMPATIBLE HTTP DIRECTO: Cambiamos el SDK moderno por un Fetch tradicional compatible con navegadores antiguos
+    const urlGemini = "https://googleapis.com" + claves[idxActual];
+    
+    // PASARELA INTERNACIONAL CORREGIDA: Codifica de forma limpia evitando bloqueos CORS corporativos
+    const urlApi = "https://allorigins.win" + encodeURIComponent(urlGemini);
+    const datosEnvio = { contents: [{ parts: [{ text: promptContexto }] }] };
+
     try {
-        const model = ai.models.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const respuesta = await model.generateContent({ contents: promptContexto });
-        const resultadoTexto = respuesta.text;
-
-        document.getElementById("thinking-indicator").style.display = "none";
-        document.querySelectorAll(".bar").forEach(b => b.style.animationDuration = "0.8s");
-
-        historial.push({ role: "model", text: resultadoTexto });
-        localStorage.setItem("neox_web_history", JSON.stringify(historial));
+        const r = await fetch(urlApi, { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                url: urlGemini,
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                data: JSON.stringify(datosEnvio)
+            })
+        });
         
-        efectoEscribir("NeoX", resultadoTexto, "neox");
-        actualizarBovedaVisual();
-        actualizarNeuronasRecientes(resultadoTexto);
-
+        document.getElementById("thinking-indicator").style.display = "none";
+        document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.8s"; });
+        
+        if (r.status === 200) {
+            const wrapper = await r.json();
+            const jsonRespuesta = JSON.parse(wrapper.contents);
+            const txt = jsonRespuesta.candidates[0].content.parts[0].text;
+            
+            historial.push({ role: "model", text: txt });
+            localStorage.setItem("neox_web_history", JSON.stringify(historial));
+            
+            efectoEscribir("NeoX", txt, "neox");
+            actualizarBovedaVisual();
+            actualizarNeuronasRecientes(txt);
+        } else if (r.status === 429 || r.status === 403) {
+            if (idxActual < claves.length - 1) {
+                idxActual++;
+                const coreIndicator = document.getElementById("active-core");
+                if (coreIndicator) coreIndicator.innerText = "NÚCLEO_ACTIVO: [0" + (idxActual + 1) + "]";
+                await procesarPeticion(promptContexto);
+            } else { alert("ALERTA: Bancos de energía agotados."); }
+        } else { alert("Error de enlace HTTP: " + r.status); }
     } catch (err) {
-        console.error("Fallo de núcleo de energía: ", err);
-        if (idxActual < claves.length - 1) {
-            idxActual++;
-            const coreIndicator = document.getElementById("active-core");
-            if (coreIndicator) coreIndicator.innerText = "NÚCLEO_ACTIVO: [0" + (idxActual + 1) + "]";
-            ai = new GoogleGenAI({ apiKey: claves[idxActual] });
-            await procesarPeticion(promptContexto);
-        } else {
-            document.getElementById("thinking-indicator").style.display = "none";
-            alert("ALERTA GENERAL: Bancos de energía agotados.");
-        }
+        document.getElementById("thinking-indicator").style.display = "none";
+        alert("Desviación cuántica de red: " + err);
     }
 }
 // =====================================================================
-// NeoX TACTICAL OS v11.5 - MOTOR COGNITIVO INTEGRADO - PARTE 3 DE 3
+// NeoX TACTICAL OS v11.6 - CODIGO COMPATIBLE GLOBAL - PARTE 3 DE 3
 // =====================================================================
 
 const canvas = document.getElementById("neuralNet");
-const ctx = canvas.getContext("2d");
+const ctx = canvas ? canvas.getContext("2d") : null;
 let nodos = [];
 const totalNodos = 50;
 
@@ -199,23 +214,23 @@ for (let i = 0; i < totalNodos; i++) {
 }
 
 function actualizarNeuronasRecientes(textoRespuesta) {
-    let palabras = textoRespuesta.split(" ").filter(w => w.length > 5 && w.length < 11);
+    let palabras = textoRespuesta.split(" ").filter(function(w) { return w.length > 5 && w.length < 11; });
     if (palabras.length > 0) {
-        let nodosVacios = nodos.filter(n => !n.label);
+        let nodosVacios = nodos.filter(function(n) { return !n.label; });
         let objetivo = nodosVacios.length > 0 ? nodosVacios[Math.floor(Math.random() * nodosVacios.length)] : nodos[Math.floor(Math.random() * nodos.length)];
         let palabraLimpia = palabras[Math.floor(Math.random() * palabras.length)].replace(/[^a-zA-Z]/g, "").toUpperCase();
         if (palabraLimpia) {
             objetivo.label = palabraLimpia;
-            objetivo.desc = "Concepto adquirido de forma autonoma durante el analisis del ultimo requerimiento táctico.";
+            objetivo.desc = "Concepto adquirido de forma autonoma durante el analisis del ultimo requerimiento tactico.";
         }
     }
 }
 
 if (canvas) {
     canvas.addEventListener('mousedown', iniciarArrastre);
-    canvas.addEventListener('touchstart', (e) => { if(e.touches.length === 1) iniciarArrastre(e.touches[0]); }, { passive: true });
+    canvas.addEventListener('touchstart', function(e) { if(e.touches.length === 1) iniciarArrastre(e.touches[0]); }, { passive: true });
     window.addEventListener('mousemove', moverArrastre);
-    window.addEventListener('touchmove', (e) => { if(e.touches.length === 1) moverArrastre(e.touches[0]); }, { passive: true });
+    window.addEventListener('touchmove', function(e) { if(e.touches.length === 1) moverArrastre(e.touches[0]); }, { passive: true });
     window.addEventListener('mouseup', detenerArrastre);
     window.addEventListener('touchend', detenerArrastre);
     canvas.addEventListener('wheel', procesarZoom);
@@ -244,7 +259,7 @@ function moverArrastre(e) {
 
 function detenerArrastre() {
     isDragging = false;
-    setTimeout(() => {
+    setTimeout(function() {
         if (!isDragging) { angY = 0.002; angX = 0.001; }
     }, 1500);
 }
@@ -260,7 +275,7 @@ function procesarClickNodo(mx, my) {
     let nodoDetectado = null;
     let distanciaMinima = 15;
 
-    nodos.forEach((n, index) => {
+    nodos.forEach(function(n, index) {
         let e = fov / (fov + n.z);
         let nx = cx + n.x * e;
         let ny = cy + n.y * e;
@@ -274,16 +289,16 @@ function procesarClickNodo(mx, my) {
 
     const panelHud = document.getElementById("card-content");
     if (panelHud && nodoDetectado) {
-        panelHud.innerHTML = `<span><strong>ID_NODO:</strong> [N_0${seleccionadoIndex}]</span><br>
-                              <span><strong>ETIQUETA:</strong> ${nodoDetectado.label}</span><br>
-                              <span><strong>STATUS:</strong> Activo / Enlazado</span><br>
-                              <span><strong>DATO:</strong> ${nodoDetectado.desc || "Célula de contexto cognitivo vacía."}</span>`;
+        panelHud.innerHTML = '<span><strong>ID_NODO:</strong> [N_0' + seleccionadoIndex + ']</span><br>' +
+                              '<span><strong>ETIQUETA:</strong> ' + nodoDetectado.label + '</span><br>' +
+                              '<span><strong>STATUS:</strong> Activo / Enlazado</span><br>' +
+                              '<span><strong>DATO:</strong> ' + (nodoDetectado.desc || "Celula de contexto cognitivo vacia.") + '</span>';
     }
 }
 
 function rotar() {
     let cY = Math.cos(angY), sY = Math.sin(angY), cX = Math.cos(angX), sX = Math.sin(angX);
-    nodos.forEach(n => {
+    nodos.forEach(function(n) {
         let x1 = n.x * cY - n.z * sY, z1 = n.z * cY + n.x * sY;
         let y2 = n.y * cX - z1 * sX, z2 = z1 * cX + n.y * sX;
         n.x = x1; n.y = y2; n.z = z2;
@@ -313,7 +328,7 @@ function render() {
         }
     }
     
-    nodos.forEach((n, idx) => {
+    nodos.forEach(function(n, idx) {
         let e = fov / (fov + n.z);
         let x = cx + n.x * e;
         let y = cy + n.y * e;
