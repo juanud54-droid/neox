@@ -1,42 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeoX SYSTEM v10.0</title>
+    <title>NeoX TACTICAL OS v10.5</title>
     <style>
         @import url('https://googleapis.com');
         :root { --cyan: #00f0ff; --green: #00ff66; --red: #ff3333; --bg: #010409; --panel: rgba(6,16,30,0.85); }
         * { box-sizing: border-box; font-family: 'Share Tech Mono', monospace; }
-        body { background-color: var(--bg); color: var(--cyan); margin: 0; display: flex; height: 100vh; overflow: hidden; background-image: radial-gradient(rgba(0,240,255,0.06) 1.5px, transparent 0); background-size: 30px 30px; }
-        #hud-layout { display: flex; width: 100%; height: 100vh; padding: 12px; gap: 12px; }
-        .cyber-panel { background: var(--panel); border: 1px solid var(--cyan); box-shadow: 0 0 20px rgba(0,240,255,0.1); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); display: flex; flex-direction: column; padding: 18px; position: relative; }
-        #left-monitor { width: 340px; display: flex; flex-direction: column; gap: 12px; }
+        
+        /* Ajuste de pantalla completa responsiva para móviles */
+        body { background-color: var(--bg); color: var(--cyan); margin: 0; display: flex; height: 100vh; height: 100dvh; overflow: hidden; background-image: radial-gradient(rgba(0,240,255,0.06) 1.5px, transparent 0); background-size: 30px 30px; }
+        #hud-layout { display: flex; width: 100%; height: 100%; padding: 10px; gap: 10px; }
+        
+        /* Paneles tácticos ciberpunk */
+        .cyber-panel { background: var(--panel); border: 1px solid var(--cyan); box-shadow: 0 0 20px rgba(0,240,255,0.1); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); display: flex; flex-direction: column; padding: 15px; position: relative; }
+        #left-monitor { width: 300px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+        
+        /* Menú de navegación interactivo */
         .nav-tabs { display: flex; gap: 5px; margin-bottom: 5px; }
         .tab-btn { flex: 1; background: rgba(0,240,255,0.05); border: 1px solid var(--cyan); color: var(--cyan); padding: 8px; cursor: pointer; font-size: 0.8em; font-weight: bold; clip-path: polygon(0 0, 85% 0, 100% 8px, 100% 100%, 0 100%); }
         .tab-btn.active { background: var(--cyan); color: var(--bg); box-shadow: 0 0 10px var(--cyan); }
         .tab-content { flex: 1; display: none; flex-direction: column; height: calc(100% - 45px); }
         .tab-content.active { display: flex; }
+        
+        /* Indicadores HUD */
         .panel-title { color: var(--green); font-size: 0.9em; letter-spacing: 2px; border-bottom: 1px dashed var(--green); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; }
         canvas { width: 100%; height: 100%; display: block; background: rgba(0,0,0,0.5); }
-        .icon-grid { display: flex; justify-content: space-around; align-items: center; margin: 15px 0; background: rgba(0,0,0,0.3); padding: 15px; border: 1px solid rgba(0,240,255,0.1); }
-        .radar-box { width: 85px; height: 85px; border: 1px solid rgba(0,240,255,0.3); border-radius: 50%; position: relative; overflow: hidden; }
+        .icon-grid { display: flex; justify-content: space-around; align-items: center; margin: 10px 0; background: rgba(0,0,0,0.3); padding: 10px; border: 1px solid rgba(0,240,255,0.1); }
+        .radar-box { width: 75px; height: 75px; border: 1px solid rgba(0,240,255,0.3); border-radius: 50%; position: relative; overflow: hidden; }
         .radar-box::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, rgba(0,240,255,0.4) 0%, transparent 50%); transform-origin: center; animation: rotHUD 2.5s linear infinite; }
-        .ring-box { width: 85px; height: 85px; border: 3px dotted var(--green); border-radius: 50%; animation: rotHUDBack 6s linear infinite; display: flex; align-items: center; justify-content: center; font-size: 0.9em; color: var(--green); font-weight: bold; }
-        #brain-activity { height: 130px; display: flex; align-items: flex-end; justify-content: space-between; padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,240,255,0.2); }
-        .bar { width: 8px; background-color: var(--cyan); animation: pulseBar 0.8s infinite ease-in-out; transform-origin: bottom; box-shadow: 0 0 8px var(--cyan); }
-        #chat-center { flex: 1; }
-        #chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding: 10px; margin-bottom: 10px; border-bottom: 1px solid rgba(0,240,255,0.2); }
-        .msg { padding: 15px; max-width: 85%; font-size: 0.95em; letter-spacing: 0.8px; line-height: 1.4; }
+        .ring-box { width: 75px; height: 75px; border: 3px dotted var(--green); border-radius: 50%; animation: rotHUDBack 6s linear infinite; display: flex; align-items: center; justify-content: center; font-size: 0.8em; color: var(--green); font-weight: bold; }
+        #brain-activity { height: 110px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,240,255,0.2); }
+        .bar { width: 6px; background-color: var(--cyan); animation: pulseBar 0.8s infinite ease-in-out; transform-origin: bottom; box-shadow: 0 0 8px var(--cyan); }
+        
+        /* Chasis flexible para forzar la barra a quedarse fija abajo */
+        #chat-center { flex: 1; display: flex; flex-direction: column; height: 100%; min-width: 0; }
+        #chat-box { flex: 1; height: calc(100% - 130px); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 8px; margin-bottom: 5px; border-bottom: 1px solid rgba(0,240,255,0.2); }
+        .msg { padding: 10px 14px; max-width: 90%; font-size: 0.9em; letter-spacing: 0.5px; line-height: 1.3; margin-bottom: 2px; }
+        
         .user { border: 1px solid var(--green); align-self: flex-end; clip-path: polygon(0 0, 96% 0, 100% 12px, 100% 100%, 4% 100%, 0 calc(100% - 12px)); background: rgba(0,255,102,0.04); }
         .neox { border: 1px solid var(--cyan); align-self: flex-start; clip-path: polygon(4% 0, 100% 0, 100% calc(100% - 12px), 96% 100%, 0 100%, 0 12px); background: rgba(0,240,255,0.04); }
-        .prefix { font-weight: bold; display: block; margin-bottom: 5px; font-size: 0.8em; letter-spacing: 1px; }
+        .prefix { font-weight: bold; display: block; margin-bottom: 3px; font-size: 0.8em; letter-spacing: 1px; }
         .user .prefix { color: var(--green); } .neox .prefix { color: var(--cyan); }
-        #thinking-indicator { display: none; color: var(--cyan); font-size: 0.9em; padding: 10px; animation: blink 1s infinite; letter-spacing: 2px; }
-        #input-area { display: flex; gap: 12px; }
-        input { flex: 1; background: rgba(11,21,36,0.9); border: 1px solid var(--cyan); color: var(--green); padding: 15px; outline: none; font-size: 1em; font-family: inherit; clip-path: polygon(0 0, 98% 0, 100% 10px, 100% 100%, 0 100%); }
+        #thinking-indicator { display: none; color: var(--cyan); font-size: 0.85em; padding: 5px 10px; animation: blink 1s infinite; letter-spacing: 2px; }
+        
+        /* Consola inferior anclada de forma visible */
+        #input-area { display: flex; gap: 10px; height: 50px; flex-shrink: 0; }
+        input { flex: 1; background: rgba(11,21,36,0.9); border: 1px solid var(--cyan); color: var(--green); padding: 10px 15px; outline: none; font-size: 0.95em; font-family: inherit; clip-path: polygon(0 0, 98% 0, 100% 10px, 100% 100%, 0 100%); }
         input:focus { border-color: var(--green); box-shadow: 0 0 12px rgba(0,255,102,0.2); }
-        .btn { background: transparent; color: var(--cyan); border: 1px solid var(--cyan); padding: 12px 26px; font-weight: bold; cursor: pointer; font-family: inherit; clip-path: polygon(0 0, 85% 0, 100% 12px, 100% 100%, 0 100%); }
+        .btn { background: transparent; color: var(--cyan); border: 1px solid var(--cyan); padding: 10px 20px; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.9em; letter-spacing: 1px; clip-path: polygon(0 0, 85% 0, 100% 12px, 100% 100%, 0 100%); flex-shrink: 0; }
         .btn:hover { background: var(--cyan); color: var(--bg); box-shadow: 0 0 15px var(--cyan); }
         .btn.danger { color: var(--red); border-color: var(--red); } .btn.danger:hover { background: var(--red); color: #fff; }
         @keyframes rotHUD { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -47,15 +60,20 @@
 </head>
 <body>
     <div id="hud-layout">
+        <!-- MONITOR IZQUIERDO CON PESTAÑAS INTERACTIVAS DE UN CLICK -->
         <div id="left-monitor">
             <div class="nav-tabs">
                 <button class="tab-btn active" onclick="cambiarTab('tab-neural')">NEURAL_3D</button>
                 <button class="tab-btn" onclick="cambiarTab('tab-activity')">BRAIN_ACT</button>
             </div>
+            
+            <!-- Pantalla Pestaña 1: Red Neuronal 3D -->
             <div class="cyber-panel tab-content active" id="tab-neural">
                 <div class="panel-title"><span>> GRAPH_NEURAL_3D</span></div>
                 <canvas id="neuralNet"></canvas>
             </div>
+            
+            <!-- Pantalla Pestaña 2: Brain Activity e Iconos -->
             <div class="cyber-panel tab-content" id="tab-activity">
                 <div class="panel-title">> HUD_MATRIX_DEVICES</div>
                 <div class="icon-grid"><div class="ring-box" id="load-percentage">100%</div><div class="radar-box"></div></div>
@@ -68,8 +86,10 @@
                 <button class="btn danger" onclick="limpiarMemoria()" style="margin-top:20px; width:100%;">PURGAR_BANCOS_MEMORIA</button>
             </div>
         </div>
+
+        <!-- CENTRO DE MANDO PRINCIPAL: CHAT HOLOGRÁFICO -->
         <div class="cyber-panel" id="chat-center">
-            <div style="text-align:center; font-weight:bold; letter-spacing:4px; padding-bottom:12px; border-bottom:1px solid rgba(0,240,255,0.3); font-size:1.1em;">✦ NeoX COGNITIVE COMMAND CENTER v10.0 ✦</div>
+            <div style="text-align:center; font-weight:bold; letter-spacing:4px; padding-bottom:12px; border-bottom:1px solid rgba(0,240,255,0.3); font-size:1.1em;">✦ NeoX COGNITIVE COMMAND CENTER v10.5 ✦</div>
             <div id="chat-box"></div>
             <div id="thinking-indicator">> NeoX PENSANDO: PROCESANDO ENLACES CUÁNTICOS...</div>
             <div id="input-area">
@@ -78,6 +98,7 @@
             </div>
         </div>
     </div>
+
     <script>
         const claves = ["AQ.Ab8RN6J-ASHXwXsoHaJiIB0MnRhrQ-xUgzDGM8XccFtZr6SHrQ", "AQ.Ab8RN6IaUAVQYdjNLfWOcIiqnj0_Nd5cB-QyCwTWhXzHIm0KWA", "AQ.Ab8RN6J1Qc6K8DD1ZANPscWF4O_sl_DL5TiN8WPj8gdHU81uCA", "AQ.Ab8RN6I0VZqIgeLDNRZNAwPJ1wpzCemWmOcL1ePlsEe4Gxr8Tg", "AQ.Ab8RN6INnMZXkMHKPN-qM_C5xAKbN7hEVPddRNBp6iWORxbwcA"];
         let idxActual = 0; let historial = [];
@@ -93,7 +114,7 @@
             document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
             document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
             document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if(event && event.currentTarget) event.currentTarget.classList.add('active');
         }
         
         function revisarEnter(e) { if (e.key === 'Enter') enviarMensaje(); }
@@ -104,7 +125,6 @@
             document.getElementById("chat-box").innerHTML = "";
             efectoEscribir("REESTRUCTURACION", "Bancos de memoria a largo plazo purgados de forma segura. Listo.", "neox");
         }
-        
         function reconstruirPantalla() {
             const box = document.getElementById("chat-box"); box.innerHTML = "";
             historial.forEach(function(m) {
@@ -147,9 +167,10 @@
         
         async function procesarPeticion(prompt) {
             const urlGemini = "https://googleapis.com" + claves[idxActual];
+            const urlApi = "https://corsproxy.io?" + encodeURIComponent(urlGemini);
             const datos = { contents: [{ parts: [{ text: prompt }] }] };
             try {
-                const r = await fetch(urlGemini, { 
+                const r = await fetch(urlApi, { 
                     method: "POST", 
                     headers: { "Content-Type": "application/json" }, 
                     body: JSON.stringify(datos) 
@@ -177,7 +198,6 @@
                 alert("Fallo critico de pasarela: " + err);
             }
         }
-        
         const canvas = document.getElementById("neuralNet"); const ctx = canvas.getContext("2d");
         let nodos = []; const totalNodos = 20; let angY = 0.005, angX = 0.002;
         let labels = ["NeoX_Core", "JARVIS_Matrix", "Quantum_Vault", "Memory_JSON", "Google_1.5", "Cyberpunk_UI", "User_Carlos"];
@@ -249,3 +269,4 @@
     </script>
 </body>
 </html>
+
