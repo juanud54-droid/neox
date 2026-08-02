@@ -3,42 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX TACTICAL OS v10.7</title>
+    <title>NeoX COGNITIVE OS v11.0</title>
     <style>
         @import url('https://googleapis.com');
-        :root { --cyan: #00f0ff; --green: #00ff66; --red: #ff3333; --bg: #010409; --panel: rgba(6,16,30,0.85); }
-        * { box-sizing: border-box; font-family: 'Share Tech Mono', monospace; margin: 0; padding: 0; }
-        body { background-color: var(--bg); color: var(--cyan); display: flex; height: 100vh; height: 100dvh; width: 100vw; overflow: hidden; background-image: radial-gradient(rgba(0,240,255,0.06) 1.5px, transparent 0); background-size: 30px 30px; padding: 10px; }
-        #hud-layout { display: flex; width: 100%; height: 100%; gap: 10px; }
-        .cyber-panel { background: var(--panel); border: 1px solid var(--cyan); box-shadow: 0 0 20px rgba(0,240,255,0.1); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); display: flex; flex-direction: column; padding: 15px; position: relative; }
-        #left-monitor { width: 280px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; height: 100%; }
-        .nav-tabs { display: flex; gap: 5px; flex-shrink: 0; }
-        .tab-btn { flex: 1; background: rgba(0,240,255,0.05); border: 1px solid var(--cyan); color: var(--cyan); padding: 8px; cursor: pointer; font-size: 0.8em; font-weight: bold; clip-path: polygon(0 0, 85% 0, 100% 8px, 100% 100%, 0 100%); }
-        .tab-btn.active { background: var(--cyan); color: var(--bg); box-shadow: 0 0 10px var(--cyan); }
-        .tab-content { flex: 1; display: none; flex-direction: column; height: calc(100% - 40px); overflow: hidden; }
-        .tab-content.active { display: flex; }
-        .panel-title { color: var(--green); font-size: 0.85em; letter-spacing: 2px; border-bottom: 1px dashed var(--green); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; flex-shrink: 0; }
-        canvas { width: 100%; flex: 1; display: block; background: rgba(0,0,0,0.5); }
-        .icon-grid { display: flex; justify-content: space-around; align-items: center; margin: 5px 0; background: rgba(0,0,0,0.3); padding: 10px; border: 1px solid rgba(0,240,255,0.1); flex-shrink: 0; }
-        .radar-box { width: 70px; height: 70px; border: 1px solid rgba(0,240,255,0.3); border-radius: 50%; position: relative; overflow: hidden; }
-        .radar-box::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, rgba(0,240,255,0.4) 0%, transparent 50%); transform-origin: center; animation: rotHUD 2.5s linear infinite; }
-        .ring-box { width: 70px; height: 70px; border: 3px dotted var(--green); border-radius: 50%; animation: rotHUDBack 6s linear infinite; display: flex; align-items: center; justify-content: center; font-size: 0.8em; color: var(--green); font-weight: bold; }
-        #brain-activity { height: 100px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,240,255,0.2); flex-shrink: 0; }
-        .bar { width: 5px; background-color: var(--cyan); animation: pulseBar 0.8s infinite ease-in-out; transform-origin: bottom; box-shadow: 0 0 8px var(--cyan); }
-        #chat-center { flex: 1; display: flex; flex-direction: column; height: 100%; min-width: 0; justify-content: space-between; }
-        #chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 5px; margin-bottom: 10px; }
-        .msg { padding: 10px 14px; max-width: 85%; font-size: 0.9em; letter-spacing: 0.5px; line-height: 1.3; }
-        .user { border: 1px solid var(--green); align-self: flex-end; clip-path: polygon(0 0, 96% 0, 100% 12px, 100% 100%, 4% 100%, 0 calc(100% - 12px)); background: rgba(0,255,102,0.04); }
-        .neox { border: 1px solid var(--cyan); align-self: flex-start; clip-path: polygon(4% 0, 100% 0, 100% calc(100% - 12px), 96% 100%, 0 100%, 0 12px); background: rgba(0,240,255,0.04); }
-        .prefix { font-weight: bold; display: block; margin-bottom: 3px; font-size: 0.8em; letter-spacing: 1px; }
-        .user .prefix { color: var(--green); } .neox .prefix { color: var(--cyan); }
-        #thinking-indicator { display: none; color: var(--cyan); font-size: 0.85em; padding: 5px; animation: blink 1s infinite; letter-spacing: 2px; flex-shrink: 0; }
-        #input-area { display: flex; gap: 10px; height: 45px; flex-shrink: 0; margin-top: auto; width: 100%; }
-        input { flex: 1; background: rgba(11,21,36,0.9); border: 1px solid var(--cyan); color: var(--green); padding: 0 15px; outline: none; font-size: 0.95em; font-family: inherit; clip-path: polygon(0 0, 98% 0, 100% 10px, 100% 100%, 0 100%); height: 100%; }
-        input:focus { border-color: var(--green); box-shadow: 0 0 12px rgba(0,255,102,0.2); }
-        .btn { background: transparent; color: var(--cyan); border: 1px solid var(--cyan); padding: 0 20px; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.9em; letter-spacing: 1px; clip-path: polygon(0 0, 85% 0, 100% 12px, 100% 100%, 0 100%); height: 100%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-        .btn:hover { background: var(--cyan); color: var(--bg); box-shadow: 0 0 15px var(--cyan); }
-        .btn.danger { color: var(--red); border-color: var(--red); } .btn.danger:hover { background: var(--red); color: #fff; }
+        :root { 
+            --cyan: #00f0ff; 
+            --green: #00ff66; 
+            --red: #ff3333; 
+            --bg: #010409; 
+            --panel: rgba(6, 16, 30, 0.85); 
+        }
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Share Tech Mono', monospace; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        /* Chasis flexible maestro adaptado para tablets y móviles */
+        body { 
+            background-color: var(--bg); 
+            color: var(--cyan); 
+            display: flex; 
+            height: 100vh; 
+            height: 100dvh; 
+            width: 100vw; 
+            overflow: hidden; 
+            background-image: radial-gradient(rgba(0, 240, 255, 0.06) 1.5px, transparent 0); 
+            background-size: 30px 30px; 
+            padding: 10px; 
+        }
+        #hud-layout { 
+            display: flex; 
+            width: 100%; 
+            height: 100%; 
+            gap: 12px; 
+        }
+        /* Configuración de la Sidebar Izquierda */
+        #left-monitor { 
+            width: 320px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            flex-shrink: 0; 
+            height: 100%; 
+        }
+        
+        /* Sistema de pestañas interactivas de un click */
+        .nav-tabs { 
+            display: flex; 
+            gap: 6px; 
+            flex-shrink: 0; 
+        }
+        .tab-btn { 
+            flex: 1; 
+            background: rgba(0, 240, 255, 0.05); 
+            border: 1px solid var(--cyan); 
+            color: var(--cyan); 
+            padding: 10px; 
+            cursor: pointer; 
+            font-size: 0.85em; 
+            font-weight: bold; 
+            letter-spacing: 1px;
+            clip-path: polygon(0 0, 85% 0, 100% 8px, 100% 100%, 0 100%); 
+        }
+        .tab-btn.active { 
+            background: var(--cyan); 
+            color: var(--bg); 
+            box-shadow: 0 0 12px var(--cyan); 
+        }
+        
+        /* Contenedores dinámicos ocultables */
+        .tab-content { 
+            flex: 1; 
+            display: none; 
+            flex-direction: column; 
+            height: calc(100% - 45px); 
+            overflow: hidden; 
+        }
+        .tab-content.active { 
+            display: flex; 
+        }
+        
+        /* Paneles con estética cyberpunk militar */
+        .cyber-panel { 
+            background: var(--panel); 
+            border: 1px solid var(--cyan); 
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1); 
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 16px; 
+            position: relative; 
+        }
+        /* Títulos de los paneles del HUD */
+        .panel-title { 
+            color: var(--green); 
+            font-size: 0.85em; 
+            letter-spacing: 2px; 
+            border-bottom: 1px dashed var(--green); 
+            padding-bottom: 5px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            flex-shrink: 0; 
+        }
+        canvas { 
+            width: 100%; 
+            flex: 1; 
+            display: block; 
+            background: rgba(0, 0, 0, 0.5); 
+        }
+        
+        /* Widgets estadísticos de la pestaña BRAIN_ACT */
+        .icon-grid { 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            margin: 5px 0; 
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 10px; 
+            border: 1px solid rgba(0, 240, 255, 0.1); 
+            flex-shrink: 0; 
+        }
+        .radar-box { 
+            width: 70px; 
+            height: 70px; 
+            border: 1px solid rgba(0, 240, 255, 0.3); 
+            border-radius: 50%; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .radar-box::after { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(45deg, rgba(0, 240, 255, 0.4) 0%, transparent 50%); 
+            transform-origin: center; 
+            animation: rotHUD 2.5s linear infinite; 
+        }
+        .ring-box { 
+            width: 70px; 
+            height: 70px; 
+            border: 3px dotted var(--green); 
+            border-radius: 50%; 
+            animation: rotHUDBack 6s linear infinite; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 0.8em; 
+            color: var(--green); 
+            font-weight: bold; 
+        }
+        #brain-activity { 
+            height: 100px; 
+            display: flex; 
+            align-items: flex-end; 
+            justify-content: space-between; 
+            padding: 10px; 
+            background: rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(0, 240, 255, 0.2); 
+            flex-shrink: 0; 
+        }
+        .bar { 
+            width: 5px; 
+            background-color: var(--cyan); 
+            animation: pulseBar 0.8s infinite ease-in-out; 
+            transform-origin: bottom; 
+            box-shadow: 0 0 8px var(--cyan); 
+        }
+        
+        /* CONTROL DE MAQUETACIÓN FLEXIBLE DEL COMMAND CENTER DERECHO */
+        #chat-center { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100%; 
+            min-width: 0; 
+            justify-content: space-between; 
+        }
+        #chat-box { 
+            flex: 1; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            padding: 5px; 
+            margin-bottom: 10px; 
+        }
+        .msg { 
+            padding: 10px 14px; 
+            max-width: 85%; 
+            font-size: 0.9em; 
+            letter-spacing: 0.5px; 
+            line-height: 1.3; 
+        }
+        /* Diseño de los bloques de transmisión de datos */
+        .user { 
+            border: 1px solid var(--green); 
+            align-self: flex-end; 
+            clip-path: polygon(0 0, 96% 0, 100% 12px, 100% 100%, 4% 100%, 0 calc(100% - 12px)); 
+            background: rgba(0, 255, 102, 0.04); 
+        }
+        .neox { 
+            border: 1px solid var(--cyan); 
+            align-self: flex-start; 
+            clip-path: polygon(4% 0, 100% 0, 100% calc(100% - 12px), 96% 100%, 0 100%, 0 12px); 
+            background: rgba(0, 240, 255, 0.04); 
+        }
+        .prefix { 
+            font-weight: bold; 
+            display: block; 
+            margin-bottom: 3px; 
+            font-size: 0.8em; 
+            letter-spacing: 1px; 
+        }
+        .user .prefix { color: var(--green); } 
+        .neox .prefix { color: var(--cyan); }
+        
+        #thinking-indicator { 
+            display: none; 
+            color: var(--cyan); 
+            font-size: 0.85em; 
+            padding: 5px; 
+            animation: blink 1s infinite; 
+            letter-spacing: 2px; 
+            flex-shrink: 0; 
+        }
+        
+        /* Consola de comandos inferior protegida contra ocultamiento */
+        #input-area { 
+            display: flex; 
+            gap: 10px; 
+            height: 45px; 
+            flex-shrink: 0; 
+            margin-top: auto; 
+            width: 100%; 
+        }
+        input { 
+            flex: 1; 
+            background: rgba(11, 21, 36, 0.9); 
+            border: 1px solid var(--cyan); 
+            color: var(--green); 
+            padding: 0 15px; 
+            outline: none; 
+            font-size: 0.95em; 
+            font-family: inherit; 
+            clip-path: polygon(0 0, 98% 0, 100% 10px, 100% 100%, 0 100%); 
+            height: 100%; 
+        }
+        input:focus { 
+            border-color: var(--green); 
+            box-shadow: 0 0 12px rgba(0, 255, 102, 0.2); 
+        }
+        .btn { 
+            background: transparent; 
+            color: var(--cyan); 
+            border: 1px solid var(--cyan); 
+            padding: 0 20px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-family: inherit; 
+            font-size: 0.9em; 
+            letter-spacing: 1px; 
+            clip-path: polygon(0 0, 85% 0, 100% 12px, 100% 100%, 0 100%); 
+            height: 100%; 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .btn:hover { 
+            background: var(--cyan); 
+            color: var(--bg); 
+            box-shadow: 0 0 15px var(--cyan); 
+        }
+        .btn.danger { 
+            color: var(--red); 
+            border-color: var(--red); 
+        } 
+        .btn.danger:hover { 
+            background: var(--red); 
+            color: #fff; 
+        }
+        
+        /* Motores de ciclos de renderización analíticos */
         @keyframes rotHUD { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes rotHUDBack { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
         @keyframes pulseBar { 0%, 100% { transform: scaleY(0.2); } 50% { transform: scaleY(1); } }
@@ -47,38 +299,42 @@
 </head>
 <body>
     <div id="hud-layout">
-        <!-- MONITOR IZQUIERDO CON PESTAÑAS INTERACTIVAS DE UN CLICK -->
+        <!-- MONITOR IZQUIERDO: SIDEBAR DE ANÁLISIS COGNITIVO -->
         <div id="left-monitor">
             <div class="nav-tabs">
-                <button class="tab-btn active" onclick="cambiarTab('tab-neural')">NEURAL_3D</button>
+                <button class="tab-btn active" onclick="cambiarTab('tab-neural')">RED_NEURAL</button>
                 <button class="tab-btn" onclick="cambiarTab('tab-activity')">BRAIN_ACT</button>
             </div>
             
-            <!-- Pantalla Pestaña 1: Red Neuronal 3D -->
+            <!-- Panel Pestaña 1: Mapa Corregido de la Red Neuronal 3D -->
             <div class="cyber-panel tab-content active" id="tab-neural">
-                <div class="panel-title"><span>> GRAPH_NEURAL_3D</span></div>
+                <div class="panel-title"><span>> GRAPH_NEURAL_3D_LIVE</span></div>
                 <canvas id="neuralNet"></canvas>
             </div>
             
-            <!-- Pantalla Pestaña 2: Brain Activity e Iconos -->
+            <!-- Panel Pestaña 2: Espectrómetro y Métricas de Pensamiento -->
             <div class="cyber-panel tab-content" id="tab-activity">
-                <div class="panel-title">> HUD_MATRIX_DEVICES</div>
-                <div class="icon-grid"><div class="ring-box" id="load-percentage">100%</div><div class="radar-box"></div></div>
-                <div id="active-core" style="font-size:0.8em; text-align:center; font-weight:bold; background:rgba(0,240,255,0.05); padding:8px; border:1px dashed rgba(0,240,255,0.2);">NÚCLEO_ACTIVO:</div>
-                <div class="panel-title" style="margin-top:20px;">> BRAIN_ACTIVITY_SPECTRUM</div>
+                <div class="panel-title">> HUD_MATRIX_METRICS</div>
+                <div class="icon-grid">
+                    <div class="ring-box" id="load-percentage">100%</div>
+                    <div class="radar-box"></div>
+                </div>
+                <div id="active-core" style="font-size:0.8em; text-align:center; font-weight:bold; background:rgba(0,240,255,0.05); padding:8px; border:1px dashed rgba(0,240,255,0.2);">NÚCLEO_ACTIVO: [01]</div>
+                
+                <div class="panel-title" style="margin-top:15px;">> BRAIN_ACTIVITY_SPECTRUM</div>
                 <div id="brain-activity">
                     <div class="bar" style="height:75%;"></div><div class="bar" style="height:35%;"></div><div class="bar" style="height:90%;"></div>
                     <div class="bar" style="height:55%;"></div><div class="bar" style="height:25%;"></div><div class="bar" style="height:80%;"></div><div class="bar" style="height:45%;"></div>
                 </div>
-                <button class="btn danger" onclick="limpiarMemoria()" style="margin-top:20px; width:100%;">PURGAR_BANCOS_MEMORIA</button>
+                <button class="btn danger" onclick="limpiarMemoria()" style="margin-top:15px; width:100%; font-size:0.8em;">PURGAR_BANCOS_MEMORIA</button>
             </div>
         </div>
 
-        <!-- CENTRO DE MANDO PRINCIPAL: CHAT HOLOGRÁFICO -->
+        <!-- CENTRO DE MANDO PRINCIPAL DERECHO: CHAT HOLOGRÁFICO -->
         <div class="cyber-panel" id="chat-center">
-            <div style="text-align:center; font-weight:bold; letter-spacing:4px; padding-bottom:12px; border-bottom:1px solid rgba(0,240,255,0.3); font-size:1.1em;">✦ NeoX COGNITIVE COMMAND CENTER v10.7 ✦</div>
+            <div style="text-align:center; font-weight:bold; letter-spacing:4px; padding-bottom:12px; border-bottom:1px solid rgba(0,240,255,0.3); font-size:1.1em;">✦ NeoX COGNITIVE COMMAND CENTER v11.0 ✦</div>
             <div id="chat-box"></div>
-            <div id="thinking-indicator">> NeoX PENSANDO: PROCESANDO ENLACES CUÁNTICOS...</div>
+            <div id="thinking-indicator">> NeoX PENSANDO: REALIZANDO SINAPSIS DIRECCIONAL...</div>
             <div id="input-area">
                 <input type="text" id="user-input" placeholder="INGRESE REQUERIMIENTO TÁCTICO..." onkeypress="revisarEnter(event)">
                 <button class="btn" onclick="enviarMensaje()">EJECUTAR</button>
@@ -87,16 +343,29 @@
     </div>
 
     <script>
-        const claves = ["AQ.Ab8RN6J-ASHXwXsoHaJiIB0MnRhrQ-xUgzDGM8XccFtZr6SHrQ", "AQ.Ab8RN6IaUAVQYdjNLfWOcIiqnj0_Nd5cB-QyCwTWhXzHIm0KWA", "AQ.Ab8RN6J1Qc6K8DD1ZANPscWF4O_sl_DL5TiN8WPj8gdHU81uCA", "AQ.Ab8RN6I0VZqIgeLDNRZNAwPJ1wpzCemWmOcL1ePlsEe4Gxr8Tg", "AQ.Ab8RN6INnMZXkMHKPN-qM_C5xAKbN7hEVPddRNBp6iWORxbwcA"];
-        let idxActual = 0; let historial = [];
+        // Bóveda cuántica de energía: Tus 5 núcleos API activos e indexados
+        const claves = [
+            "AQ.Ab8RN6J-ASHXwXsoHaJiIB0MnRhrQ-xUgzDGM8XccFtZr6SHrQ",
+            "AQ.Ab8RN6IaUAVQYdjNLfWOcIiqnj0_Nd5cB-QyCwTWhXzHIm0KWA",
+            "AQ.Ab8RN6J1Qc6K8DD1ZANPscWF4O_sl_DL5TiN8WPj8gdHU81uCA",
+            "AQ.Ab8RN6I0VZqIgeLDNRZNAwPJ1wpzCemWmOcL1ePlsEe4Gxr8Tg",
+            "AQ.Ab8RN6INnMZXkMHKPN-qM_C5xAKbN7hEVPddRNBp6iWORxbwcA"
+        ];
+        let idxActual = 0; 
+        let historial = [];
         
+        // Protocolo automático de lectura de la memoria a largo plazo de NeoX
         if (localStorage.getItem("neox_web_history")) {
             historial = JSON.parse(localStorage.getItem("neox_web_history"));
             reconstruirPantalla();
         } else {
-            setTimeout(function() { efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Servidor seguro activo. Esperando directrices, Creador...", "neox"); }, 500);
+            // Retraso controlado para simular el encendido de motores cognitivos
+            setTimeout(function() { 
+                efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Red de retransmision directa acoplada. Esperando directrices, Creador...", "neox"); 
+            }, 500);
         }
         
+        // Función interactiva para conmutar las pestañas de la Sidebar izquierda
         function cambiarTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
             document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -104,17 +373,20 @@
             if(event && event.currentTarget) event.currentTarget.classList.add('active');
         }
         
-        function revisarEnter(e) { if (e.key === 'Enter') enviarMensaje(); }
+        function revisarEnter(e) { 
+            if (e.key === 'Enter') enviarMensaje(); 
+        }
         
+        // Borrado absoluto físico de los bancos de memoria del chasis
         function limpiarMemoria() {
             historial = [];
             localStorage.removeItem("neox_web_history");
             document.getElementById("chat-box").innerHTML = "";
             efectoEscribir("REESTRUCTURACION", "Bancos de memoria a largo plazo purgados de forma segura. Listo.", "neox");
         }
-        
         function reconstruirPantalla() {
-            const box = document.getElementById("chat-box"); box.innerHTML = "";
+            const box = document.getElementById("chat-box"); 
+            box.innerHTML = "";
             historial.forEach(function(m) {
                 const div = document.createElement("div");
                 div.className = "msg " + (m.role === 'user' ? 'user' : 'neox');
@@ -124,40 +396,45 @@
             });
             box.scrollTop = box.scrollHeight;
         }
+        
         function efectoEscribir(prefix, texto, tipo) {
             const box = document.getElementById("chat-box");
             const div = document.createElement("div");
             div.className = "msg " + tipo;
             div.innerHTML = '<span class="prefix">[' + prefix + ']</span><span class="text-body"></span>';
             box.appendChild(div);
-            let i = 0; const span = div.querySelector(".text-body");
+            let i = 0; 
+            const span = div.querySelector(".text-body");
             function escribir() {
                 if (i < texto.length) {
-                    span.innerHTML += texto.charAt(i); i++;
+                    span.innerHTML += texto.charAt(i); 
+                    i++;
                     box.scrollTop = box.scrollHeight;
-                    setTimeout(escribir, 12);
+                    setTimeout(escribir, 12); // Velocidad óptima táctica
                 }
             }
             escribir();
         }
-        
         async function enviarMensaje() {
             const input = document.getElementById("user-input");
             const texto = input.value.trim(); if (!texto) return;
             input.value = ""; historial.push({ role: "user", text: texto });
             reconstruirPantalla();
+            
+            // Activar indicadores holográficos y acelerar espectrómetro
             document.getElementById("thinking-indicator").style.display = "block";
             document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.15s"; });
-            const prompt = "Actua como NeoX, un asistente de IA inteligente, con personalidad como JARVIS de Iron Man. Responde de forma brillante y directa. Historial de sesion: " + JSON.stringify(historial.slice(-10)) + " \nMensaje del creador: " + texto;
+            
+            // Inyectar el contexto maestro JARVIS junto con los últimos recuerdos como hilos lógicos
+            const prompt = "Actua como NeoX, un asistente de IA inteligente y sofisticado, con personalidad como JARVIS de Iron Man. Responde de forma brillante y directa. Historial de sesion: " + JSON.stringify(historial.slice(-10)) + " \nMensaje del creador: " + texto;
             await procesarPeticion(prompt);
         }
         
         async function procesarPeticion(prompt) {
-            const urlGemini = "https://googleapis.com" + claves[idxActual];
-            
-            // TÚNEL DE ESCAPE THINGPROXY DIRECTO: Evita el error 530 de Cloudflare de pasarelas previas
-            const urlApi = "https://freeboard.io" + urlGemini;
+            // CONEXIÓN DIRECTA OFICIAL: Llamada nativa sin proxies para evitar errores de pasarela 530
+            const urlApi = "https://googleapis.com" + claves[idxActual];
             const datos = { contents: [{ parts: [{ text: prompt }] }] };
+            
             try {
                 const r = await fetch(urlApi, { 
                     method: "POST", 
@@ -174,35 +451,44 @@
                     historial.push({ role: "model", text: txt });
                     localStorage.setItem("neox_web_history", JSON.stringify(historial));
                     efectoEscribir("NeoX", txt, "neox");
-                    actualizarNeuronasRecientes(txt);
+                    actualizarNeuronasRecientes(txt); // Alimentar el mapa de la red neuronal 3D en vivo
                 } else if (r.status === 429 || r.status === 403) {
+                    // Protocolo de rotación cuántica automática si el núcleo actual agota su energía
                     if (idxActual < claves.length - 1) {
                         idxActual++;
                         document.getElementById("active-core").innerText = "NÚCLEO_ACTIVO: [0" + (idxActual + 1) + "]";
                         await procesarPeticion(prompt);
-                    } else { alert("Bancos de energia de la boveda agotados."); }
-                } else { alert("Error de enlace pasarela: " + r.status); }
+                    } else { alert("Bancos de energia de la boveda totalmente agotados."); }
+                } else { alert("Error de enlace nativo del servidor: " + r.status); }
             } catch (err) {
                 document.getElementById("thinking-indicator").style.display = "none";
-                alert("Fallo critico de pasarela: " + err);
+                alert("Fallo critico de red local: " + err);
             }
         }
+        const canvas = document.getElementById("neuralNet"); 
+        const ctx = canvas.getContext("2d");
+        let nodos = []; 
+        // RED NEURONAL EXPANDIDA: Incrementamos a 40 nodos para densificar la red cognitiva
+        const totalNodos = 40; 
+        let angY = 0.005, angX = 0.002;
         
-        const canvas = document.getElementById("neuralNet"); const ctx = canvas.getContext("2d");
-        let nodos = []; const totalNodos = 20; let angY = 0.005, angX = 0.002;
-        let labels = ["NeoX_Core", "JARVIS_Matrix", "Quantum_Vault", "Memory_JSON", "Google_1.5", "Cyberpunk_UI", "User_Carlos"];
+        // Diccionario base de conceptos para la matriz de recuerdos iniciales
+        let labels = ["NeoX_Core", "JARVIS_Matrix", "Quantum_Vault", "Memory_JSON", "Google_1.5", "Cyberpunk_UI", "User_Carlos", "Synapse_v11", "Cortex_Link", "Data_Stream"];
         
         function resCanvas() {
             if (!canvas.parentNode) return;
-            canvas.width = canvas.parentNode.clientWidth - 36;
-            canvas.height = canvas.parentNode.clientHeight - 70;
+            canvas.width = canvas.parentNode.clientWidth - 32;
+            canvas.height = canvas.parentNode.clientHeight - 65;
         }
-        window.addEventListener('resize', resCanvas); setTimeout(resCanvas, 200);
+        window.addEventListener('resize', resCanvas); 
+        setTimeout(resCanvas, 200);
         
+        // Generador matemático esférico para distribuir los nodos densos uniformemente en el espacio 3D
         for (let i = 0; i < totalNodos; i++) {
             let u = Math.random(), v = Math.random();
-            let theta = u * 2 * Math.PI, phi = Math.acos(2 * v - 1);
-            let r = 75;
+            let theta = u * 2 * Math.PI;
+            let phi = Math.acos(2 * v - 1);
+            let r = 85; // Radio orbital de la esfera cuántica
             nodos.push({
                 x: r * Math.sin(phi) * Math.cos(theta),
                 y: r * Math.sin(phi) * Math.sin(theta),
@@ -210,16 +496,23 @@
                 label: i < labels.length ? labels[i] : null
             });
         }
-        
+        // CAPACIDAD DE APRENDIZAJE ADAPTATIVO EN VIVO
+        // Filtra palabras clave complejas de la respuesta de NeoX y las inyecta en los nodos flotantes
         function actualizarNeuronasRecientes(t) {
-            let p = t.split(" ").filter(function(w) { return w.length > 5 && w.length < 11; });
-            if (p.length > 0) {
-                let n = nodos[Math.floor(Math.random() * nodos.length)];
-                let lim = p[0].replace(/[^a-zA-Z]/g, "");
-                if (lim) n.label = lim + "_Memory";
+            let palabras = t.split(" ").filter(function(w) { 
+                return w.length > 5 && w.length < 11; 
+            });
+            if (palabras.length > 0) {
+                // Selecciona un nodo al azar para mutar e indexar el nuevo concepto recordado
+                let nodoAzar = nodos[Math.floor(Math.random() * nodos.length)];
+                let limpio = palabras[Math.floor(Math.random() * palabras.length)].replace(/[^a-zA-Z]/g, "");
+                if (limpio) {
+                    nodoAzar.label = limpio.toUpperCase() + "_Node";
+                }
             }
         }
         
+        // Matriz de rotación en los ejes espaciales X e Y
         function rotar() {
             let cY = Math.cos(angY), sY = Math.sin(angY), cX = Math.cos(angX), sX = Math.sin(angX);
             nodos.forEach(function(n) {
@@ -229,30 +522,57 @@
             });
         }
         
+        // RENDERIZADOR TRIDIMENSIONAL DE LA RED NEURONAL EN VIVO
         function render() {
             if (canvas.width === 0) resCanvas();
-            ctx.clearRect(0, 0, canvas.width, canvas.height); rotar();
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            rotar();
+            
             let cx = canvas.width / 2, cy = canvas.height / 2, fov = 130;
-            ctx.strokeStyle = "rgba(0,240,255,0.15)"; ctx.lineWidth = 1;
+            
+            // Dibujar hilos de sinapsis (Conexiones inteligentes entre nodos cercanos)
+            ctx.strokeStyle = "rgba(0, 240, 255, 0.12)"; 
+            ctx.lineWidth = 1;
             for (let i = 0; i < nodos.length; i++) {
                 for (let j = i + 1; j < nodos.length; j++) {
-                    if (Math.sqrt(Math.pow(nodos[i].x - nodos[j].x, 2) + Math.pow(nodos[i].y - nodos[j].y, 2)) < 110) {
-                        let si = fov / (fov + nodos[i].z), sj = fov / (fov + nodos[j].z);
-                        ctx.beginPath(); ctx.moveTo(cx + nodos[i].x * si, cy + nodos[i].y * si); ctx.lineTo(cx + nodos[j].x * sj, cy + nodos[j].y * sj); ctx.stroke();
+                    let dist = Math.sqrt(Math.pow(nodos[i].x - nodos[j].x, 2) + Math.pow(nodos[i].y - nodos[j].y, 2));
+                    if (dist < 95) {
+                        let si = fov / (fov + nodos[i].z);
+                        let sj = fov / (fov + nodos[j].z);
+                        ctx.beginPath(); 
+                        ctx.moveTo(cx + nodos[i].x * si, cy + nodos[i].y * si); 
+                        ctx.lineTo(cx + nodos[j].x * sj, cy + nodos[j].y * sj); 
+                        ctx.stroke();
                     }
                 }
             }
+            
+            // Dibujar núcleos neuronales y sus etiquetas flotantes de datos
             nodos.forEach(function(n) {
-                let e = fov / (fov + n.z), x = cx + n.x * e, y = cy + n.y * e, rd = Math.max(1, 3.5 * e), al = (fov - n.z) / (2 * fov);
-                ctx.fillStyle = n.label ? "rgba(0,255,102," + (al + 0.4) + ")" : "rgba(0,240,255," + al + ")";
-                ctx.beginPath(); ctx.arc(x, y, rd, 0, 2 * Math.PI); ctx.fill();
-                if (n.label && n.z < 15) {
-                    ctx.fillStyle = "rgba(230,237,243," + (al + 0.3) + ")";
+                let e = fov / (fov + n.z);
+                let x = cx + n.x * e;
+                let y = cy + n.y * e;
+                let rd = Math.max(1, 3 * e);
+                let al = (fov - n.z) / (2 * fov);
+                
+                // Color diferenciado si el nodo ha aprendido un dato (Verde J.A.R.V.I.S.) o si es base (Cian)
+                ctx.fillStyle = n.label ? "rgba(0, 255, 102, " + (al + 0.4) + ")" : "rgba(0, 240, 255, " + al + ")";
+                ctx.beginPath(); 
+                ctx.arc(x, y, rd, 0, 2 * Math.PI); 
+                ctx.fill();
+                
+                // Renderizar los nombres de los recuerdos en la rejilla espacial
+                if (n.label && n.z < 20) {
+                    ctx.fillStyle = "rgba(230, 237, 243, " + (al + 0.3) + ")";
                     ctx.font = Math.max(7, 9 * e) + "px 'Share Tech Mono'";
-                    ctx.fillText("[" + n.label + "]", x + 7, y + 3);
+                    ctx.fillText("[" + n.label + "]", x + 6, y + 3);
                 }
             });
-            const p = document.getElementById("load-percentage"); if (p) p.innerText = Math.floor(93 + Math.random() * 8) + "%";
+            
+            // Actualizar dinámicamente las estadísticas de CPU simuladas en BRAIN_ACT
+            const p = document.getElementById("load-percentage"); 
+            if (p) p.innerText = Math.floor(94 + Math.random() * 7) + "%";
+            
             requestAnimationFrame(render);
         }
         requestAnimationFrame(render);
