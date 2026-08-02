@@ -3,25 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX TACTICAL OS v10.6</title>
+    <title>NeoX TACTICAL OS v10.7</title>
     <style>
         @import url('https://googleapis.com');
         :root { --cyan: #00f0ff; --green: #00ff66; --red: #ff3333; --bg: #010409; --panel: rgba(6,16,30,0.85); }
         * { box-sizing: border-box; font-family: 'Share Tech Mono', monospace; margin: 0; padding: 0; }
-        
-        /* Chasis elástico dinámico (Se auto-ajusta y encoge ante barras de navegación de Android) */
         body { background-color: var(--bg); color: var(--cyan); display: flex; height: 100vh; height: 100dvh; width: 100vw; overflow: hidden; background-image: radial-gradient(rgba(0,240,255,0.06) 1.5px, transparent 0); background-size: 30px 30px; padding: 10px; }
         #hud-layout { display: flex; width: 100%; height: 100%; gap: 10px; }
-        
         .cyber-panel { background: var(--panel); border: 1px solid var(--cyan); box-shadow: 0 0 20px rgba(0,240,255,0.1); clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); display: flex; flex-direction: column; padding: 15px; position: relative; }
         #left-monitor { width: 280px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; height: 100%; }
-        
         .nav-tabs { display: flex; gap: 5px; flex-shrink: 0; }
         .tab-btn { flex: 1; background: rgba(0,240,255,0.05); border: 1px solid var(--cyan); color: var(--cyan); padding: 8px; cursor: pointer; font-size: 0.8em; font-weight: bold; clip-path: polygon(0 0, 85% 0, 100% 8px, 100% 100%, 0 100%); }
         .tab-btn.active { background: var(--cyan); color: var(--bg); box-shadow: 0 0 10px var(--cyan); }
         .tab-content { flex: 1; display: none; flex-direction: column; height: calc(100% - 40px); overflow: hidden; }
         .tab-content.active { display: flex; }
-        
         .panel-title { color: var(--green); font-size: 0.85em; letter-spacing: 2px; border-bottom: 1px dashed var(--green); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; flex-shrink: 0; }
         canvas { width: 100%; flex: 1; display: block; background: rgba(0,0,0,0.5); }
         .icon-grid { display: flex; justify-content: space-around; align-items: center; margin: 5px 0; background: rgba(0,0,0,0.3); padding: 10px; border: 1px solid rgba(0,240,255,0.1); flex-shrink: 0; }
@@ -30,19 +25,14 @@
         .ring-box { width: 70px; height: 70px; border: 3px dotted var(--green); border-radius: 50%; animation: rotHUDBack 6s linear infinite; display: flex; align-items: center; justify-content: center; font-size: 0.8em; color: var(--green); font-weight: bold; }
         #brain-activity { height: 100px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,240,255,0.2); flex-shrink: 0; }
         .bar { width: 5px; background-color: var(--cyan); animation: pulseBar 0.8s infinite ease-in-out; transform-origin: bottom; box-shadow: 0 0 8px var(--cyan); }
-        
-        /* Chasis flexible maestro para forzar la barra a quedarse arriba de todo */
         #chat-center { flex: 1; display: flex; flex-direction: column; height: 100%; min-width: 0; justify-content: space-between; }
         #chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 5px; margin-bottom: 10px; }
         .msg { padding: 10px 14px; max-width: 85%; font-size: 0.9em; letter-spacing: 0.5px; line-height: 1.3; }
-        
         .user { border: 1px solid var(--green); align-self: flex-end; clip-path: polygon(0 0, 96% 0, 100% 12px, 100% 100%, 4% 100%, 0 calc(100% - 12px)); background: rgba(0,255,102,0.04); }
         .neox { border: 1px solid var(--cyan); align-self: flex-start; clip-path: polygon(4% 0, 100% 0, 100% calc(100% - 12px), 96% 100%, 0 100%, 0 12px); background: rgba(0,240,255,0.04); }
         .prefix { font-weight: bold; display: block; margin-bottom: 3px; font-size: 0.8em; letter-spacing: 1px; }
         .user .prefix { color: var(--green); } .neox .prefix { color: var(--cyan); }
         #thinking-indicator { display: none; color: var(--cyan); font-size: 0.85em; padding: 5px; animation: blink 1s infinite; letter-spacing: 2px; flex-shrink: 0; }
-        
-        /* Área de escritura blindada contra desbordamientos */
         #input-area { display: flex; gap: 10px; height: 45px; flex-shrink: 0; margin-top: auto; width: 100%; }
         input { flex: 1; background: rgba(11,21,36,0.9); border: 1px solid var(--cyan); color: var(--green); padding: 0 15px; outline: none; font-size: 0.95em; font-family: inherit; clip-path: polygon(0 0, 98% 0, 100% 10px, 100% 100%, 0 100%); height: 100%; }
         input:focus { border-color: var(--green); box-shadow: 0 0 12px rgba(0,255,102,0.2); }
@@ -86,7 +76,7 @@
 
         <!-- CENTRO DE MANDO PRINCIPAL: CHAT HOLOGRÁFICO -->
         <div class="cyber-panel" id="chat-center">
-            <div style="text-align:center; font-weight:bold; letter-spacing:4px; padding-bottom:12px; border-bottom:1px solid rgba(0,240,255,0.3); font-size:1.1em;">✦ NeoX COGNITIVE COMMAND CENTER v10.6 ✦</div>
+            <div style="text-align:center; font-weight:bold; letter-spacing:4px; padding-bottom:12px; border-bottom:1px solid rgba(0,240,255,0.3); font-size:1.1em;">✦ NeoX COGNITIVE COMMAND CENTER v10.7 ✦</div>
             <div id="chat-box"></div>
             <div id="thinking-indicator">> NeoX PENSANDO: PROCESANDO ENLACES CUÁNTICOS...</div>
             <div id="input-area">
@@ -122,13 +112,51 @@
             document.getElementById("chat-box").innerHTML = "";
             efectoEscribir("REESTRUCTURACION", "Bancos de memoria a largo plazo purgados de forma segura. Listo.", "neox");
         }
+        
+        function reconstruirPantalla() {
+            const box = document.getElementById("chat-box"); box.innerHTML = "";
+            historial.forEach(function(m) {
+                const div = document.createElement("div");
+                div.className = "msg " + (m.role === 'user' ? 'user' : 'neox');
+                const pfx = m.role === 'user' ? 'CREADOR' : 'NeoX';
+                div.innerHTML = '<span class="prefix">[' + pfx + ']</span>' + m.text;
+                box.appendChild(div);
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+        function efectoEscribir(prefix, texto, tipo) {
+            const box = document.getElementById("chat-box");
+            const div = document.createElement("div");
+            div.className = "msg " + tipo;
+            div.innerHTML = '<span class="prefix">[' + prefix + ']</span><span class="text-body"></span>';
+            box.appendChild(div);
+            let i = 0; const span = div.querySelector(".text-body");
+            function escribir() {
+                if (i < texto.length) {
+                    span.innerHTML += texto.charAt(i); i++;
+                    box.scrollTop = box.scrollHeight;
+                    setTimeout(escribir, 12);
+                }
+            }
+            escribir();
+        }
+        
+        async function enviarMensaje() {
+            const input = document.getElementById("user-input");
+            const texto = input.value.trim(); if (!texto) return;
+            input.value = ""; historial.push({ role: "user", text: texto });
+            reconstruirPantalla();
+            document.getElementById("thinking-indicator").style.display = "block";
+            document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.15s"; });
+            const prompt = "Actua como NeoX, un asistente de IA inteligente, con personalidad como JARVIS de Iron Man. Responde de forma brillante y directa. Historial de sesion: " + JSON.stringify(historial.slice(-10)) + " \nMensaje del creador: " + texto;
+            await procesarPeticion(prompt);
+        }
+        
         async function procesarPeticion(prompt) {
-            // Dirección URL oficial de Google Gemini
             const urlGemini = "https://googleapis.com" + claves[idxActual];
             
-            // TÚNEL DE ESCAPE THINGPROXY: Soluciona el error 530 y salta el bloqueo CORS del navegador
+            // TÚNEL DE ESCAPE THINGPROXY DIRECTO: Evita el error 530 de Cloudflare de pasarelas previas
             const urlApi = "https://freeboard.io" + urlGemini;
-            
             const datos = { contents: [{ parts: [{ text: prompt }] }] };
             try {
                 const r = await fetch(urlApi, { 
@@ -159,6 +187,7 @@
                 alert("Fallo critico de pasarela: " + err);
             }
         }
+        
         const canvas = document.getElementById("neuralNet"); const ctx = canvas.getContext("2d");
         let nodos = []; const totalNodos = 20; let angY = 0.005, angX = 0.002;
         let labels = ["NeoX_Core", "JARVIS_Matrix", "Quantum_Vault", "Memory_JSON", "Google_1.5", "Cyberpunk_UI", "User_Carlos"];
@@ -186,7 +215,7 @@
             let p = t.split(" ").filter(function(w) { return w.length > 5 && w.length < 11; });
             if (p.length > 0) {
                 let n = nodos[Math.floor(Math.random() * nodos.length)];
-                let lim = p.replace(/[^a-zA-Z]/g, "");
+                let lim = p[0].replace(/[^a-zA-Z]/g, "");
                 if (lim) n.label = lim + "_Memory";
             }
         }
