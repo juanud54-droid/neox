@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX TACTICAL OS v11.0 - MOTOR COGNITIVO INTEGRADO - PARTE 1 DE 4
+// NeoX TACTICAL OS v11.5 - MOTOR COGNITIVO INTEGRADO - PARTE 1 DE 3
 // =====================================================================
 
 import { GoogleGenAI } from "@google/generative-ai";
@@ -15,40 +15,38 @@ const claves = [
 let idxActual = 0;
 let historial = [];
 
-// Inicializador del cliente nativo de Google (Garantiza conexión libre de CORS)
+// Inicializador del cliente nativo oficial de Google (Blindado contra CORS)
 let ai = new GoogleGenAI({ apiKey: claves[idxActual] });
 
-// Sistema de lectura automática de la memoria a largo plazo al iniciar
+// Lectura de registros de memoria persistente del chasis
 if (localStorage.getItem("neox_web_history")) {
     historial = JSON.parse(localStorage.getItem("neox_web_history"));
     setTimeout(() => {
         reconstruirPantalla();
         actualizarBovedaVisual();
-    }, 100);
+    }, 150);
 } else {
     setTimeout(() => {
-        efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Modulos de hardware 3D acoplados. Esperando comandos, Creador...", "neox");
+        efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Modulos HUD y puente de red directos acoplados. Esperando directrices...", "neox");
     }, 500);
 }
 
-// CONMUTADOR GENERAL DE PANTALLA COMPLETA (SIDEBAR INTERACTIVA)
+// ANCLAJE GLOBAL: Devuelve la vida táctica a los botones de la Sidebar
 window.cambiarPantalla = function(screenId, boton) {
-    // Desactivar todas las pantallas y botones de la Sidebar
     document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.side-icon-btn').forEach(b => b.classList.remove('active'));
     
-    // Activar la pantalla seleccionada y marcar su botón
-    document.getElementById(screenId).classList.add('active');
+    const pantallaObjetivo = document.getElementById(screenId);
+    if (pantallaObjetivo) pantallaObjetivo.classList.add('active');
     if (boton) boton.classList.add('active');
     
-    // Forzar el rediseño del lienzo de la red neuronal si se entra en su monitor
     if (screenId === 'screen-neural') {
         setTimeout(resCanvas, 50);
     }
 };
 
 window.revisarEnter = function(e) {
-    if (e.key === 'Enter') enviarMensaje();
+    if (e.key === 'Enter') window.enviarMensaje();
 };
 
 window.limpiarMemoria = function() {
@@ -59,7 +57,7 @@ window.limpiarMemoria = function() {
     efectoEscribir("REESTRUCTURACION", "Bancos de memoria a largo plazo purgados de forma segura. Listo.", "neox");
 };
 // =====================================================================
-// NeoX TACTICAL OS v11.0 - MOTOR COGNITIVO INTEGRADO - PARTE 2 DE 4
+// NeoX TACTICAL OS v11.5 - MOTOR COGNITIVO INTEGRADO - PARTE 2 DE 3
 // =====================================================================
 
 function reconstruirPantalla() {
@@ -96,19 +94,15 @@ function efectoEscribir(prefix, texto, tipo) {
     escribir();
 }
 
-// Actualización en tiempo real de la base de datos visual en la pantalla de la Red Neuronal
 function actualizarBovedaVisual() {
     const contenedor = document.getElementById("memory-vault-list");
     if (!contenedor) return;
     contenedor.innerHTML = "";
-    
-    // Extraer las últimas 5 interacciones clave para el contexto visible de recuerdos
     const memoriasFiltro = historial.filter(m => m.role === 'model').slice(-5);
     if (memoriasFiltro.length === 0) {
-        contenedor.innerHTML = '<div class="profile-meta" style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos de memoria vacíos.</div>';
+        contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos de memoria vacíos.</div>';
         return;
     }
-    
     memoriasFiltro.forEach((m, index) => {
         const div = document.createElement("div");
         div.className = "memory-item";
@@ -131,17 +125,12 @@ window.enviarMensaje = async function() {
     document.getElementById("thinking-indicator").style.display = "block";
     document.querySelectorAll(".bar").forEach(b => b.style.animationDuration = "0.15s");
     
-    // Inyección estricta del prompt de comportamiento nativo para emular a J.A.R.V.I.S.
-    const promptContexto = "Actua como NeoX, un asistente de IA inteligente, brillante y sofisticado, con una personalidad exacta a JARVIS de Iron Man. Responde con genialidad y de forma directa. Historial de sesion previo: " + JSON.stringify(historial.slice(-8)) + " \nMensaje actual del creador: " + texto;
+    const promptContexto = "Actua como NeoX, un asistente de IA inteligente y sofisticado, con personalidad exacta a JARVIS de Iron Man. Responde de forma brillante y directa. Historial: " + JSON.stringify(historial.slice(-8)) + " \nMensaje actual del creador: " + texto;
     await procesarPeticion(promptContexto);
 };
-// =====================================================================
-// NeoX TACTICAL OS v11.0 - MOTOR COGNITIVO INTEGRADO - PARTE 3 DE 4
-// =====================================================================
 
 async function procesarPeticion(promptContexto) {
     try {
-        // LLAMADA OFICIAL DIRECTA MEDIANTE SDK NATIVO: Evita CORS y bloqueos de red
         const model = ai.models.getGenerativeModel({ model: "gemini-1.5-flash" });
         const respuesta = await model.generateContent({ contents: promptContexto });
         const resultadoTexto = respuesta.text;
@@ -152,60 +141,54 @@ async function procesarPeticion(promptContexto) {
         historial.push({ role: "model", text: resultadoTexto });
         localStorage.setItem("neox_web_history", JSON.stringify(historial));
         
-        // Actualizar los módulos del sistema operativo en vivo
         efectoEscribir("NeoX", resultadoTexto, "neox");
         actualizarBovedaVisual();
         actualizarNeuronasRecientes(resultadoTexto);
 
     } catch (err) {
         console.error("Fallo de núcleo de energía: ", err);
-        
-        // Sistema automático de rotación cuántica si el núcleo actual agota su cuota
         if (idxActual < claves.length - 1) {
             idxActual++;
             const coreIndicator = document.getElementById("active-core");
             if (coreIndicator) coreIndicator.innerText = "NÚCLEO_ACTIVO: [0" + (idxActual + 1) + "]";
-            
-            // Re-inicializar el SDK nativo con el núcleo de respaldo
             ai = new GoogleGenAI({ apiKey: claves[idxActual] });
             await procesarPeticion(promptContexto);
         } else {
             document.getElementById("thinking-indicator").style.display = "none";
-            alert("ALERTA GENERAL: Todos los bancos de energía de la bóveda han agotado su cuota global.");
+            alert("ALERTA GENERAL: Bancos de energía agotados.");
         }
     }
 }
+// =====================================================================
+// NeoX TACTICAL OS v11.5 - MOTOR COGNITIVO INTEGRADO - PARTE 3 DE 3
+// =====================================================================
 
-// ARQUITECTURA GRÁFICA DE LA RED NEURONAL INTERACTIVA AVANZADA
 const canvas = document.getElementById("neuralNet");
 const ctx = canvas.getContext("2d");
 let nodos = [];
-const totalNodos = 50; // Densidad expandida de nodos para aumentar la capacidad visual
+const totalNodos = 50;
 
-// Físicas táctiles avanzadas: Matrices de rotación, Zoom (Fov) y Arrastre con el dedo
 let angY = 0.003, angX = 0.001;
 let isDragging = false;
 let previousMousePosition = { x: 0, y: 0 };
-let fov = 130; // Control de expansión y zoom interactivo
-let seleccionadoIndex = null; // Nodo decodificado actual
+let fov = 130;
+let seleccionadoIndex = null;
 
-// Lista base de memorias del núcleo ciberpunk
 let labelsBase = ["NeoX_Core", "JARVIS_Matrix", "Quantum_Vault", "Memory_JSON", "Google_1.5", "Cyberpunk_UI", "User_Carlos", "Synapse_v11", "Cortex_Link", "Data_Stream"];
 
-function resCanvas() {
+window.resCanvas = function() {
     if (!canvas || !canvas.parentNode) return;
     canvas.width = canvas.parentNode.clientWidth;
     canvas.height = canvas.parentNode.clientHeight - 40;
-}
-window.addEventListener('resize', resCanvas);
-setTimeout(resCanvas, 200);
+};
+window.addEventListener('resize', window.resCanvas);
+setTimeout(window.resCanvas, 200);
 
-// Generador de esfera tridimensional densa
 for (let i = 0; i < totalNodos; i++) {
     let u = Math.random(), v = Math.random();
     let theta = u * 2 * Math.PI;
     let phi = Math.acos(2 * v - 1);
-    let r = 90; // Radio de órbita esférica
+    let r = 90;
     nodos.push({
         x: r * Math.sin(phi) * Math.cos(theta),
         y: r * Math.sin(phi) * Math.sin(theta),
@@ -214,15 +197,10 @@ for (let i = 0; i < totalNodos; i++) {
         desc: i < labelsBase.length ? "Registro de sistema indexado en sector de arranque." : null
     });
 }
-// =====================================================================
-// NeoX TACTICAL OS v11.0 - MOTOR COGNITIVO INTEGRADO - PARTE 4 DE 4
-// =====================================================================
 
-// APRENDIZAJE ADAPTATIVO EN VIVO: Extrae palabras de NeoX y las asienta en la red
 function actualizarNeuronasRecientes(textoRespuesta) {
     let palabras = textoRespuesta.split(" ").filter(w => w.length > 5 && w.length < 11);
     if (palabras.length > 0) {
-        // Buscar un nodo vacío para enseñarle la palabra
         let nodosVacios = nodos.filter(n => !n.label);
         let objetivo = nodosVacios.length > 0 ? nodosVacios[Math.floor(Math.random() * nodosVacios.length)] : nodos[Math.floor(Math.random() * nodos.length)];
         let palabraLimpia = palabras[Math.floor(Math.random() * palabras.length)].replace(/[^a-zA-Z]/g, "").toUpperCase();
@@ -233,13 +211,11 @@ function actualizarNeuronasRecientes(textoRespuesta) {
     }
 }
 
-// CAPTURA DE EVENTOS TÁCTILES Y RATÓN (ARRANQUE DE ROTACIÓN MANUAL Y CLICS)
 if (canvas) {
-    // Soporte para PC y Tablet (Eventos unificados)
     canvas.addEventListener('mousedown', iniciarArrastre);
-    canvas.addEventListener('touchstart', (e) => iniciarArrastre(e.touches[0]), { passive: true });
+    canvas.addEventListener('touchstart', (e) => { if(e.touches.length === 1) iniciarArrastre(e.touches[0]); }, { passive: true });
     window.addEventListener('mousemove', moverArrastre);
-    window.addEventListener('touchmove', (e) => moverArrastre(e.touches[0]), { passive: true });
+    window.addEventListener('touchmove', (e) => { if(e.touches.length === 1) moverArrastre(e.touches[0]); }, { passive: true });
     window.addEventListener('mouseup', detenerArrastre);
     window.addEventListener('touchend', detenerArrastre);
     canvas.addEventListener('wheel', procesarZoom);
@@ -248,8 +224,10 @@ if (canvas) {
 function iniciarArrastre(e) {
     isDragging = true;
     const rect = canvas.getBoundingClientRect();
-    previousMousePosition = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    procesarClickNodo(e.clientX - rect.left, e.clientY - rect.top);
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    previousMousePosition = { x: mx, y: my };
+    procesarClickNodo(mx, my);
 }
 
 function moverArrastre(e) {
@@ -258,7 +236,6 @@ function moverArrastre(e) {
     const currentX = e.clientX - rect.left;
     const currentY = e.clientY - rect.top;
     
-    // Convertir el desplazamiento del dedo en velocidad angular esférica
     angY = (currentX - previousMousePosition.x) * 0.005;
     angX = (currentY - previousMousePosition.y) * 0.005;
     
@@ -267,24 +244,21 @@ function moverArrastre(e) {
 
 function detenerArrastre() {
     isDragging = false;
-    // Retorno suave a la órbita inercial automática de NeoX
     setTimeout(() => {
         if (!isDragging) { angY = 0.002; angX = 0.001; }
     }, 1500);
 }
 
-// ZOOM INTERACTIVO POR PELLIZCO O RUEDA DE RATÓN
 function procesarZoom(e) {
     e.preventDefault();
     fov += e.deltaY * 0.1;
-    fov = Math.max(50, Math.min(250, fov)); // Límites de seguridad del visor óptico
+    fov = Math.max(50, Math.min(250, fov));
 }
 
-// DETECTOR DE INTERACCIÓN SOBRE NODOS (DECISIONES TÁCTILES)
 function procesarClickNodo(mx, my) {
     const cx = canvas.width / 2, cy = canvas.height / 2;
     let nodoDetectado = null;
-    let distanciaMinima = 15; // Margen de error para el toque del dedo
+    let distanciaMinima = 15;
 
     nodos.forEach((n, index) => {
         let e = fov / (fov + n.z);
@@ -307,7 +281,6 @@ function procesarClickNodo(mx, my) {
     }
 }
 
-// MATRIZ DE ROTACIÓN TRIDIMENSIONAL
 function rotar() {
     let cY = Math.cos(angY), sY = Math.sin(angY), cX = Math.cos(angX), sX = Math.sin(angX);
     nodos.forEach(n => {
@@ -317,16 +290,14 @@ function rotar() {
     });
 }
 
-// BUCLE DE FOTOGRAMAS DINÁMICOS EN VIVO
 function render() {
     if (!canvas || !ctx) return;
-    if (canvas.width === 0) resCanvas();
+    if (canvas.width === 0) window.resCanvas();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     rotar();
     
     const cx = canvas.width / 2, cy = canvas.height / 2;
     
-    // Renderizado de hilos de sinapsis interconectados
     ctx.strokeStyle = "rgba(0, 240, 255, 0.12)";
     ctx.lineWidth = 1;
     for (let i = 0; i < nodos.length; i++) {
@@ -342,7 +313,6 @@ function render() {
         }
     }
     
-    // Renderizado de núcleos neuronales y textos espaciales
     nodos.forEach((n, idx) => {
         let e = fov / (fov + n.z);
         let x = cx + n.x * e;
@@ -351,7 +321,7 @@ function render() {
         let al = (fov - n.z) / (2 * fov);
         
         if (idx === seleccionadoIndex) {
-            ctx.fillStyle = "var(--red)"; // Destacar nodo seleccionado actual
+            ctx.fillStyle = "var(--red)";
             rd = rd * 1.5;
         } else {
             ctx.fillStyle = n.label ? "rgba(0, 255, 102, " + (al + 0.4) + ")" : "rgba(0, 240, 255, " + al + ")";
@@ -368,12 +338,10 @@ function render() {
         }
     });
     
-    // Modulación dinámica de barras analíticas en BRAIN_ACT
     const indicadorPorcentaje = document.getElementById("load-percentage");
     if (indicadorPorcentaje) indicadorPorcentaje.innerText = Math.floor(94 + Math.random() * 7) + "%";
     
     requestAnimationFrame(render);
 }
 
-// Disparador inicial absoluto de la interfaz gráfica
 requestAnimationFrame(render);
