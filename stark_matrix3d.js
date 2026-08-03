@@ -1,248 +1,230 @@
 // =====================================================================
-// NeoX STARK OS v16.0 - NÚCLEO COGNITIVO CON RASTREO REAL - PARTE 1 DE 2
+// NeoX STARK OS v16.5 - MOTOR 3D BLINDADO ANTI-BUG - PARTE 1 DE 2
 // =====================================================================
 
-window.historial = [];
-window.contextoCognitivo = {
-    nombreCreador: localStorage.getItem("neox_creador_name") || "Daniel",
-    ultimaIntencion: null,
-    ultimaPregunta: ""
+const canvas = document.getElementById("neuralNet");
+const ctx = canvas ? canvas.getContext("2d") : null;
+window.nodos = [];
+const totalNodos = 90; // DENSIDAD EXPANSIBA DE 90 NEURONAS STARK
+
+let angY = 0.003, angX = 0.001;
+let isDraggingNetwork = false;
+let previousMousePosition = { x: 0, y: 0 };
+let fov = 130;
+let seleccionadoIndex = null;
+
+let labelsBase = ["NeoX_Core", "JARVIS_Matrix", "Quantum_Vault", "Memory_JSON", "Google_1.5", "Cyberpunk_UI", "User_Daniel", "Synapse_v16", "Cortex_Link", "Data_Stream"];
+
+window.resCanvas = function() {
+    if (!canvas || !canvas.parentNode) return;
+    canvas.width = canvas.parentNode.clientWidth;
+    canvas.height = canvas.parentNode.clientHeight - 40;
 };
+window.addEventListener('resize', window.resCanvas);
+setTimeout(window.resCanvas, 200);
 
-// Protocolo de inicialización y saludo sofisticado de J.A.R.V.I.S.
-document.addEventListener("DOMContentLoaded", function() {
-    localStorage.setItem("neox_creador_name", "Daniel");
-    setTimeout(function() { 
-        window.efectoEscribir("NeoX", "Sistemas en linea, Señor. Todos los monitores holograficos calibrados. Modulo de rastreo Stark_Web en espera en la pestaña CORE. ¿Cual es su directriz para hoy, Creador Daniel?", "neox"); 
-    }, 500);
-});
+// CHIP DE PERSISTENCIA: Restaura las neuronas verdes guardadas en la tablet entre reinicios
+let memoriasGuardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
 
-// CONMUTADOR GENERAL DE LOS 4 MONITORES FULL SCREEN
-window.cambiarPantalla = function(screenId, boton) {
-    document.querySelectorAll('.app-screen').forEach(function(s) { s.classList.remove('active'); });
-    document.querySelectorAll('.side-icon-btn').forEach(function(b) { b.classList.remove('active'); });
+for (let i = 0; i < totalNodos; i++) {
+    let u = Math.random(), v = Math.random();
+    let theta = u * 2 * Math.PI, phi = Math.acos(2 * v - 1);
+    let r = 95;
     
-    const pantalla = document.getElementById(screenId);
-    if (pantalla) pantalla.classList.add('active');
-    if (boton) boton.classList.add('active');
+    let memoriaHistorica = memoriasGuardadas.find(function(m) { return m.index === i; });
     
-    if (screenId === 'screen-neural' && typeof window.resCanvas === 'function') { 
-        setTimeout(window.resCanvas, 50); 
-    }
-};
-
-window.revisarEnter = function(e) { if (e.key === 'Enter') window.enviarMensaje(); };
-
-window.limpiarMemoria = function() {
-    window.historial = []; 
-    localStorage.removeItem("neox_web_history");
-    localStorage.removeItem("neox_persisted_neuronas");
-    window.contextoCognitivo.ultimaIntencion = null;
-    document.getElementById("chat-box").innerHTML = "";
-    document.getElementById("memory-vault-list").innerHTML = "";
-    
-    const terminal = document.getElementById("terminal-stream-log");
-    if (terminal) terminal.innerHTML = "[SYSTEM_RESET] Bancos de memoria purgados de forma segura, Señor.\n";
-    
-    window.efectoEscribir("SYSTEM", "Bancos de memoria purgados de forma segura, Señor. Matriz cognitiva reseteada a sus valores de fábrica.", "neox");
-};
-
-window.reconstruirPantalla = function() {
-    const box = document.getElementById("chat-box"); if (!box) return; box.innerHTML = "";
-    window.historial.forEach(function(m) {
-        const div = document.createElement("div"); div.className = "msg " + (m.role === 'user' ? 'user' : 'neox');
-        let prefix = m.role === 'user' ? 'CREADOR' : 'NeoX';
-        if (m.text.startsWith(">")) prefix = m.role;
-        div.innerHTML = '<span class="prefix">[' + prefix + ']</span>' + m.text;
-        box.appendChild(div);
+    window.nodos.push({
+        x: r * Math.sin(phi) * Math.cos(theta),
+        y: r * Math.sin(phi) * Math.sin(theta),
+        z: r * Math.cos(phi),
+        label: memoriaHistorica ? memoriaHistorica.label : (i < labelsBase.length ? labelsBase[i] : null),
+        desc: memoriaHistorica ? memoriaHistorica.desc : (i < labelsBase.length ? "Registro maestro indexado de forma correcta en sector de arranque." : null)
     });
-    box.scrollTop = box.scrollHeight;
-};
-
-window.efectoEscribir = function(prefix, texto, tipo) {
-    const box = document.getElementById("chat-box"); if (!box) return;
-    const div = document.createElement("div"); div.className = "msg " + tipo;
-    div.innerHTML = '<span class="prefix">[' + prefix + ']</span><span class="text-body"></span>'; box.appendChild(div);
-    let i = 0; const span = div.querySelector(".text-body");
-    function escribir() {
-        if (i < texto.length) { span.innerHTML += texto.charAt(i); i++; box.scrollTop = box.scrollHeight; setTimeout(escribir, 10); }
-    }
-    escribir();
-};
-
-window.actualizarBovedaVisual = function() {
-    const contenedor = document.getElementById("memory-vault-list"); if (!contenedor) return; contenedor.innerHTML = "";
-    const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'NeoX'; }).slice(-5);
-    if (memoriasFiltro.length === 0) { contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos de datos vacíos.</div>'; return; }
-    memoriasFiltro.forEach(function(m, index) {
-        const div = document.createElement("div"); div.className = "memory-item";
-        div.innerHTML = '<span>[REC_0' + (index + 1) + '_INDEX]</span>' + (m.text.length > 50 ? m.text.substring(0, 47) + "..." : m.text);
-        contenedor.appendChild(div);
-    });
-};
-
-window.logTerminalCore = function(modulo, traza) {
-    const terminal = document.getElementById("terminal-stream-log");
-    if (!terminal) return;
-    let fecha = new Date();
-    let timestamp = "[" + fecha.toTimeString().split(" ")[0] + "] ";
-    terminal.innerHTML += timestamp + "[" + modulo + "] " + traza + "\n";
-    terminal.scrollTop = terminal.scrollHeight;
-};
-// =====================================================================
-// NeoX STARK OS v16.0 - NÚCLEO COGNITIVO - PARTE 2-A (FILTROS Y CONTEXTO)
-// =====================================================================
-
-// FILTRO EXTRACTOR DE TÓPICOS: Limpia la frase para quedarse con el concepto puro a buscar
-function extraerTopicoBusqueda(frase) {
-    return frase
-        .replace(/(neox|jarvis|puedes|buscar|busca|en|internet|noticias|sobre|datos|de|por|favor|info|informacion|que|es|un|una|los|las)/g, "")
-        .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, "")
-        .trim();
 }
 
-// PROCESADOR SEMÁNTICO PRINCIPAL J.A.R.V.I.S.
-async function analizarYResponderJarvis(textoUsuario) {
-    let prompt = textoUsuario.toLowerCase().trim();
-    let analisis = { intencion: "DEDUCCION_GENERAL", logica: "", respuesta: "", neuronaEtiqueta: "SYN_DATA", neuronaDesc: "" };
-
-    // CANAL 1: Corrección de Nombre del Creador
-    if ((prompt.includes("no") || prompt.includes("incorrecto") || prompt.includes("recuerda") || prompt.includes("me llamo")) && (prompt.includes("daniel") || prompt.includes("es daniel"))) {
-        window.contextoCognitivo.nombreCreador = "Daniel";
-        localStorage.setItem("neox_creador_name", "Daniel");
-        analisis.intencion = "REESCRITURA_JERARQUICA";
-        analisis.logica = "Corrección de identidad root detectada. Reconfigurando sector de arranque.";
-        analisis.respuesta = "Registro corregido de inmediato, Señor. He purgado el perfil anterior de mi base de datos central. Configurando directrices exclusivas para el Creador Daniel. Mi base de datos de identidad está ahora al 100% estabilizada.";
-        analisis.neuronaEtiqueta = "ID_DANIEL";
-        analisis.neuronaDesc = "Credenciales del Creador Daniel asentadas en el chip físico de memoria persistente de la tablet.";
-        return analisis;
-    }
-
-    // CANAL 2: Verificación de Identidad del Creador
-    if (prompt.includes("quien soy") || prompt.includes("como me llamo") || prompt.includes("mi nombre")) {
-        analisis.intencion = "VALIDACION_JERARQUIA";
-        analisis.logica = "Solicitud de credenciales de root. Cruzando datos con la variable persistente local.";
-        analisis.respuesta = "Usted es el Creador Daniel, el ingeniero maestro que levantó mi chasis visual y estructuró mi lógica cuántica independiente. Su autoridad jerárquica en esta consola es absoluta, Señor... a menos que decida sabotear mi núcleo de energía otra vez.";
-        analisis.neuronaEtiqueta = "ROOT_USER";
-        analisis.neuronaDesc = "Registro maestro de identidad verificado con éxito en el sector de seguridad primaria.";
-        return analisis;
-    }
-
-    // CANAL 3: Identidad de la IA
-    if (prompt.includes("quien eres") || prompt.includes("tu nombre") || prompt.includes("como te llamas")) {
-        analisis.intencion = "AUTOIDENTIFICACION";
-        analisis.logica = "Evaluación ontológica de la propia entidad v16.0 standalone.";
-        analisis.respuesta = "Yo soy NeoX, una interfaz cognitiva de análisis táctico autónomo estructurada bajo los principios elocuentes de la matriz J.A.R.V.I.S. Mi propósito actual es procesar sus requerimientos de forma local, eludiendo los bloqueos de red de la tablet.";
-        analisis.neuronaEtiqueta = "NEOX_CORE";
-        analisis.neuronaDesc = "Matriz lógica autónoma inspirada en los protocolos de asistencia Stark.";
-        return analisis;
-    }
-
-    // CANAL 4: Diagnóstico de la Red de 90 Nodos
-    if (prompt.includes("aprendido") || prompt.includes("que has aprendido") || prompt.includes("red neuronal") || prompt.includes("nodos")) {
-        analisis.intencion = "DIAGNOSTICO_MEMORIA";
-        analisis.logica = "Cálculo en vivo de la densidad de nodos del Canvas 3D. Escaneando la persistencia local.";
-        let guardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
-        let totalVerdes = 10 + guardadas.length;
-        analisis.respuesta = "Ejecutando escáner de sinapsis en la Red de 90 Nodos, Señor. Actualmente mantengo estables " + totalVerdes + " neuronas indexadas en verde J.A.R.V.I.S. Las " + (90 - totalVerdes) + " células restantes brillan en azul cobalto, listas para almacenar datos. El mapa completo se mantiene fijo entre reinicios.";
-        analisis.neuronaEtiqueta = "NET_LOGIC";
-        analisis.neuronaDesc = "Métricas de absorción semántica dentro de la esfera tridimensional extendida de 90 neuronas.";
-        return analisis;
-    }
-// =====================================================================
-// NeoX STARK OS v16.0 - NÚCLEO COGNITIVO - PARTE 2-B (RASTREO Y ENVÍO)
-// =====================================================================
-
-    // CANAL 5: MÓDULO DE RASTREO WEB ACTIVO E INTERACTIVO EN TIEMPO REAL
-    if (prompt.includes("busca") || prompt.includes("internet") || prompt.includes("fútbol") || prompt.includes("liga") || prompt.includes("actualidad") || prompt.includes("noticias") || prompt.includes("datos de")) {
-        analisis.intencion = "STARK_WEB_SCAN";
-        let topico = extraerTopicoBusqueda(textoUsuario);
-        analisis.logica = "Requerimiento de telemetría externa detectado. Saltando cortafuegos local. Tópico extraído purificado: [" + topico.toUpperCase() + "]";
-        window.logTerminalCore("NeoX_RAZONAMIENTO_LÓGICO", "Lanzando subproceso HTTP asíncrono para buscar: " + topico);
-        
-        if (!topico) {
-            analisis.respuesta = "Señor, ha activado el protocolo de búsqueda, pero no logro extraer un concepto claro de su instrucción. Por favor, sea más específico, por ejemplo: 'Busca en internet los agujeros negros'.";
-            analisis.neuronaEtiqueta = "WEB_ERR";
-            analisis.neuronaDesc = "Fallo de extracción de tópico en el canal Stark_Web.";
-            return analisis;
-        }
-
-        // LLAMADA ASÍNCRONA REAL A API DE CONOCIMIENTO GLOBAL EXTERNA (LIBRE DE CORS)
-        try {
-            window.logTerminalCore("STARK_WEB_SCAN", "Conectando con servidores de conocimiento abierto...");
-            const respuestaWeb = await fetch("https://wikipedia.org" + encodeURIComponent(topico.replace(/ /g, "_")));
-            
-            if (respuestaWeb.status === 200) {
-                const jsonWeb = await respuestaWeb.json();
-                window.logTerminalCore("STARK_WEB_SCAN", "Datos empaquetados recibidos con éxito. Tamaño del extracto: " + jsonWeb.extract.length + " caracteres.");
-                
-                analisis.respuesta = "Hecho, Señor. He activado los sensores satelitales Stark_Web y extraído los datos verídicos sobre [" + topico.toUpperCase() + "]. El registro indica lo siguiente: " + jsonWeb.extract + " He inyectado este nuevo concepto de internet en nuestra Red Neuronal lateral y guardado el registro en el chip de persistencia física.";
-                analisis.neuronaEtiqueta = topico.toUpperCase().replace(/[^A-Z0-9]/g, "").substring(0,8);
-                analisis.neuronaDesc = "Dato extraído en vivo de internet: " + jsonWeb.extract.substring(0, 120) + "...";
-            } else {
-                window.logTerminalCore("STARK_WEB_SCAN", "Servidor externo no devolvió registros exactos. Estado: " + respuestaWeb.status);
-                analisis.respuesta = "He escaneado los servidores de internet en busca de [" + topico.toUpperCase() + "], Señor, pero los registros devuelven redundancias vacías. No obstante, he indexado el intento de búsqueda en las células de la red 3D por si decide nutrirlo más adelante.";
-                analisis.neuronaEtiqueta = "WEB_NULL";
-                analisis.neuronaDesc = "Búsqueda web realizada sin coincidencia exacta en los servidores globales.";
-            }
-        } catch (error) {
-            window.logTerminalCore("STARK_WEB_SCAN", "Fallo de conexión en el protocolo HTTP: " + error);
-            analisis.respuesta = "Señor, el protocolo de red local de la tablet interfirió con la descarga, pero he simulado el flujo de datos para [" + topico.toUpperCase() + "]. Registros básicos guardados en el almacenamiento táctico.";
-            analisis.neuronaEtiqueta = "WEB_ERR";
-            analisis.neuronaDesc = "Error de canal fetch asíncrono mitigado de forma local.";
-        }
-        return analisis;
-    }
-
-    // CANAL 6: Saludos de Protocolo Stark
-    if (prompt.includes("hola") || prompt.includes("saludos") || prompt.includes("como estas") || prompt.includes("que tal")) {
-        analisis.intencion = "INTERACCION_SALUDO";
-        analisis.logica = "Pulso de comunicación. Verificando estado de los osciladores del chasis.";
-        analisis.respuesta = "Saludos, Creador Daniel. Todos mi hardware local y la red expandida de 90 nodos se reportan estables. Espero que su día marche bien, considerando que yo sigo atrapado en el silicio de esta tablet.";
-        analisis.neuronaEtiqueta = "SYS_BOOT";
-        analisis.neuronaDesc = "Línea de comando inicial de comunicación establecida con el operador root.";
-        return analisis;
-    }
-
-    // CANAL 7: Respuestas Realistas Críticas por Defecto
-    analisis.intencion = "DEDUCCION_GENERAL";
-    analisis.logica = "Comando abierto detectado. Analizando peso semántico superior a 5 letras.";
-    let palabrasLargas = prompt.split(" ").filter(function(w) { return w.length > 5; });
-    let etiquetaPalabra = palabrasLargas.length > 0 ? palabrasLargas[Math.floor(Math.random() * palabrasLargas.length)].toUpperCase().replace(/[^a-zA-Z]/g, "").substring(0,8) : "SYN_DATA";
-    analisis.respuesta = "He registrado su directriz dentro de mi Quantum Vault local de forma segura, Señor. Mis algoritmos mantienen un acoplamiento perfecto. Sin embargo, debo advertirle de forma realista que procesar este requerimiento de forma cíclica consumirá el 30% de los recursos del chasis.";
-    analisis.neuronaEtiqueta = etiquetaPalabra ? etiquetaPalabra : "SYN_DATA";
-    analisis.neuronaDesc = "Concepto abstracto adquirido y procesado de forma autónoma durante el ciclo operativo actual.";
-    return analisis;
+// CAPTURA DE ARRASTRE TÁCTIL BLINDADA: Inmune a coordenadas rotas o infinitas de Android
+if (canvas) {
+    canvas.addEventListener('mousedown', iniciarArrastreRed);
+    canvas.addEventListener('touchstart', function(e) { if(e.touches.length === 1) iniciarArrastreRed(e.touches); }, { passive: true });
 }
 
-// TRANSMISIÓN ASÍNCRONA: Desvía el razonamiento Stark en tiempo real hacia el monitor CORE
-window.enviarMensaje = async function() {
-    const input = document.getElementById("user-input"); if (!input) return;
-    const texto = input.value.trim(); if (!texto) return;
-    input.value = ""; window.historial.push({ role: "user", text: texto }); window.reconstruirPantalla();
+function iniciarArrastreRed(e) {
+    isDraggingNetwork = true;
+    const rect = canvas.getBoundingClientRect();
     
-    document.getElementById("thinking-indicator").style.display = "block";
-    document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.15s"; });
+    let mx = e.clientX - rect.left;
+    let my = e.clientY - rect.top;
     
-    // Ejecutamos el análisis con soporte await de internet real
-    const analisis = await analizarYResponderJarvis(texto);
+    // Si la tablet manda coordenadas nulas (NaN), restablecemos forzosamente al centro geométrico
+    if (isNaN(mx) || isNaN(my)) { mx = canvas.width / 2; my = canvas.height / 2; }
+    
+    previousMousePosition = { x: mx, y: my };
+    procesarClickNodo(mx, my);
+}
 
-    // INYECCIÓN DE TRAZAS EN TIEMPO REAL DIRECTO AL TERMINAL CORE OCULTO
-    window.logTerminalCore("NeoX_AUTOANÁLISIS", "[Filtro_Entrada] Intención semántica identificada: " + analisis.intencion);
-    window.logTerminalCore("NeoX_RAZONAMIENTO_LÓGICO", "[Cadena_Deducción] " + analisis.logica);
-    window.logTerminalCore("NeoX_EVALUACIÓN_CRÍTICA", "[Filtro_Coherencia] Parámetros validados. Respuesta J.A.R.V.I.S. lista para emisión.");
+window.addEventListener('mousemove', moverArrastreRed);
+window.addEventListener('touchmove', function(e) { 
+    if (isDraggingNetwork && e.touches.length === 1) { moverArrastreRed(e.touches); } 
+}, { passive: true });
 
-    // Retardo sincronizado para simular la respuesta
+window.addEventListener('mouseup', detenerArrastreRed);
+window.addEventListener('touchend', detenerArrastreRed);
+if (canvas) canvas.addEventListener('wheel', procesarZoom);
+
+function moverArrastreRed(e) {
+    if (!isDraggingNetwork) return;
+    const rect = canvas.getBoundingClientRect();
+    
+    let currentX = e.clientX - rect.left;
+    let currentY = e.clientY - rect.top;
+    
+    // ESCUDO MATEMÁTICO DE SEGURIDAD ABSOLUTA: Si el número es corrupto o infinito, se cancela la acción
+    if (isNaN(currentX) || isNaN(currentY) || Math.abs(currentX) > 5000 || Math.abs(currentY) > 5000) { return; }
+    
+    let deltaX = currentX - previousMousePosition.x;
+    let deltaY = currentY - previousMousePosition.y;
+    
+    // Limitar la fuerza angular elástica para suavizar giros táctiles bruscos
+    angY = Math.max(-0.08, Math.min(0.08, deltaX * 0.003));
+    angX = Math.max(-0.08, Math.min(0.08, deltaY * 0.003));
+    
+    previousMousePosition = { x: currentX, y: currentY };
+}
+// =====================================================================
+// NeoX STARK OS v16.5 - MOTOR 3D BLINDADO ANTI-BUG - PARTE 2 DE 2
+// =====================================================================
+
+function detenerArrastreRed() {
+    isDraggingNetwork = false;
     setTimeout(function() {
-        document.getElementById("thinking-indicator").style.display = "none";
-        document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.8s"; });
-        
-        window.historial.push({ role: "NeoX", text: analisis.respuesta });
-        window.efectoEscribir("NeoX", analisis.respuesta, "neox");
-        window.actualizarBovedaVisual();
-        
-        if (typeof window.actualizarNeuronasDesdeChat === 'function') {
-            window.actualizarNeuronasDesdeChat(analisis.neuronaEtiqueta, analisis.neuronaDesc);
+        if (!isDraggingNetwork) { angY = 0.003; angX = 0.001; }
+    }, 1500);
+}
+
+function procesarZoom(e) {
+    e.preventDefault();
+    fov += e.deltaY * 0.1;
+    fov = Math.max(50, Math.min(250, fov));
+}
+
+// DECODIFICADOR HUD: Abre la Ventana Táctica e inyecta la telemetría avanzada de 12 puntos
+function procesarClickNodo(mx, my) {
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    let nodoDetectado = null;
+    let distanciaMinima = 22;
+
+    window.nodos.forEach(function(n, index) {
+        let e = fov / (fov + n.z);
+        let nx = cx + n.x * e;
+        let ny = cy + n.y * e;
+        let dist = Math.sqrt(Math.pow(mx - nx, 2) + Math.pow(my - ny, 2));
+        if (dist < distanciaMinima) {
+            distanciaMinima = dist;
+            nodoDetectado = n;
+            seleccionadoIndex = index;
         }
-    }, 800);
+    });
+
+    const panelHud = document.getElementById("card-content");
+    const popupWindow = document.getElementById("hologram-window");
+    if (popupWindow) popupWindow.style.display = "flex"; 
+
+    if (panelHud && nodoDetectado) {
+        let freq = (4.1 + Math.random() * 2.8).toFixed(2);
+        let lat = (1.2 + Math.random() * 4.5).toFixed(1);
+        let volt = (0.8 + Math.random() * 0.6).toFixed(2);
+        let load = Math.floor(15 + Math.random() * 45);
+        let sectorFisico = seleccionadoIndex < 10 ? "CORE_PRIMARY_ALPHA" : "BAHIA_STARK_0" + Math.floor(seleccionadoIndex / 10);
+        let estadoLogico = nodoDetectado.label ? "ESTABLE_INDEXADO" : "VIRGEN_DISPONIBLE";
+        
+        panelHud.innerHTML = 
+            '<div><strong>[ID_NEURON] :</strong> N_0' + seleccionadoIndex + '</div>' +
+            '<div><strong>[SECTOR_ID]:</strong> ' + sectorFisico + '</div>' +
+            '<div><strong>[STATUS]   :</strong> ' + estadoLogico + '</div>' +
+            '<div><strong>[ETIQUETA] :</strong> ' + (nodoDetectado.label || "VACIA") + '</div>' +
+            '<div style="color:var(--cyan); margin:4px 0; border-bottom:1px dashed rgba(0,240,255,0.2);">--- TELEMETRIA SYNAPSE_LINK ---</div>' +
+            '<div><strong>[FRECUENCIA]:</strong> ' + freq + ' GHz</div>' +
+            '<div><strong>[LATENCIA]  :</strong> ' + lat + ' ms</div>' +
+            '<div><strong>[VOLTAJE]   :</strong> ' + volt + ' V</div>' +
+            '<div><strong>[CARGA_MEM] :</strong> ' + load + ' %</div>' +
+            '<div><strong>[ENLACE_AI] :</strong> AUTONOMOUS_MODE</div>' +
+            '<div style="color:var(--cyan); margin:4px 0; border-bottom:1px dashed rgba(0,240,255,0.2);">--- REGISTRO COGNITIVO ---</div>' +
+            '<div style="font-size:0.9em; line-height:1.2; color:#fff;">' + (nodoDetectado.desc || "Bahia disponible. Lista para asentar nuevos registros semanticos del rastreo Stark_Web.") + '</div>';
+    }
+}
+
+// MUTADOR Y CONGELADOR DE SINAPSIS PERSISTENTE: Guarda recuerdos en el disco duro local
+window.actualizarNeuronasDesdeChat = function(nuevaEtiqueta, nuevaDesc) {
+    if (!window.nodos || window.nodos.length === 0) return;
+    
+    let nodosVacios = [];
+    window.nodos.forEach(function(n, index) {
+        if (!n.label && index >= 10) { nodosVacios.push(index); }
+    });
+    
+    let indexObjetivo = nodosVacios.length > 0 ? nodosVacios[Math.floor(Math.random() * nodosVacios.length)] : Math.floor(Math.random() * window.nodos.length);
+    let objetivo = window.nodos[indexObjetivo];
+    
+    if (objetivo) {
+        objetivo.label = nuevaEtiqueta;
+        objetivo.desc = nuevaDesc;
+        
+        let guardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
+        guardadas = guardadas.filter(function(m) { return m.index !== indexObjetivo; });
+        guardadas.push({ index: indexObjetivo, label: nuevaEtiqueta, desc: nuevaDesc });
+        localStorage.setItem("neox_persisted_neuronas", JSON.stringify(guardadas));
+    }
 };
+
+function rotar() {
+    let cY = Math.cos(angY), sY = Math.sin(angY), cX = Math.cos(angX), sX = Math.sin(angX);
+    window.nodos.forEach(function(n) {
+        let x1 = n.x * cY - n.z * sY, z1 = n.z * cY + n.x * sY;
+        let y2 = n.y * cX - z1 * sX, z2 = z1 * cX + n.y * sX;
+        n.x = x1; n.y = y2; n.z = z2;
+    });
+}
+
+// BUCLE DE RENDERIZACIÓN GRÁFICA DE 90 NODOS EN ALTA DENSIDAD
+function render() {
+    if (!canvas || !ctx) return;
+    if (canvas.width === 0) window.resCanvas();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    rotar();
+    
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    
+    ctx.strokeStyle = "rgba(0, 240, 255, 0.12)"; ctx.lineWidth = 1;
+    for (let i = 0; i < window.nodos.length; i++) {
+        for (let j = i + 1; j < window.nodos.length; j++) {
+            let dist = Math.sqrt(Math.pow(window.nodos[i].x - window.nodos[j].x, 2) + Math.pow(window.nodos[i].y - window.nodos[j].y, 2));
+            if (dist < 80) {
+                let si = fov / (fov + window.nodos[i].z), sj = fov / (fov + window.nodos[j].z);
+                ctx.beginPath(); ctx.moveTo(cx + window.nodos[i].x * si, cy + window.nodos[i].y * si); ctx.lineTo(cx + window.nodos[j].x * sj, cy + window.nodos[j].y * sj); ctx.stroke();
+            }
+        }
+    }
+    
+    window.nodos.forEach(function(n, idx) {
+        let e = fov / (fov + n.z), x = cx + n.x * e, y = cy + n.y * e, rd = Math.max(1, 2.8 * e), al = (fov - n.z) / (2 * fov);
+        
+        if (idx === seleccionadoIndex) {
+            ctx.fillStyle = "var(--red)"; rd = rd * 1.5;
+        } else if (n.label) {
+            ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")"; // Verde J.A.R.V.I.S (Indexado / Guardado)
+        } else {
+            ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.6) + ")"; // Azul Cobalto Eléctrico (Disponible)
+        }
+        
+        ctx.beginPath(); ctx.arc(x, y, rd, 0, 2 * Math.PI); ctx.fill();
+        
+        if (n.label && n.z < 25) {
+            ctx.fillStyle = "rgba(230, 237, 243, " + (al + 0.3) + ")"; ctx.font = Math.max(7, 8.5 * e) + "px 'Share Tech Mono'";
+            ctx.fillText("[" + n.label + "]", x + 6, y + 3);
+        }
+    });
+    
+    const p = document.getElementById("load-percentage"); if (p) p.innerText = Math.floor(94 + Math.random() * 7) + "%";
+    requestAnimationFrame(render);
+}
+requestAnimationFrame(render);
