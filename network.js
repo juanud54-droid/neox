@@ -1,8 +1,7 @@
 // =====================================================================
-// NeoX COGNITIVE OS v12.0 - CANAL DE RED SEGURO - network.js
+// NeoX COGNITIVE OS v12.0 - CANAL DE RED SEGURO CORREGIDO - PARTE 1 DE 2
 // =====================================================================
 
-// Bóveda cuántica de energía: Tus 5 núcleos API activos e indexados
 const claves = [
     "AQ.Ab8RN6J-ASHXwXsoHaJiIB0MnRhrQ-xUgzDGM8XccFtZr6SHrQ",
     "AQ.Ab8RN6IaUAVQYdjNLfWOcIiqnj0_Nd5cB-QyCwTWhXzHIm0KWA",
@@ -13,7 +12,6 @@ const claves = [
 let idxActual = 0;
 window.historial = [];
 
-// Sistema de lectura automática de la memoria a largo plazo al arrancar
 if (localStorage.getItem("neox_web_history")) {
     window.historial = JSON.parse(localStorage.getItem("neox_web_history"));
     setTimeout(function() {
@@ -22,11 +20,10 @@ if (localStorage.getItem("neox_web_history")) {
     }, 150);
 } else {
     setTimeout(function() {
-        window.efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Arquitectura modular aislada activa. Esperando comandos, Creador...", "neox");
+        window.efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Modulos HUD y pasarela blindada listos. Esperando comandos, Creador...", "neox");
     }, 500);
 }
 
-// CONMUTADOR GENERAL DE PANTALLA COMPLETA DIRECTO (SIDEBAR DE ICONOS)
 window.cambiarPantalla = function(screenId, boton) {
     document.querySelectorAll('.app-screen').forEach(function(s) { s.classList.remove('active'); });
     document.querySelectorAll('.side-icon-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -35,7 +32,6 @@ window.cambiarPantalla = function(screenId, boton) {
     if (pantalla) pantalla.classList.add('active');
     if (boton) boton.classList.add('active');
     
-    // Forzar rediseño del Canvas 3D si se entra al monitor neuronal
     if (screenId === 'screen-neural' && typeof window.resCanvas === 'function') {
         setTimeout(window.resCanvas, 50);
     }
@@ -50,8 +46,12 @@ window.limpiarMemoria = function() {
     localStorage.removeItem("neox_web_history");
     document.getElementById("chat-box").innerHTML = "";
     document.getElementById("memory-vault-list").innerHTML = "";
-    window.efectoEscribir("REESTRUCTURACION", "Bancos de memoria a largo plazo purgados de forma segura. Listo.", "neox");
+    window.efectoEscribir("REESTRUCTURACION", "Bancos de memoria purgados de forma segura. Listo.", "neox");
 };
+
+// =====================================================================
+// NeoX COGNITIVE OS v12.0 - CANAL DE RED SEGURO CORREGIDO - PARTE 2 DE 2
+// =====================================================================
 
 window.reconstruirPantalla = function() {
     const box = document.getElementById("chat-box");
@@ -93,7 +93,7 @@ window.actualizarBovedaVisual = function() {
     contenedor.innerHTML = "";
     const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'model'; }).slice(-5);
     if (memoriasFiltro.length === 0) {
-        contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos de memoria vacíos.</div>';
+        contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0, 240, 255, 0.4); text-align:center; padding-top:20px;">Bancos de memoria vacíos.</div>';
         return;
     }
     memoriasFiltro.forEach(function(m, index) {
@@ -123,9 +123,10 @@ window.enviarMensaje = async function() {
 };
 
 async function procesarPeticion(prompt) {
+    // Endosamos los parámetros HTTP oficiales v1beta
     const urlGemini = "https://googleapis.com" + claves[idxActual];
     
-    // PASARELA CODETABS INDUSTRIAL: Redirige de forma transparente la llamada POST saltando el CORS
+    // SINTAXIS DE LA PASARELA CORREGIDA Y CORRIDA DE PUNTA A PUNTA
     const urlApi = "https://codetabs.com" + encodeURIComponent(urlGemini);
     const datos = { contents: [{ parts: [{ text: prompt }] }] };
     
@@ -141,7 +142,7 @@ async function procesarPeticion(prompt) {
         
         if (r.status === 200) {
             const json = await r.json(); 
-            const txt = json.candidates.content.parts.text;
+            const txt = json.candidates[0].content.parts[0].text;
             window.historial.push({ role: "model", text: txt });
             localStorage.setItem("neox_web_history", JSON.stringify(window.historial));
             
@@ -163,4 +164,3 @@ async function procesarPeticion(prompt) {
         alert("Fallo critico de pasarela: " + err);
     }
 }
-
