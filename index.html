@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX COGNITIVE COMMAND HUB v14.5</title>
+    <title>NeoX COGNITIVE COMMAND HUB v15.5</title>
     <!-- Enlace directo a la armadura estática de diseño cyberpunk externa -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="hud-layout">
-        <!-- BARRA LATERAL ULTRA DELGADA (SIDEBAR TÁCTICA DE ICONOS) -->
+        <!-- BARRA LATERAL TÁCTICA DE ICONOS (EXPANDIDA A 4 PANELES MODULARES) -->
         <div id="sidebar-icons">
             <button class="side-icon-btn active" onclick="window.cambiarPantalla('screen-chat', this)">
                 <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
@@ -23,28 +23,32 @@
                 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-1-2zm-1 16H6c-.55 0-1-.45-1-1V6c0-.55 0 .45 1 1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm-4-4h-4v-2h4v2zm0-4h-4V9h4v2z"/></svg>
                 <span>BRAIN</span>
             </button>
+            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-core', this)">
+                <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                <span>CORE</span>
+            </button>
         </div>
 
         <!-- RECEPTÁCULO PRINCIPAL DE MONITORES FULL SCREEN -->
         <div id="main-display">
-            <!-- MONITOR 1: INTERFAZ COGNITIVA DE DIÁLOGO (CHAT STARK v14.5) -->
+            
+            <!-- MONITOR 1: INTERFAZ COGNITIVA DE DIÁLOGO (CHAT LIMPIO REALISTA J.A.R.V.I.S.) -->
             <div class="app-screen active" id="screen-chat">
                 <div class="cyber-panel full-panel">
-                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v14.5 [STARK_ICE_ENGINE] ✦</div>
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v15.5 [JARVIS_ICE_CORE] ✦</div>
                     <div id="chat-box"></div>
-                    <div id="thinking-indicator">> NeoX ANALIZANDO VARIABLES... EJECUTANDO CADENA DE AUTOANÁLISIS CRÍTICO...</div>
+                    <div id="thinking-indicator">> NeoX PROCESANDO SECUENCIA SEMÁNTICA EN SEGUNDO PLANO...</div>
                     <div id="input-area">
                         <input type="text" id="user-input" placeholder="INGRESE REQUERIMIENTO TÁCTICO..." onkeypress="window.revisarEnter(event)">
                         <button class="btn" onclick="window.enviarMensaje()">EJECUTAR</button>
                     </div>
                 </div>
             </div>
-
             <!-- MONITOR 2: MAPA TRIDIMENSIONAL INTERACTIVO EXPANSIBLE -->
             <div class="app-screen" id="screen-neural">
                 <div class="cyber-panel full-panel split-layout">
                     <div class="map-view-box">
-                        <div class="panel-header">> GRAPH_NEURAL_3D_LIVE [90_NODOS_CONECTADOS - ARRASTRE TÁCTIL]</div>
+                        <div class="panel-header">> GRAPH_NEURAL_3D_LIVE [90_NODOS_CONECTADOS - PERSISTENCIA_ACTIVA]</div>
                         <canvas id="neuralNet"></canvas>
                         
                         <!-- Ventana Táctica Emergente Controlada por el Módulo popup_controls.js -->
@@ -81,7 +85,7 @@
                         </div>
                         <div class="metric-card wide-card">
                             <div class="metric-label">NÚCLEO_ACTIVO_DE_ENERGÍA</div>
-                            <div id="active-core">NÚCLEO_ACTIVO: STARK_COGNITIVE_v14.5</div>
+                            <div id="active-core">NÚCLEO_ACTIVO: STARK_COGNITIVE_v15.5</div>
                         </div>
                     </div>
                     <div class="panel-header" style="margin-top:20px;">> COGNITIVE_ACTIVITY_SPECTRUM_LIVE</div>
@@ -94,28 +98,26 @@
                 </div>
             </div>
 
+            <!-- NUEVO MONITOR 4: TERMINAL DE FILTROS LOGICOS Y CÓDIGO CORE EN TIEMPO REAL -->
+            <div class="app-screen" id="screen-core">
+                <div class="cyber-panel full-panel" style="background:#000; border-color:var(--green);">
+                    <div class="panel-header" style="color:var(--green); border-bottom-color:var(--green);">
+                        > NeoX_INTERNAL_CORE_REASONING_LOG_STREAM [REAL_TIME]
+                    </div>
+                    <!-- Cascada de terminal de código independiente -->
+                    <div id="terminal-stream-log" style="flex:1; overflow-y:auto; font-family:'Share Tech Mono', monospace; font-size:0.85em; color:var(--green); padding:10px; line-height:1.5; white-space:pre-wrap;">
+[SYSTEM_INIT] Inicializando consolas de monitoreo asíncronas...
+[STREAM_READY] Esperando hilos de autoanálisis semántico desde el chat...
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-        <!-- CORRECCIÓN DE ARRANQUE STARK: El motor 3D inicializa primero las variables antes de la red de la IA -->
-    <script src="stark_matrix3d.js?v=15.0"></script>
-    <script src="stark_brain.js?v=15.0"></script>
-    <script src="popup_controls.js?v=15.0"></script>
-
-    <!-- INYECTOR MAESTRO DE IDENTIDAD PERSISTENTE (Establece el rango del Creador Daniel de forma absoluta) -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            localStorage.setItem("neox_creador_name", "Daniel");
-            if (window.contextoCognitivo) {
-                window.contextoCognitivo.nombreCreador = "Daniel";
-            }
-            // Forzar el rediseño elástico del Canvas 3D al encender el sistema
-            if (typeof window.resCanvas === 'function') {
-                setTimeout(window.resCanvas, 100);
-            }
-        });
-    </script>
-    
+    <!-- ENLACES DE CONTROL MODULAR REORDENADOS (EL MOTOR 3D ARRANCA PRIMERO) -->
+    <script src="stark_matrix3d.js?v=15.5"></script>
+    <script src="stark_brain.js?v=15.5"></script>
+    <script src="popup_controls.js?v=15.5"></script>
 </body>
 </html>
-
