@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX COGNITIVE OS v12.1 - CANAL DE RED BLINDADO - brain_network.js
+// NeoX COGNITIVE OS v12.5 - CANAL DE RED INDUSTRIAL - brain_network.js
 // =====================================================================
 
 const claves = [
@@ -20,7 +20,7 @@ if (localStorage.getItem("neox_web_history")) {
     }, 150);
 } else {
     setTimeout(function() {
-        window.efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Modulos HUD y pasarela blindada listos. Esperando comandos, Creador...", "neox");
+        window.efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Pasarela industrial unificada. Esperando directrices, Creador...", "neox");
     }, 500);
 }
 
@@ -121,14 +121,17 @@ window.enviarMensaje = async function() {
 async function procesarPeticion(prompt) {
     const urlGemini = "https://googleapis.com" + claves[idxActual];
     
-    // PASARELA RAW DE PRODUCCIÓN: Elude el CORS saltando las restricciones de red nativas de Google sin alterar datos
-    const urlApi = "https://allorigins.win" + encodeURIComponent(urlGemini);
+    // TÚNEL INDUSTRIAL DE CÓDIGO ABIERTO: Elimina el bloqueo CORS de los navegadores móviles de forma absoluta
+    const urlApi = "https://herokuapp.com" + urlGemini;
     const datos = { contents: [{ parts: [{ text: prompt }] }] };
     
     try {
         const r = await fetch(urlApi, { 
             method: "POST", 
-            headers: { "Content-Type": "application/json" }, 
+            headers: { 
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }, 
             body: JSON.stringify(datos) 
         });
         
@@ -137,7 +140,7 @@ async function procesarPeticion(prompt) {
         
         if (r.status === 200) {
             const json = await r.json(); 
-            const txt = json.candidates[0].content.parts[0].text; // Corrección estructural estricta de la API de Google
+            const txt = json.candidates.content.parts.text;
             window.historial.push({ role: "model", text: txt });
             localStorage.setItem("neox_web_history", JSON.stringify(window.historial));
             
@@ -153,9 +156,9 @@ async function procesarPeticion(prompt) {
                 if (coreInd) coreInd.innerText = "NÚCLEO_ACTIVO: [0" + (idxActual + 1) + "]";
                 await procesarPeticion(prompt);
             } else { alert("Bancos de energia de la boveda agotados."); }
-        } else { alert("Error de pasarela: " + r.status); }
+        } else { alert("Error de respuesta del núcleo: " + r.status); }
     } catch (err) {
         document.getElementById("thinking-indicator").style.display = "none";
-        alert("Desviacion de red: " + err);
+        alert("Fallo critico de enlace: " + err);
     }
 }
