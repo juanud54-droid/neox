@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NeoX COGNITIVE OS v12.0</title>
+    <!-- Enlace a la armadura de diseño externa -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="hud-layout">
+        <!-- SIDEBAR IZQUIERDA DE ICONOS INTERACTIVOS -->
+        <div id="sidebar-icons">
+            <button class="side-icon-btn active" onclick="cambiarPantalla('screen-chat', this)">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+                <span>CHAT</span>
+            </button>
+            <button class="side-icon-btn" onclick="cambiarPantalla('screen-neural', this)">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L12 15v5h1v-1.07zM19.93 11c-.17-1.39-.72-2.65-1.5-3.72L15 11v1h5v-1zm-6-6.93V7h-1v4.07L7.07 5.14c1.39-1.17 3.14-1.93 5.07-2.07z"/></svg>
+                <span>NEURAL</span>
+            </button>
+            <button class="side-icon-btn" onclick="cambiarPantalla('screen-brain', this)">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-1-2zm-1 16H6c-.55 0-1-.45-1-1V6c0-.55 0 .45 1 1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm-4-4h-4v-2h4v2zm0-4h-4V9h4v2z"/></svg>
+                <span>BRAIN</span>
+            </button>
+        </div>
+
+        <!-- BAHÍA CENTRAL DE MONITORES EN PANTALLA COMPLETA -->
+        <div id="main-display">
+            
+            <!-- MONITOR 1: CENTRO DE MANDO (CHAT COGNITIVO) -->
+            <div class="app-screen active" id="screen-chat">
+                <div class="cyber-panel full-panel">
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v12.0 ✦</div>
+                    <div id="chat-box"></div>
+                    <div id="thinking-indicator">> NeoX PENSANDO: PROCESANDO ENLACES CUÁNTICOS...</div>
+                    <div id="input-area">
+                        <input type="text" id="user-input" placeholder="INGRESE REQUERIMIENTO TÁCTICO..." onkeypress="revisarEnter(event)">
+                        <button class="btn" onclick="enviarMensaje()">EJECUTAR</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MONITOR 2: MAPA TRIDIMENSIONAL INTERACTIVO EXPANSIBLE -->
+            <div class="app-screen" id="screen-neural">
+                <div class="cyber-panel full-panel split-layout">
+                    <div class="map-view-box">
+                        <div class="panel-header">> GRAPH_NEURAL_3D_LIVE [ARRASNTRE_DEDO_PARA_ROTAR / SCROLL_ZOOM]</div>
+                        <canvas id="neuralNet"></canvas>
+                        <!-- Ficha HUD Desplegable -->
+                        <div id="node-hud-card">
+                            <div class="card-title">> NODE_DATA_DECODE</div>
+                            <div id="card-content">Toque un nodo de la red interactiva para inspeccionar su registro...</div>
+                        </div>
+                    </div>
+                    <!-- Pestaña interna de memoria a largo plazo -->
+                    <div class="memory-vault-box">
+                        <div class="panel-header">> QUANTUM_VAULT_CORE [MEM_ARS]</div>
+                        <div id="memory-vault-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MONITOR 3: ESPECTRÓMETRO Y PROCESOS EN TIEMPO REAL -->
+            <div class="app-screen" id="screen-brain">
+                <div class="cyber-panel full-panel">
+                    <div class="panel-header">> BRAIN_ACTIVITY_ANALYTICS</div>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">CARGA_DE_PROCESO</div>
+                            <div class="ring-box" id="load-percentage">100%</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">RADAR_DE_BÚSQUEDA</div>
+                            <div class="radar-box"></div>
+                        </div>
+                        <div class="metric-card wide-card">
+                            <div class="metric-label">NÚCLEO_ACTIVO_DE_ENERGÍA</div>
+                            <div id="active-core">NÚCLEO_ACTIVO: [01]</div>
+                        </div>
+                    </div>
+                    <div class="panel-header" style="margin-top:20px;">> COGNITIVE_ACTIVITY_SPECTRUM_LIVE</div>
+                    <div id="brain-activity">
+                        <div class="bar" style="height:75%;"></div><div class="bar" style="height:35%;"></div><div class="bar" style="height:90%;"></div>
+                        <div class="bar" style="height:55%;"></div><div class="bar" style="height:25%;"></div><div class="bar" style="height:80%;"></div><div class="bar" style="height:45%;"></div>
+                        <div class="bar" style="height:60%;"></div><div class="bar" style="height:40%;"></div><div class="bar" style="height:85%;"></div>
+                    </div>
+                    <button class="btn danger" onclick="limpiarMemoria()" style="margin-top:20px; width:100%;">PURGAR_BANCOS_DE_MEMORIA_MUNDIAL</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- CARGA DE LOS MOTORES LÓGICOS AISLADOS -->
+    <script src="network.js"></script>
+    <script src="matrix3d.js"></script>
+</body>
+</html>
