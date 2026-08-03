@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX COGNITIVE OS v12.5 - CANAL DE RED INDUSTRIAL - brain_network.js
+// NeoX COGNITIVE OS v12.6 - CANAL DE RED BLINDADO DIRECTO - PARTE 1 DE 2
 // =====================================================================
 
 const claves = [
@@ -20,7 +20,7 @@ if (localStorage.getItem("neox_web_history")) {
     }, 150);
 } else {
     setTimeout(function() {
-        window.efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Pasarela industrial unificada. Esperando directrices, Creador...", "neox");
+        window.efectoEscribir("SYSTEM_BOOT", "Sistemas cognitivos en linea. Protocolo HTTP directo blindado. Esperando comandos, Creador...", "neox");
     }, 500);
 }
 
@@ -46,8 +46,11 @@ window.limpiarMemoria = function() {
     localStorage.removeItem("neox_web_history");
     document.getElementById("chat-box").innerHTML = "";
     document.getElementById("memory-vault-list").innerHTML = "";
-    window.efectoEscribir("REESTRUCTURACION", "Bancos de memoria purgados de forma segura. Listo.", "neox");
+    window.efectoEscribir("REESTRUCTURACION", "Bancos de memoria a largo plazo purgados de forma segura. Listo.", "neox");
 };
+// =====================================================================
+// NeoX COGNITIVE OS v12.6 - CANAL DE RED BLINDADO DIRECTO - PARTE 2 DE 2
+// =====================================================================
 
 window.reconstruirPantalla = function() {
     const box = document.getElementById("chat-box");
@@ -119,19 +122,14 @@ window.enviarMensaje = async function() {
 };
 
 async function procesarPeticion(prompt) {
-    const urlGemini = "https://googleapis.com" + claves[idxActual];
-    
-    // TÚNEL INDUSTRIAL DE CÓDIGO ABIERTO: Elimina el bloqueo CORS de los navegadores móviles de forma absoluta
-    const urlApi = "https://herokuapp.com" + urlGemini;
+    // ENLACE NATIVO DIRECTO DE PRODUCCIÓN V1 (Esquiva de forma natural las restricciones del navegador)
+    const urlApi = "https://googleapis.com" + claves[idxActual];
     const datos = { contents: [{ parts: [{ text: prompt }] }] };
     
     try {
+        // Ejecución limpia libre de cabeceras de origen artificiales
         const r = await fetch(urlApi, { 
             method: "POST", 
-            headers: { 
-                "Content-Type": "application/json",
-                "X-Requested-With": "XMLHttpRequest"
-            }, 
             body: JSON.stringify(datos) 
         });
         
@@ -140,7 +138,7 @@ async function procesarPeticion(prompt) {
         
         if (r.status === 200) {
             const json = await r.json(); 
-            const txt = json.candidates.content.parts.text;
+            const txt = json.candidates[0].content.parts[0].text; // Mapeo exacto de la respuesta estructural v1 de Google
             window.historial.push({ role: "model", text: txt });
             localStorage.setItem("neox_web_history", JSON.stringify(window.historial));
             
