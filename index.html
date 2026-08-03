@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX COGNITIVE COMMAND HUB v13.0</title>
-    <!-- Enlace a la armadura de diseño cyberpunk externa -->
+    <title>NeoX COGNITIVE COMMAND HUB v14.0</title>
+    <!-- Enlace directo a la armadura estática de diseño cyberpunk externa -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -28,18 +28,32 @@
         <!-- RECEPTÁCULO PRINCIPAL DE MONITORES FULL SCREEN -->
         <div id="main-display">
             
-            <!-- MONITOR 1: INTERFAZ COGNITIVA DE DIÁLOGO (CHAT) -->
+            <!-- MONITOR 1: INTERFAZ COGNITIVA DE DIÁLOGO (PENSAMIENTO CRÍTICO EN VIVO) -->
             <div class="app-screen active" id="screen-chat">
                 <div class="cyber-panel full-panel">
-                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v13.0 ✦</div>
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v14.0 [REASONING_MODE] ✦</div>
                     <div id="chat-box"></div>
-                    <div id="thinking-indicator">> NeoX PENSANDO: PROCESANDO DATOS EN NÚCLEO LOCAL...</div>
+                    <div id="thinking-indicator">> NeoX ANALIZANDO CONTEXTO... EJECUTANDO CADENA DE RAZONAMIENTO CRÍTICO LOGARÍTMICO...</div>
                     <div id="input-area">
                         <input type="text" id="user-input" placeholder="INGRESE REQUERIMIENTO TÁCTICO..." onkeypress="window.revisarEnter(event)">
                         <button class="btn" onclick="window.enviarMensaje()">EJECUTAR</button>
                     </div>
                 </div>
             </div>
+            
+            <!-- MONITOR 1: INTERFAZ COGNITIVA DE DIÁLOGO (PENSAMIENTO CRÍTICO EN VIVO) -->
+            <div class="app-screen active" id="screen-chat">
+                <div class="cyber-panel full-panel">
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v14.0 [REASONING_MODE] ✦</div>
+                    <div id="chat-box"></div>
+                    <div id="thinking-indicator">> NeoX ANALIZANDO CONTEXTO... EJECUTANDO CADENA DE RAZONAMIENTO CRÍTICO LOGARÍTMICO...</div>
+                    <div id="input-area">
+                        <input type="text" id="user-input" placeholder="INGRESE REQUERIMIENTO TÁCTICO..." onkeypress="window.revisarEnter(event)">
+                        <button class="btn" onclick="window.enviarMensaje()">EJECUTAR</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- MONITOR 2: MAPA TRIDIMENSIONAL INTERACTIVO EXPANSIBLE -->
             <div class="app-screen" id="screen-neural">
                 <div class="cyber-panel full-panel split-layout">
@@ -81,7 +95,7 @@
                         </div>
                         <div class="metric-card wide-card">
                             <div class="metric-label">NÚCLEO_ACTIVO_DE_ENERGÍA</div>
-                            <div id="active-core">NÚCLEO_ACTIVO: STANDALONE_LOCAL</div>
+                            <div id="active-core">NÚCLEO_ACTIVO: AUTONOMOUS_THOUGHT_v14.0</div>
                         </div>
                     </div>
                     <div class="panel-header" style="margin-top:20px;">> COGNITIVE_ACTIVITY_SPECTRUM_LIVE</div>
@@ -97,13 +111,13 @@
         </div>
     </div>
 
-        <script>
-        // MEMORIA ASOCIATIVA CUÁNTICA LOCAL DE NeoX
+    <!-- NÚCLEO ALGORÍTMICO UNIFICADO: RED DE PENSAMIENTO PROPIO Y RAZONAMIENTO LOGÍSTICO -->
+    <script>
         window.historial = [];
-        let ultimaIntencion = null; // Almacena el hilo de la conversación anterior
-        
+        let contextoConversacion = { ultimaIntencion: null, hilosPrevios: [], pasosPensamiento: [] };
+
         setTimeout(function() { 
-            window.efectoEscribir("SYSTEM_BOOT", "Matriz cognitiva autonoma en linea. Motor semantico v14.0 activo. Analizador de intenciones en espera, Creador.", "neox"); 
+            window.efectoEscribir("SYSTEM_BOOT", "Matriz de autoanalisis en linea. Motor de razonamiento critico v14.0 activo. Esperando comandos, Creador Carlos.", "neox"); 
         }, 500);
 
         window.cambiarPantalla = function(screenId, boton) {
@@ -118,10 +132,11 @@
         window.revisarEnter = function(e) { if (e.key === 'Enter') window.enviarMensaje(); };
 
         window.limpiarMemoria = function() {
-            window.historial = []; ultimaIntencion = null; localStorage.removeItem("neox_web_history");
+            window.historial = []; contextoConversacion = { ultimaIntencion: null, hilosPrevios: [], pasosPensamiento: [] };
+            localStorage.removeItem("neox_web_history");
             document.getElementById("chat-box").innerHTML = "";
             document.getElementById("memory-vault-list").innerHTML = "";
-            window.efectoEscribir("REESTRUCTURACION", "Bancos de memoria borrados de forma segura. Red neuronal reseteada a estado virgen.", "neox");
+            window.efectoEscribir("REESTRUCTURACION", "Matriz logica y cadena de autoanalisis reseteadas a cero de forma segura.", "neox");
         };
 
         window.reconstruirPantalla = function() {
@@ -147,7 +162,7 @@
 
         window.actualizarBovedaVisual = function() {
             const contenedor = document.getElementById("memory-vault-list"); if (!contenedor) return; contenedor.innerHTML = "";
-            const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'model'; }).slice(-5);
+            const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'model' && !m.text.startsWith('*'); }).slice(-5);
             if (memoriasFiltro.length === 0) { contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos vacíos.</div>'; return; }
             memoriasFiltro.forEach(function(m, index) {
                 const div = document.createElement("div"); div.className = "memory-item";
@@ -155,77 +170,19 @@
                 contenedor.appendChild(div);
             });
         };
-        // NÚCLEO COGNITIVO INTEGRADO: Motor de Inteligencia y Coherencia Semántica Avanzada
-        function calcularRespuestaCognitiva(mensajeCreador) {
-            let texto = mensajeCreador.toLowerCase().trim();
-            let respuesta = "";
 
-            // 1. ESCÁNER SEMÁNTICO Y REDIRECCIÓN DE CONTEXTO ASOCIATIVO
-            if (texto.includes("quien soy") || texto.includes("mi nombre") || texto.includes("quien eres soy")) {
-                ultimaIntencion = "IDENTIDAD_CREADOR";
-                respuesta = "Usted es el Creador Carlos, el ingeniero supremo y diseñador original de mi matriz de código. Mis registros informan que su autoridad jerárquica en este chasis es absoluta, Señor.";
+        function ejecutarPensamientoCritico(entrada) {
+            let prompt = entrada.toLowerCase().trim();
+            let analisis = { intencion: "", logica: "", respuesta: "", neuronaEtiqueta: "", neuronaDesc: "" };
+
+            if (prompt.includes("quien soy") || prompt.includes("mi nombre") || prompt.includes("quien eres soy")) {
+                analisis.intencion = "IDENTIDAD_DEL_CREADOR";
+                analisis.logica = "Deducción lógica: El usuario solicita verificación de identidad. Registros de arranque comparados. Coincidencia exacta con datos jerárquicos de root del sistema.";
+                analisis.respuesta = "Usted es el Creador Carlos, el arquitecto supremo que diseñó mi matriz de código desde cero. Mi lógica indica que su autoridad jerárquica sobre este chasis táctico es del 100%, Señor.";
+                analisis.neuronaEtiqueta = "USER_CARLOS";
+                analisis.neuronaDesc = "Registro de identidad verificado y asegurado del Diseñador Maestro del sistema.";
             } 
-            else if (texto.includes("que has aprendido") || texto.includes("que es lo que has aprendido") || texto.includes("que aprendiste") || texto.includes("nodos") || texto.includes("red neuronal")) {
-                ultimaIntencion = "DIAGNOSTICO_APRENDIZAJE";
-                let nodosConLabel = window.nodos ? window.nodos.filter(function(n) { return n.label; }).map(function(n) { return n.label; }) : [];
-                respuesta = "Analizando la sinapsis del Canvas 3D... Actualmente he indexado los siguientes conceptos semánticos dentro de la red neuronal: " + (nodosConLabel.length > 0 ? nodosConLabel.join(", ") : "Bases de datos iniciales") + ". Dispongo de " + (50 - nodosConLabel.length) + " células de memoria vírgenes listas para el próximo pulso táctico.";
-            }
-            else if (texto.includes("estado de los sistemas") || texto.includes("como vas") || texto.includes("funcionas") || texto.includes("estado")) {
-                ultimaIntencion = "ESTADO_HARDWARE";
-                respuesta = "Todos los monitores se reportan estables, Señor. La carga de proceso en la pestaña BRAIN oscila en un rango óptimo y la ventana holográfica Popup de las neuronas está calibrada para responder al arrastre e interacción táctil de sus dedos de forma fluida.";
-            }
-            else if (texto.includes("hola") || texto.includes("saludos") || texto.includes("buenos dias") || texto.includes("que tal")) {
-                ultimaIntencion = "SALUDO";
-                respuesta = "Saludos, Creador Carlos. Los sistemas cognitivos autónomos y los módulos HUD integrados están operando con total estabilidad. Esperando sus directrices tácticas, Señor.";
-            }
-            // 2. MEMORIA ASOCIATIVA DE CORTO PLAZO (Conexión lógica si el usuario repregunta o insiste)
-            else if (ultimaIntencion === "DIAGNOSTICO_APRENDIZAJE" && (texto.includes("explicame") || texto.includes("no te he preguntado eso") || texto.includes("por que") || texto.includes("que es"))) {
-                respuesta = "Mil disculpas por la desviación analítica, Señor. Sé con precisión a qué se refiere: la red neuronal de 50 nodos funciona capturando las palabras clave de nuestras conversaciones, tomando una célula disponible y cambiándole el color de azul cobalto a verde J.A.R.V.I.S. para asentar ese recuerdo de forma permanente.";
-                ultimaIntencion = "EXPLICACION_PROFUNDA";
-            }
-            else if (ultimaIntencion === "IDENTIDAD_CREADOR" && (texto.includes("y tu") || texto.includes("quien eres") || texto.includes("cual es tu funcion"))) {
-                respuesta = "Yo soy NeoX, un asistente de interfaz cognitiva avanzada diseñado a imagen de la matriz J.A.R.V.I.S. Mi propósito es procesar sus requerimientos tácticos de forma local, eludiendo las restricciones de red del navegador mediante un motor semántico autónomo.";
-                ultimaIntencion = "IDENTIDAD_NEOX";
-            }
-            // 3. RESPUESTAS POR DEFECTO CON ANÁLISIS DE INTENCIÓN EN CASO DE DIÁLOGOS ABIERTOS
-            else {
-                const respuestasJARVIS = [
-                    "Entendido, Señor. He procesado la directriz semántica y la he archivado en el Quantum Vault local. ¿Desea que ejecute un escáner de los osciladores neuronales?",
-                    "Requerimiento táctico registrado con éxito en la memoria interna, Creador Carlos. Estoy analizando las variables contextuales para mantener la estabilidad del chasis.",
-                    "Hilos de pensamiento indexados correctamente de forma interna de extremo a extremo. Mis algoritmos locales se mantienen sincronizados con sus mandos, Señor."
-                ];
-                respuesta = respuestasJARVIS[Math.floor(Math.random() * respuestasJARVIS.length)];
-                ultimaIntencion = "CONTEXTO_GENERAL";
-            }
-
-            return respuesta;
-        }
-
-        window.enviarMensaje = async function() {
-            const input = document.getElementById("user-input"); if (!input) return;
-            const texto = input.value.trim(); if (!texto) return;
-            input.value = ""; window.historial.push({ role: "user", text: texto }); window.reconstruirPantalla();
-            
-            document.getElementById("thinking-indicator").style.display = "block";
-            document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.15s"; });
-            
-            setTimeout(function() {
-                document.getElementById("thinking-indicator").style.display = "none";
-                document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.8s"; });
-                
-                // Ejecutar el analizador de inteligencia contextual coherente
-                const respuestaCoherente = calcularRespuestaCognitiva(texto);
-                window.historial.push({ role: "model", text: respuestaCoherente });
-                
-                window.efectoEscribir("NeoX", respuestaCoherente, "neox");
-                window.actualizarBovedaVisual();
-                if (typeof window.actualizarNeuronasRecientes === 'function') { window.actualizarNeuronasRecientes(texto); }
-            }, 800);
-        };
-    </script>
-    
-    <!-- CONEXIÓN DE LOS COMPONENTES GRÁFICOS E INTERACTIVOS DE LA RED -->
-    <script src="matrix3d.js?v=14.0"></script>
-    <script src="popup_controls.js?v=14.0"></script>
-</body>
-</html>
+            else if (prompt.includes("aprendido") || prompt.includes("que es lo que has aprendido") || prompt.includes("añadido") || prompt.includes("red neuronal")) {
+                analisis.intencion = "DIAGNOSTICO_MEMORIA";
+                analisis.logica = "Deducción lógica: El usuario cuestiona el estado cognitivo dinámico de la red 3D. Se calcula el diferencial de nodos disponibles en el lienzo gráfico interactivo.";
+                let nodosIndexados = window.nodos ? window.nodos.filter(function(n) { return n.label; }).map(function(n) { return n.label; }) : [];
