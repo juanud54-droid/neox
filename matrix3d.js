@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX COGNITIVE OS v12.0 - MOTOR GRÁFICO E INTERACTIVO 3D - PARTE 1 DE 2
+// NeoX COGNITIVE OS v12.1 - MOTOR INTERACTIVO TÁCTIL 3D - PARTE 1 DE 2
 // =====================================================================
 
 const canvas = document.getElementById("neuralNet");
@@ -23,11 +23,10 @@ window.resCanvas = function() {
 window.addEventListener('resize', window.resCanvas);
 setTimeout(window.resCanvas, 200);
 
-// Generador de coordenadas esféricas 3D
+// Inicializador de las neuronas del chasis
 for (let i = 0; i < totalNodos; i++) {
     let u = Math.random(), v = Math.random();
-    let theta = u * 2 * Math.PI;
-    let phi = Math.acos(2 * v - 1);
+    let theta = u * 2 * Math.PI, phi = Math.acos(2 * v - 1);
     let r = 90;
     nodos.push({
         x: r * Math.sin(phi) * Math.cos(theta),
@@ -38,7 +37,7 @@ for (let i = 0; i < totalNodos; i++) {
     });
 }
 
-// LÓGICA DE CONTROL TÁCTIL AVANZADO PARA ARRASTRAR Y ESCALAR LA VENTANA FLOTANTE
+// CAPTURA TÁCTIL MULTI-ENTORNO CON SOPORTE ANDROID PARA LA VENTANA FLOTANTE
 const popup = document.getElementById("hologram-window");
 const dragZone = document.getElementById("popup-drag-zone");
 const resizer = document.getElementById("popup-resizer");
@@ -47,49 +46,52 @@ let activeDrag = false;
 let activeResize = false;
 let startX, startY, startWidth, startHeight, startLeft, startTop;
 
+// Interceptores táctiles y de ratón unificados
 if (dragZone && popup) {
-    dragZone.addEventListener('mousedown', initDragPopup);
-    dragZone.addEventListener('touchstart', function(e) { initDragPopup(e.touches[0]); }, { passive: false });
+    dragZone.addEventListener('mousedown', initDrag);
+    dragZone.addEventListener('touchstart', function(e) { initDrag(e.changedTouches[0]); }, { passive: false });
 }
 if (resizer && popup) {
-    resizer.addEventListener('mousedown', initResizePopup);
-    resizer.addEventListener('touchstart', function(e) { initResizePopup(e.touches[0]); }, { passive: false });
+    resizer.addEventListener('mousedown', initResize);
+    resizer.addEventListener('touchstart', function(e) { initResize(e.changedTouches[0]); }, { passive: false });
 }
 
-window.addEventListener('mousemove', doPopupAction);
-window.addEventListener('touchmove', function(e) { doPopupAction(e.touches[0]); }, { passive: false });
-window.addEventListener('mouseup', stopPopupAction);
-window.addEventListener('touchend', stopPopupAction);
+window.addEventListener('mousemove', doAction);
+window.addEventListener('touchmove', function(e) { if(activeDrag || activeResize) { e.preventDefault(); doAction(e.changedTouches[0]); } }, { passive: false });
+window.addEventListener('mouseup', stopAction);
+window.addEventListener('touchend', stopAction);
 
-function initDragPopup(e) {
+function initDrag(point) {
     activeDrag = true;
-    startX = e.clientX; startY = e.clientY;
+    startX = point.clientX; startY = point.clientY;
     startLeft = popup.offsetLeft; startTop = popup.offsetTop;
 }
-function initResizePopup(e) {
+
+function initResize(point) {
     activeResize = true;
-    startX = e.clientX; startY = e.clientY;
+    startX = point.clientX; startY = point.clientY;
     startWidth = parseInt(document.defaultView.getComputedStyle(popup).width, 10);
     startHeight = parseInt(document.defaultView.getComputedStyle(popup).height, 10);
 }
-function doPopupAction(e) {
+
+function doAction(point) {
     if (activeDrag) {
-        popup.style.left = (startLeft + (e.clientX - startX)) + 'px';
-        popup.style.top = (startTop + (e.clientY - startY)) + 'px';
+        popup.style.left = (startLeft + (point.clientX - startX)) + 'px';
+        popup.style.top = (startTop + (point.clientY - startY)) + 'px';
     }
     if (activeResize) {
-        popup.style.width = (startWidth + (e.clientX - startX)) + 'px';
-        popup.style.height = (startHeight + (e.clientY - startY)) + 'px';
+        popup.style.width = Math.max(200, startWidth + (point.clientX - startX)) + 'px';
+        popup.style.height = Math.max(150, startHeight + (point.clientY - startY)) + 'px';
     }
 }
-function stopPopupAction() { activeDrag = false; activeResize = false; }
+
+function stopAction() { activeDrag = false; activeResize = false; }
 window.cerrarPopup = function() { if (popup) popup.style.display = "none"; };
-
 // =====================================================================
-// NeoX COGNITIVE OS v12.0 - MOTOR GRÁFICO E INTERACTIVO 3D - PARTE 2 DE 2
+// NeoX COGNITIVE OS v12.1 - MOTOR INTERACTIVO TÁCTIL 3D - PARTE 2 DE 2
 // =====================================================================
 
-// CAPTURA DE EVENTOS DE ARRASTRE PARA LA ROTACIÓN DE LA PROPIA RED NEURONAL
+// CAPTURA DE EVENTOS DE ARRASTRE PARA LA ROTACIÓN DE LA RED NEURONAL 3D
 if (canvas) {
     canvas.addEventListener('mousedown', iniciarArrastreRed);
     canvas.addEventListener('touchstart', function(e) { if(e.touches.length === 1) iniciarArrastreRed(e.touches[0]); }, { passive: true });
@@ -104,7 +106,6 @@ function iniciarArrastreRed(e) {
     procesarClickNodo(mx, my);
 }
 
-// Escuchadores globales para el movimiento y parada del dedo en el Canvas
 window.addEventListener('mousemove', moverArrastreRed);
 window.addEventListener('touchmove', function(e) { if(isDraggingNetwork && e.touches.length === 1) moverArrastreRed(e.touches[0]); }, { passive: true });
 window.addEventListener('mouseup', detenerArrastreRed);
@@ -136,11 +137,11 @@ function procesarZoom(e) {
     fov = Math.max(50, Math.min(250, fov));
 }
 
-// DETECTOR DE INTERACCIÓN: Abre y llena la Ventana Táctica Holográfica
+// TELEMETRÍA MILITAR ULTRA DETALLADA J.A.R.V.I.S. (12 PUNTOS DE DECODIFICACIÓN)
 function procesarClickNodo(mx, my) {
     const cx = canvas.width / 2, cy = canvas.height / 2;
     let nodoDetectado = null;
-    let distanciaMinima = 20; // Sensibilidad táctil idónea
+    let distanciaMinima = 22; // Margen de error óptimo para dedos
 
     nodos.forEach(function(n, index) {
         let e = fov / (fov + n.z);
@@ -155,32 +156,42 @@ function procesarClickNodo(mx, my) {
     });
 
     const panelHud = document.getElementById("card-content");
-    if (popup) popup.style.display = "flex"; // Forzar apertura de la ventana flotante
+    if (popup) popup.style.display = "flex"; 
 
     if (panelHud && nodoDetectado) {
-        // Diccionario de funciones sintácticas detalladas simuladas para dar contexto JARVIS
-        let sectorFisico = seleccionadoIndex < 10 ? "NÚCLEO_PRIMARIO" : "BAHÍA_APRENDIZAJE_0" + Math.floor(seleccionadoIndex / 10);
-        let funcionTeorica = nodoDetectado.label ? "Matriz contextual de indexación semántica en tiempo real." : "Célula sináptica virgen esperando almacenamiento cuántico.";
+        // Simulación de registros analíticos militares en tiempo real
+        let freq = (4.1 + Math.random() * 2.8).toFixed(2);
+        let lat = (1.2 + Math.random() * 4.5).toFixed(1);
+        let volt = (0.8 + Math.random() * 0.6).toFixed(2);
+        let load = Math.floor(15 + Math.random() * 45);
+        let sectorFisico = seleccionadoIndex < 10 ? "CORE_PRIMARY_ALPHA" : "BAHIA_SYNAPSE_0" + Math.floor(seleccionadoIndex / 10);
+        let estadoLogico = nodoDetectado.label ? "ESTABLE_INDEXADO" : "VIRGEN_DISPONIBLE";
         
-        panelHud.innerHTML = '<span><strong>ID_NURON:</strong> [N_0' + seleccionadoIndex + ']</span><br>' +
-                              '<span><strong>SECTOR:</strong> ' + sectorFisico + '</span><br>' +
-                              '<span><strong>ETIQUETA:</strong> ' + (nodoDetectado.label || "VACÍA (DISPONIBLE)") + '</span><br>' +
-                              '<span><strong>FUNCIÓN:</strong> ' + funcionTeorica + '</span><br>' +
-                              '<span><strong>REGISTRO:</strong> ' + (nodoDetectado.desc || "Sin datos almacenados. Neurona lista para expandir el cerebro de NeoX.") + '</span>';
+        panelHud.innerHTML = 
+            '<div><strong>[ID_NEURON] :</strong> N_0' + seleccionadoIndex + '</div>' +
+            '<div><strong>[SECTOR_ID]:</strong> ' + sectorFisico + '</div>' +
+            '<div><strong>[STATUS]   :</strong> ' + estadoLogico + '</div>' +
+            '<div><strong>[ETIQUETA] :</strong> ' + (nodoDetectado.label || "VACIA") + '</div>' +
+            '<div style="color:var(--cyan); margin:4px 0; border-bottom:1px dashed rgba(0,240,255,0.2);">--- TELEMETRIA SYNAPSE_LINK ---</div>' +
+            '<div><strong>[FRECUENCIA]:</strong> ' + freq + ' GHz</div>' +
+            '<div><strong>[LATENCIA]  :</strong> ' + lat + ' ms</div>' +
+            '<div><strong>[VOLTAJE]   :</strong> ' + volt + ' V</div>' +
+            '<div><strong>[CARGA_MEM] :</strong> ' + load + ' %</div>' +
+            '<div><strong>[ENLACE_AI] :</strong> DIRECT_MODE</div>' +
+            '<div style="color:var(--cyan); margin:4px 0; border-bottom:1px dashed rgba(0,240,255,0.2);">--- REGISTRO COGNITIVO ---</div>' +
+            '<div style="font-size:0.9em; line-height:1.2; color:#fff;">' + (nodoDetectado.desc || "Bahia disponible. Lista para asentar nuevos registros semanticos en el proximo ciclo de transmision.") + '</div>';
     }
 }
 
-// RECEPTOR DE APRENDIZAJE ADAPTATIVO EN TIEMPO REAL
 window.actualizarNeuronasRecientes = function(t) {
     let p = t.split(" ").filter(function(w) { return w.length > 5 && w.length < 11; });
     if (p.length > 0) {
         let nodosVacios = nodos.filter(function(n) { return !n.label; });
-        // Si hay neuronas vacías, programa una, si no, reescribe una al azar
         let objetivo = nodosVacios.length > 0 ? nodosVacios[Math.floor(Math.random() * nodosVacios.length)] : nodos[Math.floor(Math.random() * nodos.length)];
         let lim = p[Math.floor(Math.random() * p.length)].replace(/[^a-zA-Z]/g, "").toUpperCase();
         if (lim) {
             objetivo.label = lim;
-            objetivo.desc = "Concepto adquirido de forma autónoma durante el análisis de la última directriz del Creador.";
+            objetivo.desc = "Concepto adquirido de forma autónoma durante el análisis semántico de la última directriz del Creador.";
         }
     }
 };
@@ -194,7 +205,6 @@ function rotar() {
     });
 }
 
-// BUCLE GRÁFICO 3D EN TIEMPO REAL
 function render() {
     if (!canvas || !ctx) return;
     if (canvas.width === 0) window.resCanvas();
@@ -203,7 +213,6 @@ function render() {
     
     const cx = canvas.width / 2, cy = canvas.height / 2;
     
-    // Trazado de líneas neuronales interconectadas
     ctx.strokeStyle = "rgba(0, 240, 255, 0.12)"; ctx.lineWidth = 1;
     for (let i = 0; i < nodos.length; i++) {
         for (let j = i + 1; j < nodos.length; j++) {
@@ -215,17 +224,16 @@ function render() {
         }
     }
     
-    // Renderizado corregido de nodos verdes y azules de alta visibilidad
     nodos.forEach(function(n, idx) {
         let e = fov / (fov + n.z), x = cx + n.x * e, y = cy + n.y * e, rd = Math.max(1, 3 * e), al = (fov - n.z) / (2 * fov);
         
         if (idx === seleccionadoIndex) {
-            ctx.fillStyle = "var(--red)"; // Destacado táctico en rojo al seleccionar
+            ctx.fillStyle = "var(--red)";
             rd = rd * 1.5;
         } else if (n.label) {
-            ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")"; // Nodos con memoria (Verde J.A.R.V.I.S.)
+            ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")"; // Verde J.A.R.V.I.S.
         } else {
-            ctx.fillStyle = "rgba(0, 102, 255, " + (al + 0.5) + ")"; // CORREGIDO: Nodos disponibles en Azul Cobalto intenso y visible
+            ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.6) + ")"; // Azul Cobalto Eléctrico de alta visibilidad
         }
         
         ctx.beginPath(); ctx.arc(x, y, rd, 0, 2 * Math.PI); ctx.fill();
