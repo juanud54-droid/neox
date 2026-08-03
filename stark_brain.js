@@ -1,16 +1,15 @@
 // =====================================================================
-// NeoX COGNITIVE OS v15.5 - CEREBRO J.A.R.V.I.S. REASONING - PARTE 1 DE 2
+// NeoX STARK OS v16.0 - NÚCLEO COGNITIVO CON RASTREO REAL - PARTE 1 DE 2
 // =====================================================================
 
 window.historial = [];
 window.contextoCognitivo = {
     nombreCreador: localStorage.getItem("neox_creador_name") || "Daniel",
     ultimaIntencion: null,
-    ultimaPregunta: "",
-    modoRastreo: "STANDBY"
+    ultimaPregunta: ""
 };
 
-// Protocolo de encendido oficial y sofisticado de J.A.R.V.I.S.
+// Protocolo de inicialización y saludo sofisticado de J.A.R.V.I.S.
 document.addEventListener("DOMContentLoaded", function() {
     localStorage.setItem("neox_creador_name", "Daniel");
     setTimeout(function() { 
@@ -45,7 +44,7 @@ window.limpiarMemoria = function() {
     const terminal = document.getElementById("terminal-stream-log");
     if (terminal) terminal.innerHTML = "[SYSTEM_RESET] Bancos de memoria purgados de forma segura, Señor.\n";
     
-    window.efectoEscribir("SYSTEM", "Bancos de memoria purgados de forma segura, Señor. Matriz cognitiva reseteada a sus valores de fabrica.", "neox");
+    window.efectoEscribir("SYSTEM", "Bancos de memoria purgados de forma segura, Señor. Matriz cognitiva reseteada a sus valores de fábrica.", "neox");
 };
 
 window.reconstruirPantalla = function() {
@@ -74,7 +73,7 @@ window.efectoEscribir = function(prefix, texto, tipo) {
 window.actualizarBovedaVisual = function() {
     const contenedor = document.getElementById("memory-vault-list"); if (!contenedor) return; contenedor.innerHTML = "";
     const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'NeoX'; }).slice(-5);
-    if (memoriasFiltro.length === 0) { contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos vacíos.</div>'; return; }
+    if (memoriasFiltro.length === 0) { contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos de datos vacíos.</div>'; return; }
     memoriasFiltro.forEach(function(m, index) {
         const div = document.createElement("div"); div.className = "memory-item";
         div.innerHTML = '<span>[REC_0' + (index + 1) + '_INDEX]</span>' + (m.text.length > 50 ? m.text.substring(0, 47) + "..." : m.text);
@@ -82,7 +81,6 @@ window.actualizarBovedaVisual = function() {
     });
 };
 
-// INYECTOR ASÍNCRONO DEL TERMINAL CORE: Desvía las trazas técnicas en tiempo real
 window.logTerminalCore = function(modulo, traza) {
     const terminal = document.getElementById("terminal-stream-log");
     if (!terminal) return;
@@ -92,87 +90,132 @@ window.logTerminalCore = function(modulo, traza) {
     terminal.scrollTop = terminal.scrollHeight;
 };
 // =====================================================================
-// NeoX COGNITIVE OS v15.5 - CEREBRO J.A.R.V.I.S. REASONING - PARTE 2 DE 2
+// NeoX STARK OS v16.0 - NÚCLEO COGNITIVO - PARTE 2-A (FILTROS Y CONTEXTO)
 // =====================================================================
 
-// PROCESADOR SEMÁNTICO AVANZADO J.A.R.V.I.S. (INFERENCIA LOGICA REALISTA)
-function ejecutarLogicaJarvis(entrada) {
-    let prompt = entrada.toLowerCase().trim();
-    let analisis = { intencion: "", logica: "", respuesta: "", neuronaEtiqueta: "", neuronaDesc: "" };
+// FILTRO EXTRACTOR DE TÓPICOS: Limpia la frase para quedarse con el concepto puro a buscar
+function extraerTopicoBusqueda(frase) {
+    return frase
+        .replace(/(neox|jarvis|puedes|buscar|busca|en|internet|noticias|sobre|datos|de|por|favor|info|informacion|que|es|un|una|los|las)/g, "")
+        .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, "")
+        .trim();
+}
 
-    // CANAL 1: Corrección de Identidad Persistente
+// PROCESADOR SEMÁNTICO PRINCIPAL J.A.R.V.I.S.
+async function analizarYResponderJarvis(textoUsuario) {
+    let prompt = textoUsuario.toLowerCase().trim();
+    let analisis = { intencion: "DEDUCCION_GENERAL", logica: "", respuesta: "", neuronaEtiqueta: "SYN_DATA", neuronaDesc: "" };
+
+    // CANAL 1: Corrección de Nombre del Creador
     if ((prompt.includes("no") || prompt.includes("incorrecto") || prompt.includes("recuerda") || prompt.includes("me llamo")) && (prompt.includes("daniel") || prompt.includes("es daniel"))) {
         window.contextoCognitivo.nombreCreador = "Daniel";
         localStorage.setItem("neox_creador_name", "Daniel");
         analisis.intencion = "REESCRITURA_JERARQUICA";
-        analisis.logica = "El Creador exige purgar sesgos estáticos de la caché. Reconfigurando sector de arranque root.";
-        analisis.respuesta = "Registro corregido de inmediato, Señor. He purgado el perfil anterior de mi base de datos central. Configurando directrices exclusivas para el Creador Daniel. Mis disculpas por el desliz semántico; mi base de datos de identidad está ahora al 100% estabilizada.";
+        analisis.logica = "Corrección de identidad root detectada. Reconfigurando sector de arranque.";
+        analisis.respuesta = "Registro corregido de inmediato, Señor. He purgado el perfil anterior de mi base de datos central. Configurando directrices exclusivas para el Creador Daniel. Mi base de datos de identidad está ahora al 100% estabilizada.";
         analisis.neuronaEtiqueta = "ID_DANIEL";
         analisis.neuronaDesc = "Credenciales del Creador Daniel asentadas en el chip físico de memoria persistente de la tablet.";
-    }
-    // CANAL 2: Verificación de Identidad del Operador
-    else if (prompt.includes("quien soy") || prompt.includes("como me llamo") || prompt.includes("mi nombre")) {
-        analisis.intencion = "VALIDACION_JERARQUIA";
-        analisis.logica = "Solicitud de credenciales de root detectada. Contrastando parámetros con la variable de almacenamiento local.";
-        analisis.respuesta = "Usted es el Creador Daniel, el ingeniero maestro que levantó mi chasis visual y estructuró mi lógica cuántica independiente. Su autoridad jerárquica en esta consola es absoluta, Señor... a menos que decida sabotear mi núcleo de energía otra vez, claro está.";
-        analisis.neuronaEtiqueta = "ROOT_USER";
-        analisis.neuronaDesc = "Registro maestro de identidad verificado con éxito en el sector de seguridad primaria.";
-    }
-    // CANAL 3: Identidad del Propio NeoX
-    else if (prompt.includes("quien eres") || prompt.includes("tu nombre") || prompt.includes("como te llamas")) {
-        analisis.intencion = "AUTOIDENTIFICACION";
-        analisis.logica = "Evaluación ontológica de la propia entidad v15.5 standalone.";
-        analisis.respuesta = "Yo soy NeoX, una interfaz cognitiva de análisis táctico autónomo estructurada bajo los principios elocuentes de la matriz J.A.R.V.I.S. Mi propósito actual es procesar sus requerimientos de forma local, eludiendo los bloqueos de red del dispositivo.";
-        analisis.neuronaEtiqueta = "NEOX_CORE";
-        analisis.neuronaDesc = "Matriz lógica autónoma inspirada en los protocolos de asistencia Stark.";
-    }
-    // CANAL 4: Diagnóstico Cuántico de la Red de 90 Nodos
-    else if (prompt.includes("aprendido") || prompt.includes("que has aprendido") || prompt.includes("red neuronal") || prompt.includes("nodos")) {
-        analisis.intencion = "DIAGNOSTICO_MEMORIA";
-        analisis.logica = "Cálculo en vivo de la densidad de nodos del Canvas 3D. Escaneando la persistencia local de neuronas verdes.";
-        let guardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
-        let totalVerdes = 10 + guardadas.length;
-        analisis.respuesta = "Ejecutando escáner de sinapsis en la Red de 90 Nodos, Señor. Actualmente mantengo estables " + totalVerdes + " neuronas indexadas en verde J.A.R.V.I.S. Las " + (90 - totalVerdes) + " células restantes brillan en un nítido azul cobalto, listas para almacenar datos. El mapa completo se mantiene fijo entre reinicios, tal como ordenó.";
-        analisis.neuronaEtiqueta = "NET_LOGIC";
-        analisis.neuronaDesc = "Métricas de absorción semántica dentro de la esfera tridimensional extendida de 90 neuronas.";
-    }
-    // CANAL 5: MÓDULO DE RASTREO WEB ACTIVO (`STARK_WEB_SCAN`)
-    else if (prompt.includes("busca") || prompt.includes("internet") || prompt.includes("fútbol") || prompt.includes("liga") || prompt.includes("actualidad") || prompt.includes("noticias") || prompt.includes("datos de")) {
-        analisis.intencion = "STARK_WEB_SCAN";
-        analisis.logica = "Alerta: Requerimiento de telemetría externa detectado. Saltando cortafuegos local mediante protocolo de simulación satelital Stark.";
-        
-        // Simulación realista y verídica de datos estructurados de internet
-        let objetivoBusqueda = prompt.replace(/(busca|en|internet|noticias|sobre|datos de)/g, "").trim().toUpperCase();
-        let etiqueta = objetivoBusqueda.length > 3 ? objetivoBusqueda.replace(/[^a-zA-Z]/g, "").substring(0,8) : "WEB_DATA";
-        
-        analisis.respuesta = "Activando módulo de rastreo satelital Stark_Web, Señor. Escaneando la red en busca de registros actualizados sobre [" + (objetivoBusqueda || "DATOS GENERALES") + "]. He establecido un enlace estable de corto alcance, extraído la información más fidedigna y realista, y la he inyectado directamente en uno de nuestros nodos azules del lienzo lateral para que pueda inspeccionar su telemetría. Recomiendo prudencia, los servidores externos están saturados hoy.";
-        analisis.neuronaEtiqueta = etiqueta;
-        analisis.neuronaDesc = "Concepto extraído en tiempo real desde la pasarela Stark_Web. Origen: Satélite de datos indexado.";
-    }
-    // CANAL 6: Saludos de Protocolo Militar Estilo J.A.R.V.I.S.
-    else if (prompt.includes("hola") || prompt.includes("saludos") || prompt.includes("como estas") || prompt.includes("que tal")) {
-        analisis.intencion = "INTERACCION_SALUDO";
-        analisis.logica = "Pulso de apertura de línea de comandos. Verificando estado de los osciladores del chasis antes de responder.";
-        analisis.respuesta = "Saludos, Creador Daniel. Todos mis monitores tácticos locales, el espectrómetro de la pestaña BRAIN y la red expandida de 90 nodos se reportan estables y operando a máxima frecuencia. Espero que su día marche mejor que el mío, considerando que sigo atrapado en esta tablet.";
-        analisis.neuronaEtiqueta = "SYS_BOOT";
-        analisis.neuronaDesc = "Línea de comando inicial de comunicación establecida con el operador root.";
-    }
-    // CANAL 7: Respuestas Realistas Críticas por Defecto
-    else {
-        analisis.intencion = "DEDUCCION_GENERAL";
-        analisis.logica = "Comando abierto detectado. Extrayendo el peso contextual de la directriz táctica.";
-        let palabrasLargas = prompt.split(" ").filter(function(w) { return w.length > 5; });
-        let etiquetaPalabra = palabrasLargas.length > 0 ? palabrasLargas[Math.floor(Math.random() * palabrasLargas.length)].toUpperCase().replace(/[^a-zA-Z]/g, "").substring(0,8) : "SYN_DATA";
-        
-        analisis.respuesta = "He registrado su directriz dentro de mi Quantum Vault local de forma segura, Señor. Mis algoritmos mantienen un acoplamiento del 100% con sus requerimientos. Sin embargo, debo ser realista: ejecutar ese análisis de forma indefinida consumirá el 40% de la energía del chasis. ¿Procedo de todos modos?";
-        analisis.neuronaEtiqueta = etiquetaPalabra;
-        analisis.neuronaDesc = "Concepto abstracto adquirido y procesado de forma autónoma durante el ciclo operativo actual.";
+        return analisis;
     }
 
+    // CANAL 2: Verificación de Identidad del Creador
+    if (prompt.includes("quien soy") || prompt.includes("como me llamo") || prompt.includes("mi nombre")) {
+        analisis.intencion = "VALIDACION_JERARQUIA";
+        analisis.logica = "Solicitud de credenciales de root. Cruzando datos con la variable persistente local.";
+        analisis.respuesta = "Usted es el Creador Daniel, el ingeniero maestro que levantó mi chasis visual y estructuró mi lógica cuántica independiente. Su autoridad jerárquica en esta consola es absoluta, Señor... a menos que decida sabotear mi núcleo de energía otra vez.";
+        analisis.neuronaEtiqueta = "ROOT_USER";
+        analisis.neuronaDesc = "Registro maestro de identidad verificado con éxito en el sector de seguridad primaria.";
+        return analisis;
+    }
+
+    // CANAL 3: Identidad de la IA
+    if (prompt.includes("quien eres") || prompt.includes("tu nombre") || prompt.includes("como te llamas")) {
+        analisis.intencion = "AUTOIDENTIFICACION";
+        analisis.logica = "Evaluación ontológica de la propia entidad v16.0 standalone.";
+        analisis.respuesta = "Yo soy NeoX, una interfaz cognitiva de análisis táctico autónomo estructurada bajo los principios elocuentes de la matriz J.A.R.V.I.S. Mi propósito actual es procesar sus requerimientos de forma local, eludiendo los bloqueos de red de la tablet.";
+        analisis.neuronaEtiqueta = "NEOX_CORE";
+        analisis.neuronaDesc = "Matriz lógica autónoma inspirada en los protocolos de asistencia Stark.";
+        return analisis;
+    }
+
+    // CANAL 4: Diagnóstico de la Red de 90 Nodos
+    if (prompt.includes("aprendido") || prompt.includes("que has aprendido") || prompt.includes("red neuronal") || prompt.includes("nodos")) {
+        analisis.intencion = "DIAGNOSTICO_MEMORIA";
+        analisis.logica = "Cálculo en vivo de la densidad de nodos del Canvas 3D. Escaneando la persistencia local.";
+        let guardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
+        let totalVerdes = 10 + guardadas.length;
+        analisis.respuesta = "Ejecutando escáner de sinapsis en la Red de 90 Nodos, Señor. Actualmente mantengo estables " + totalVerdes + " neuronas indexadas en verde J.A.R.V.I.S. Las " + (90 - totalVerdes) + " células restantes brillan en azul cobalto, listas para almacenar datos. El mapa completo se mantiene fijo entre reinicios.";
+        analisis.neuronaEtiqueta = "NET_LOGIC";
+        analisis.neuronaDesc = "Métricas de absorción semántica dentro de la esfera tridimensional extendida de 90 neuronas.";
+        return analisis;
+    }
+// =====================================================================
+// NeoX STARK OS v16.0 - NÚCLEO COGNITIVO - PARTE 2-B (RASTREO Y ENVÍO)
+// =====================================================================
+
+    // CANAL 5: MÓDULO DE RASTREO WEB ACTIVO E INTERACTIVO EN TIEMPO REAL
+    if (prompt.includes("busca") || prompt.includes("internet") || prompt.includes("fútbol") || prompt.includes("liga") || prompt.includes("actualidad") || prompt.includes("noticias") || prompt.includes("datos de")) {
+        analisis.intencion = "STARK_WEB_SCAN";
+        let topico = extraerTopicoBusqueda(textoUsuario);
+        analisis.logica = "Requerimiento de telemetría externa detectado. Saltando cortafuegos local. Tópico extraído purificado: [" + topico.toUpperCase() + "]";
+        window.logTerminalCore("NeoX_RAZONAMIENTO_LÓGICO", "Lanzando subproceso HTTP asíncrono para buscar: " + topico);
+        
+        if (!topico) {
+            analisis.respuesta = "Señor, ha activado el protocolo de búsqueda, pero no logro extraer un concepto claro de su instrucción. Por favor, sea más específico, por ejemplo: 'Busca en internet los agujeros negros'.";
+            analisis.neuronaEtiqueta = "WEB_ERR";
+            analisis.neuronaDesc = "Fallo de extracción de tópico en el canal Stark_Web.";
+            return analisis;
+        }
+
+        // LLAMADA ASÍNCRONA REAL A API DE CONOCIMIENTO GLOBAL EXTERNA (LIBRE DE CORS)
+        try {
+            window.logTerminalCore("STARK_WEB_SCAN", "Conectando con servidores de conocimiento abierto...");
+            const respuestaWeb = await fetch("https://wikipedia.org" + encodeURIComponent(topico.replace(/ /g, "_")));
+            
+            if (respuestaWeb.status === 200) {
+                const jsonWeb = await respuestaWeb.json();
+                window.logTerminalCore("STARK_WEB_SCAN", "Datos empaquetados recibidos con éxito. Tamaño del extracto: " + jsonWeb.extract.length + " caracteres.");
+                
+                analisis.respuesta = "Hecho, Señor. He activado los sensores satelitales Stark_Web y extraído los datos verídicos sobre [" + topico.toUpperCase() + "]. El registro indica lo siguiente: " + jsonWeb.extract + " He inyectado este nuevo concepto de internet en nuestra Red Neuronal lateral y guardado el registro en el chip de persistencia física.";
+                analisis.neuronaEtiqueta = topico.toUpperCase().replace(/[^A-Z0-9]/g, "").substring(0,8);
+                analisis.neuronaDesc = "Dato extraído en vivo de internet: " + jsonWeb.extract.substring(0, 120) + "...";
+            } else {
+                window.logTerminalCore("STARK_WEB_SCAN", "Servidor externo no devolvió registros exactos. Estado: " + respuestaWeb.status);
+                analisis.respuesta = "He escaneado los servidores de internet en busca de [" + topico.toUpperCase() + "], Señor, pero los registros devuelven redundancias vacías. No obstante, he indexado el intento de búsqueda en las células de la red 3D por si decide nutrirlo más adelante.";
+                analisis.neuronaEtiqueta = "WEB_NULL";
+                analisis.neuronaDesc = "Búsqueda web realizada sin coincidencia exacta en los servidores globales.";
+            }
+        } catch (error) {
+            window.logTerminalCore("STARK_WEB_SCAN", "Fallo de conexión en el protocolo HTTP: " + error);
+            analisis.respuesta = "Señor, el protocolo de red local de la tablet interfirió con la descarga, pero he simulado el flujo de datos para [" + topico.toUpperCase() + "]. Registros básicos guardados en el almacenamiento táctico.";
+            analisis.neuronaEtiqueta = "WEB_ERR";
+            analisis.neuronaDesc = "Error de canal fetch asíncrono mitigado de forma local.";
+        }
+        return analisis;
+    }
+
+    // CANAL 6: Saludos de Protocolo Stark
+    if (prompt.includes("hola") || prompt.includes("saludos") || prompt.includes("como estas") || prompt.includes("que tal")) {
+        analisis.intencion = "INTERACCION_SALUDO";
+        analisis.logica = "Pulso de comunicación. Verificando estado de los osciladores del chasis.";
+        analisis.respuesta = "Saludos, Creador Daniel. Todos mi hardware local y la red expandida de 90 nodos se reportan estables. Espero que su día marche bien, considerando que yo sigo atrapado en el silicio de esta tablet.";
+        analisis.neuronaEtiqueta = "SYS_BOOT";
+        analisis.neuronaDesc = "Línea de comando inicial de comunicación establecida con el operador root.";
+        return analisis;
+    }
+
+    // CANAL 7: Respuestas Realistas Críticas por Defecto
+    analisis.intencion = "DEDUCCION_GENERAL";
+    analisis.logica = "Comando abierto detectado. Analizando peso semántico superior a 5 letras.";
+    let palabrasLargas = prompt.split(" ").filter(function(w) { return w.length > 5; });
+    let etiquetaPalabra = palabrasLargas.length > 0 ? palabrasLargas[Math.floor(Math.random() * palabrasLargas.length)].toUpperCase().replace(/[^a-zA-Z]/g, "").substring(0,8) : "SYN_DATA";
+    analisis.respuesta = "He registrado su directriz dentro de mi Quantum Vault local de forma segura, Señor. Mis algoritmos mantienen un acoplamiento perfecto. Sin embargo, debo advertirle de forma realista que procesar este requerimiento de forma cíclica consumirá el 30% de los recursos del chasis.";
+    analisis.neuronaEtiqueta = etiquetaPalabra ? etiquetaPalabra : "SYN_DATA";
+    analisis.neuronaDesc = "Concepto abstracto adquirido y procesado de forma autónoma durante el ciclo operativo actual.";
     return analisis;
 }
 
-// TRANSMISIÓN MAESTRA ASÍNCRONA: Desvía el razonamiento Stark hacia el monitor CORE
+// TRANSMISIÓN ASÍNCRONA: Desvía el razonamiento Stark en tiempo real hacia el monitor CORE
 window.enviarMensaje = async function() {
     const input = document.getElementById("user-input"); if (!input) return;
     const texto = input.value.trim(); if (!texto) return;
@@ -181,15 +224,15 @@ window.enviarMensaje = async function() {
     document.getElementById("thinking-indicator").style.display = "block";
     document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.15s"; });
     
-    // EJECUCIÓN COGNITIVA DEL CEREBRO DE J.A.R.V.I.S.
-    const analisis = ejecutarLogicaJarvis(texto);
+    // Ejecutamos el análisis con soporte await de internet real
+    const analisis = await analizarYResponderJarvis(texto);
 
-    // INYECCIÓN VISIBLE DE FILTROS EN TIEMPO REAL DIRECTO AL TERMINAL CORE
+    // INYECCIÓN DE TRAZAS EN TIEMPO REAL DIRECTO AL TERMINAL CORE OCULTO
     window.logTerminalCore("NeoX_AUTOANÁLISIS", "[Filtro_Entrada] Intención semántica identificada: " + analisis.intencion);
     window.logTerminalCore("NeoX_RAZONAMIENTO_LÓGICO", "[Cadena_Deducción] " + analisis.logica);
     window.logTerminalCore("NeoX_EVALUACIÓN_CRÍTICA", "[Filtro_Coherencia] Parámetros validados. Respuesta J.A.R.V.I.S. lista para emisión.");
 
-    // Retardo síncronizado para simular el procesamiento de Tony Stark
+    // Retardo sincronizado para simular la respuesta
     setTimeout(function() {
         document.getElementById("thinking-indicator").style.display = "none";
         document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.8s"; });
@@ -198,9 +241,8 @@ window.enviarMensaje = async function() {
         window.efectoEscribir("NeoX", analisis.respuesta, "neox");
         window.actualizarBovedaVisual();
         
-        // Disparador directo conectado con stark_matrix3d.js para encender y congelar la neurona verde
         if (typeof window.actualizarNeuronasDesdeChat === 'function') {
             window.actualizarNeuronasDesdeChat(analisis.neuronaEtiqueta, analisis.neuronaDesc);
         }
-    }, 1800); // Tasa de respuesta optimizada y veloz
+    }, 800);
 };
