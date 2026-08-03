@@ -1,11 +1,11 @@
 // =====================================================================
-// NeoX COGNITIVE OS v14.5 - MOTOR GRÁFICO STARK 3D - PARTE 1 DE 2
+// NeoX STARK OS v16.0 - MOTOR GRÁFICO CON PERSISTENCIA - PARTE 1 DE 2
 // =====================================================================
 
 const canvas = document.getElementById("neuralNet");
 const ctx = canvas ? canvas.getContext("2d") : null;
 window.nodos = [];
-const totalNodos = 90; // DENSIDAD EXPANSIBLE STARK: 90 NEURONAS TOTALES
+const totalNodos = 90; // Densidad expandida de 90 neuronas operativas
 
 let angY = 0.003, angX = 0.001;
 let isDraggingNetwork = false;
@@ -13,7 +13,7 @@ let previousMousePosition = { x: 0, y: 0 };
 let fov = 130;
 let seleccionadoIndex = null;
 
-let labelsBase = ["NeoX_Core", "JARVIS_Matrix", "Quantum_Vault", "Memory_JSON", "Google_1.5", "Cyberpunk_UI", "User_Carlos", "Synapse_v14", "Cortex_Link", "Data_Stream"];
+let labelsBase = ["NeoX_Core", "JARVIS_Matrix", "Quantum_Vault", "Memory_JSON", "Google_1.5", "Cyberpunk_UI", "User_Daniel", "Synapse_v16", "Cortex_Link", "Data_Stream"];
 
 window.resCanvas = function() {
     if (!canvas || !canvas.parentNode) return;
@@ -23,24 +23,30 @@ window.resCanvas = function() {
 window.addEventListener('resize', window.resCanvas);
 setTimeout(window.resCanvas, 200);
 
-// Generador de la rejilla de coordenadas esféricas masivas en 3D
+// CHIP DE PERSISTENCIA CUÁNTICA: Lee los recuerdos guardados en la tablet entre reinicios
+let memoriasGuardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
+
 for (let i = 0; i < totalNodos; i++) {
     let u = Math.random(), v = Math.random();
     let theta = u * 2 * Math.PI, phi = Math.acos(2 * v - 1);
-    let r = 95; // Radio orbital extendido
+    let r = 95;
+    
+    // Si la neurona tiene un recuerdo guardado en la tablet, se restaura en su sitio exacto
+    let memoriaHistorica = memoriasGuardadas.find(function(m) { return m.index === i; });
+    
     window.nodos.push({
         x: r * Math.sin(phi) * Math.cos(theta),
         y: r * Math.sin(phi) * Math.sin(theta),
         z: r * Math.cos(phi),
-        label: i < labelsBase.length ? labelsBase[i] : null,
-        desc: i < labelsBase.length ? "Registro maestro indexado de forma correcta en sector de arranque." : null
+        label: memoriaHistorica ? memoriaHistorica.label : (i < labelsBase.length ? labelsBase[i] : null),
+        desc: memoriaHistorica ? memoriaHistorica.desc : (i < labelsBase.length ? "Registro maestro indexado de forma correcta en sector de arranque." : null)
     });
 }
 
-// CAPTURA DE ARRASTRE TÁCTIL FIABLE PARA ROTAR LA RED CON EL DEDO INMUNE A CONGELAMIENTOS
+// CAPTURA TÁCTIL MEJORADA PARA REORIENTAR LA RED 3D CON EL DEDO
 if (canvas) {
     canvas.addEventListener('mousedown', iniciarArrastreRed);
-    canvas.addEventListener('touchstart', function(e) { if(e.touches.length === 1) iniciarArrastreRed(e.touches[0]); }, { passive: true });
+    canvas.addEventListener('touchstart', function(e) { if(e.touches.length === 1) iniciarArrastreRed(e.touches); }, { passive: true });
 }
 
 function iniciarArrastreRed(e) {
@@ -53,7 +59,7 @@ function iniciarArrastreRed(e) {
 }
 
 window.addEventListener('mousemove', moverArrastreRed);
-window.addEventListener('touchmove', function(e) { if(isDraggingNetwork && e.touches.length === 1) { moverArrastreRed(e.touches[0]); } }, { passive: true });
+window.addEventListener('touchmove', function(e) { if(isDraggingNetwork && e.touches.length === 1) { moverArrastreRed(e.touches); } }, { passive: true });
 window.addEventListener('mouseup', detenerArrastreRed);
 window.addEventListener('touchend', detenerArrastreRed);
 if (canvas) canvas.addEventListener('wheel', procesarZoom);
@@ -70,7 +76,7 @@ function moverArrastreRed(e) {
     previousMousePosition = { x: currentX, y: currentY };
 }
 // =====================================================================
-// NeoX COGNITIVE OS v14.5 - MOTOR GRÁFICO STARK 3D - PARTE 2 DE 2
+// NeoX STARK OS v16.0 - MOTOR GRÁFICO CON PERSISTENCIA - PARTE 2 DE 2
 // =====================================================================
 
 function detenerArrastreRed() {
@@ -86,7 +92,7 @@ function procesarZoom(e) {
     fov = Math.max(50, Math.min(250, fov));
 }
 
-// DECODIFICADOR HUD: Abre la Ventana Táctica e inyecta la telemetría avanzada
+// DECODIFICADOR HUD: Abre la Ventana Táctica e inyecta la telemetría avanzada de 12 puntos
 function procesarClickNodo(mx, my) {
     const cx = canvas.width / 2, cy = canvas.height / 2;
     let nodoDetectado = null;
@@ -128,18 +134,34 @@ function procesarClickNodo(mx, my) {
             '<div><strong>[CARGA_MEM] :</strong> ' + load + ' %</div>' +
             '<div><strong>[ENLACE_AI] :</strong> AUTONOMOUS_MODE</div>' +
             '<div style="color:var(--cyan); margin:4px 0; border-bottom:1px dashed rgba(0,240,255,0.2);">--- REGISTRO COGNITIVO ---</div>' +
-            '<div style="font-size:0.9em; line-height:1.2; color:#fff;">' + (nodoDetectado.desc || "Bahia disponible. Lista para asentar nuevos registros semanticos en el proximo ciclo de transmision.") + '</div>';
+            '<div style="font-size:0.9em; line-height:1.2; color:#fff;">' + (nodoDetectado.desc || "Bahia disponible. Lista para asentar nuevos registros semanticos del rastreo Stark_Web.") + '</div>';
     }
 }
 
-// MUTADOR COGNITIVO EN VIVO: Transmuta neuronas azules a verdes al instante desde el Chat
+// MUTADOR Y CONGELADOR DE SINAPSIS PERSISTENTE: Guarda recuerdos en el disco duro local
 window.actualizarNeuronasDesdeChat = function(nuevaEtiqueta, nuevaDesc) {
     if (!window.nodos || window.nodos.length === 0) return;
-    let nodosVacios = window.nodos.filter(function(n) { return !n.label; });
-    let objetivo = nodosVacios.length > 0 ? nodosVacios[Math.floor(Math.random() * nodosVacios.length)] : window.nodos[Math.floor(Math.random() * window.nodos.length)];
+    
+    // Buscar todas las neuronas que siguen vacías en azul cobalto
+    let nodosVacios = [];
+    window.nodos.forEach(function(n, index) {
+        if (!n.label && index >= 10) { nodosVacios.push(index); }
+    });
+    
+    // Si no hay vacías, sobreescribir una aleatoria
+    let indexObjetivo = nodosVacios.length > 0 ? nodosVacios[Math.floor(Math.random() * nodosVacios.length)] : Math.floor(Math.random() * window.nodos.length);
+    let objetivo = window.nodos[indexObjetivo];
+    
     if (objetivo) {
         objetivo.label = nuevaEtiqueta;
         objetivo.desc = nuevaDesc;
+        
+        // Guardar el mapa de memoria física en el chip del almacenamiento local
+        let guardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
+        // Evitar duplicados del mismo índice
+        guardadas = guardadas.filter(function(m) { return m.index !== indexObjetivo; });
+        guardadas.push({ index: indexObjetivo, label: nuevaEtiqueta, desc: nuevaDesc });
+        localStorage.setItem("neox_persisted_neuronas", JSON.stringify(guardadas));
     }
 };
 
@@ -152,7 +174,7 @@ function rotar() {
     });
 }
 
-// BUCLE GRÁFICO DE ALTA FIDELIDAD (RENDICIÓN DE LOS 90 NODOS)
+// BUCLE DE RENDERIZACIÓN GRÁFICA DE 90 NODOS EN ALTA DENSIDAD
 function render() {
     if (!canvas || !ctx) return;
     if (canvas.width === 0) window.resCanvas();
@@ -161,7 +183,6 @@ function render() {
     
     const cx = canvas.width / 2, cy = canvas.height / 2;
     
-    // Trazado de líneas de sinapsis intermodulares
     ctx.strokeStyle = "rgba(0, 240, 255, 0.12)"; ctx.lineWidth = 1;
     for (let i = 0; i < window.nodos.length; i++) {
         for (let j = i + 1; j < window.nodos.length; j++) {
@@ -173,16 +194,15 @@ function render() {
         }
     }
     
-    // Pintado de alta visibilidad: 10 Verdes J.A.R.V.I.S y 80 Azul Cobalto Stark
     window.nodos.forEach(function(n, idx) {
         let e = fov / (fov + n.z), x = cx + n.x * e, y = cy + n.y * e, rd = Math.max(1, 2.8 * e), al = (fov - n.z) / (2 * fov);
         
         if (idx === seleccionadoIndex) {
             ctx.fillStyle = "var(--red)"; rd = rd * 1.5;
         } else if (n.label) {
-            ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")";
+            ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")"; // Verde J.A.R.V.I.S (Indexado / Guardado)
         } else {
-            ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.6) + ")"; 
+            ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.6) + ")"; // Azul Cobalto Eléctrico (Disponible)
         }
         
         ctx.beginPath(); ctx.arc(x, y, rd, 0, 2 * Math.PI); ctx.fill();
