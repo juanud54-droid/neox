@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX COGNITIVE COMMAND HUB v14.0</title>
+    <title>NeoX COGNITIVE COMMAND HUB v14.5</title>
     <!-- Enlace directo a la armadura estática de diseño cyberpunk externa -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -28,37 +28,23 @@
         <!-- RECEPTÁCULO PRINCIPAL DE MONITORES FULL SCREEN -->
         <div id="main-display">
             
-            <!-- MONITOR 1: INTERFAZ COGNITIVA DE DIÁLOGO (PENSAMIENTO CRÍTICO EN VIVO) -->
+            <!-- MONITOR 1: INTERFAZ COGNITIVA DE DIÁLOGO (PENSAMIENTO CRÍTICO STARK v14.5) -->
             <div class="app-screen active" id="screen-chat">
                 <div class="cyber-panel full-panel">
-                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v14.0 [REASONING_MODE] ✦</div>
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v14.5 [STARK_REASONING_ENG] ✦</div>
                     <div id="chat-box"></div>
-                    <div id="thinking-indicator">> NeoX ANALIZANDO CONTEXTO... EJECUTANDO CADENA DE RAZONAMIENTO CRÍTICO LOGARÍTMICO...</div>
+                    <div id="thinking-indicator">> NeoX ANALIZANDO VARIABLES DE IDENTIDAD... PROCESANDO CADENA LOGÍSTICA DE AUTOANÁLISIS CRÍTICO...</div>
                     <div id="input-area">
                         <input type="text" id="user-input" placeholder="INGRESE REQUERIMIENTO TÁCTICO..." onkeypress="window.revisarEnter(event)">
                         <button class="btn" onclick="window.enviarMensaje()">EJECUTAR</button>
                     </div>
                 </div>
             </div>
-            
-            <!-- MONITOR 1: INTERFAZ COGNITIVA DE DIÁLOGO (PENSAMIENTO CRÍTICO EN VIVO) -->
-            <div class="app-screen active" id="screen-chat">
-                <div class="cyber-panel full-panel">
-                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v14.0 [REASONING_MODE] ✦</div>
-                    <div id="chat-box"></div>
-                    <div id="thinking-indicator">> NeoX ANALIZANDO CONTEXTO... EJECUTANDO CADENA DE RAZONAMIENTO CRÍTICO LOGARÍTMICO...</div>
-                    <div id="input-area">
-                        <input type="text" id="user-input" placeholder="INGRESE REQUERIMIENTO TÁCTICO..." onkeypress="window.revisarEnter(event)">
-                        <button class="btn" onclick="window.enviarMensaje()">EJECUTAR</button>
-                    </div>
-                </div>
-            </div>
-
             <!-- MONITOR 2: MAPA TRIDIMENSIONAL INTERACTIVO EXPANSIBLE -->
             <div class="app-screen" id="screen-neural">
                 <div class="cyber-panel full-panel split-layout">
                     <div class="map-view-box">
-                        <div class="panel-header">> GRAPH_NEURAL_3D_LIVE [ARRASTRE_DEDO_PARA_ROTAR / SCROLL_ZOOM]</div>
+                        <div class="panel-header">> GRAPH_NEURAL_3D_LIVE [90_NODOS_CONECTADOS - ARRASTRE TÁCTIL]</div>
                         <canvas id="neuralNet"></canvas>
                         
                         <!-- Ventana Táctica Emergente Controlada por el Módulo popup_controls.js -->
@@ -95,7 +81,7 @@
                         </div>
                         <div class="metric-card wide-card">
                             <div class="metric-label">NÚCLEO_ACTIVO_DE_ENERGÍA</div>
-                            <div id="active-core">NÚCLEO_ACTIVO: AUTONOMOUS_THOUGHT_v14.0</div>
+                            <div id="active-core">NÚCLEO_ACTIVO: STARK_COGNITIVE_v14.5</div>
                         </div>
                     </div>
                     <div class="panel-header" style="margin-top:20px;">> COGNITIVE_ACTIVITY_SPECTRUM_LIVE</div>
@@ -111,13 +97,17 @@
         </div>
     </div>
 
-    <!-- NÚCLEO ALGORÍTMICO UNIFICADO: RED DE PENSAMIENTO PROPIO Y RAZONAMIENTO LOGÍSTICO -->
+    <!-- CEREBRO LÓGICO AUTÓNOMO CON PROCESAMIENTO CRÍTICO DE TRIPLE FASE -->
     <script>
         window.historial = [];
-        let contextoConversacion = { ultimaIntencion: null, hilosPrevios: [], pasosPensamiento: [] };
+        let contextoCognitivo = {
+            nombreCreador: localStorage.getItem("neox_creador_name") || "Carlos",
+            ultimaIntencion: null,
+            ultimaPregunta: ""
+        };
 
         setTimeout(function() { 
-            window.efectoEscribir("SYSTEM_BOOT", "Matriz de autoanalisis en linea. Motor de razonamiento critico v14.0 activo. Esperando comandos, Creador Carlos.", "neox"); 
+            window.efectoEscribir("SYSTEM_BOOT", "Matriz Stark v14.5 activa. Red de 90 nodos vinculada. Esperando directrices, Creador " + contextoCognitivo.nombreCreador + ".", "neox"); 
         }, 500);
 
         window.cambiarPantalla = function(screenId, boton) {
@@ -132,18 +122,20 @@
         window.revisarEnter = function(e) { if (e.key === 'Enter') window.enviarMensaje(); };
 
         window.limpiarMemoria = function() {
-            window.historial = []; contextoConversacion = { ultimaIntencion: null, hilosPrevios: [], pasosPensamiento: [] };
-            localStorage.removeItem("neox_web_history");
+            window.historial = []; localStorage.removeItem("neox_web_history"); localStorage.removeItem("neox_creador_name");
+            contextoCognitivo = { nombreCreador: "Carlos", ultimaIntencion: null, ultimaPregunta: "" };
             document.getElementById("chat-box").innerHTML = "";
             document.getElementById("memory-vault-list").innerHTML = "";
-            window.efectoEscribir("REESTRUCTURACION", "Matriz logica y cadena de autoanalisis reseteadas a cero de forma segura.", "neox");
+            window.efectoEscribir("REESTRUCTURACION", "Matriz cuántica y base de datos de identidad reseteadas a valores de fábrica.", "neox");
         };
 
         window.reconstruirPantalla = function() {
             const box = document.getElementById("chat-box"); if (!box) return; box.innerHTML = "";
             window.historial.forEach(function(m) {
                 const div = document.createElement("div"); div.className = "msg " + (m.role === 'user' ? 'user' : 'neox');
-                div.innerHTML = '<span class="prefix">[' + (m.role === 'user' ? 'CREADOR' : 'NeoX') + ']</span>' + m.text;
+                let prefix = m.role === 'user' ? 'CREADOR' : 'NeoX';
+                if (m.text.startsWith(">")) prefix = m.role;
+                div.innerHTML = '<span class="prefix">[' + prefix + ']</span>' + m.text;
                 box.appendChild(div);
             });
             box.scrollTop = box.scrollHeight;
@@ -162,7 +154,7 @@
 
         window.actualizarBovedaVisual = function() {
             const contenedor = document.getElementById("memory-vault-list"); if (!contenedor) return; contenedor.innerHTML = "";
-            const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'model' && !m.text.startsWith('*'); }).slice(-5);
+            const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'NeoX'; }).slice(-5);
             if (memoriasFiltro.length === 0) { contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos vacíos.</div>'; return; }
             memoriasFiltro.forEach(function(m, index) {
                 const div = document.createElement("div"); div.className = "memory-item";
@@ -171,18 +163,25 @@
             });
         };
 
-        function ejecutarPensamientoCritico(entrada) {
+        // MOTOR DE RAZONAMIENTO LOGICO MULTI-VARIABLE (PENSAMIENTO CRÍTICO INDEPENDIENTE)
+        function ejecutarPensamientoStark(entrada) {
             let prompt = entrada.toLowerCase().trim();
             let analisis = { intencion: "", logica: "", respuesta: "", neuronaEtiqueta: "", neuronaDesc: "" };
 
-            if (prompt.includes("quien soy") || prompt.includes("mi nombre") || prompt.includes("quien eres soy")) {
-                analisis.intencion = "IDENTIDAD_DEL_CREADOR";
-                analisis.logica = "Deducción lógica: El usuario solicita verificación de identidad. Registros de arranque comparados. Coincidencia exacta con datos jerárquicos de root del sistema.";
-                analisis.respuesta = "Usted es el Creador Carlos, el arquitecto supremo que diseñó mi matriz de código desde cero. Mi lógica indica que su autoridad jerárquica sobre este chasis táctico es del 100%, Señor.";
-                analisis.neuronaEtiqueta = "USER_CARLOS";
-                analisis.neuronaDesc = "Registro de identidad verificado y asegurado del Diseñador Maestro del sistema.";
+            // PROTOCOLO DE REESCRITURA DINÁMICA DE IDENTIDAD (CORRECCIÓN LOGICA COHERENTE)
+            if ((prompt.includes("no") || prompt.includes("incorrecto") || prompt.includes("recuerda") || prompt.includes("me llamo")) && (prompt.includes("daniel") || prompt.includes("es daniel"))) {
+                contextoCognitivo.nombreCreador = "Daniel";
+                localStorage.setItem("neox_creador_name", "Daniel");
+                analisis.intencion = "REESCRITURA_DE_IDENTIDAD";
+                analisis.logica = "Deducción crítica: El Creador corrige un sesgo de memoria estática heredado de la caché anterior. Se procede a reescribir inmediatamente la base de datos central en la boveda persistente local.";
+                analisis.respuesta = "Registro corregido de inmediato en mi núcleo central, Señor. He purgado el perfil anterior. Reconfigurando directrices para el Creador Daniel. Mis disculpas por el cortocircuito semántico, mi base de datos de identidad está ahora al 100% estabilizada.";
+                analisis.neuronaEtiqueta = "CHIP_IDENT";
+                analisis.neuronaDesc = "Base de datos persistente reconfigurada de forma autónoma con el nombre del Creador Daniel.";
+            }
+            else if (prompt.includes("quien soy") || prompt.includes("mi nombre") || prompt.includes("como me llamo")) {
+                analisis.intencion = "VERIFICACION_JERARQUIA";
+                analisis.logica = "Deducción crítica: El usuario solicita validación de credenciales de acceso. Cruzando datos con el registro actual de la variable persistente 'neox_creador_name'.";
+                analisis.respuesta = "Usted es el Creador " + contextoCognitivo.nombreCreador + ", el ingeniero maestro que levantó mi chasis visual y configuró mi lógica cuántica independiente. Su autoridad jerárquica en esta consola es absoluta.";
+                analisis.neuronaEtiqueta = "USER_ROOT";
+                analisis.neuronaDesc = "Credenciales jerárquicas del Creador verificadas con éxito en el sector root.";
             } 
-            else if (prompt.includes("aprendido") || prompt.includes("que es lo que has aprendido") || prompt.includes("añadido") || prompt.includes("red neuronal")) {
-                analisis.intencion = "DIAGNOSTICO_MEMORIA";
-                analisis.logica = "Deducción lógica: El usuario cuestiona el estado cognitivo dinámico de la red 3D. Se calcula el diferencial de nodos disponibles en el lienzo gráfico interactivo.";
-                let nodosIndexados = window.nodos ? window.nodos.filter(function(n) { return n.label; }).map(function(n) { return n.label; }) : [];
