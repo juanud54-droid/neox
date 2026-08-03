@@ -97,9 +97,27 @@
         </div>
     </div>
 
-    <!-- ENLACES DE ARRANQUE MODULAR DE ALTA COMPATIBILIDAD CON FILTRO ANTI-CACHÉ -->
-    <script src="stark_brain.js?v=14.5"></script>
-    <script src="stark_matrix3d.js?v=14.5"></script>
-    <script src="popup_controls.js?v=14.5"></script>
+        <!-- CORRECCIÓN DE ARRANQUE STARK: El motor 3D inicializa primero las variables antes de la red de la IA -->
+    <script src="stark_matrix3d.js?v=15.0"></script>
+    <script src="stark_brain.js?v=15.0"></script>
+    <script src="popup_controls.js?v=15.0"></script>
+
+    <!-- INYECTOR MAESTRO DE IDENTIDAD PERSISTENTE (Establece el rango del Creador Daniel de forma absoluta) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            localStorage.setItem("neox_creador_name", "Daniel");
+            if (window.contextoCognitivo) {
+                window.contextoCognitivo.nombreCreador = "Daniel";
+            }
+            // Forzar el rediseño elástico del Canvas 3D al encender el sistema
+            if (typeof window.resCanvas === 'function') {
+                setTimeout(window.resCanvas, 100);
+            }
+        });
+    </script>
+    
+</body>
+</html>
+
 </body>
 </html>
