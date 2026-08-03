@@ -432,19 +432,23 @@
             canvas.addEventListener('touchstart', function(e) { if(e.touches.length === 1) iniciarArrastreRed(e.touches); }, { passive: true });
         }
 
-        function iniciarArrastreRed(e) {
+                function iniciarArrastreRed(e) {
             isDraggingNetwork = true;
             const rect = canvas.getBoundingClientRect();
-            let mx = e.clientX - rect.left;
-            let my = e.clientY - rect.top;
+            // Mapeo preciso: Si detecta dedo en tablet, lee el primer toque; si no, lee el ratón
+            const punto = e.touches ? e.touches[0] : e;
+            
+            let mx = punto.clientX - rect.left;
+            let my = punto.clientY - rect.top;
             if (isNaN(mx) || isNaN(my)) { mx = canvas.width / 2; my = canvas.height / 2; }
+            
             previousMousePosition = { x: mx, y: my };
             procesarClickNodo(mx, my);
         }
 
         window.addEventListener('mousemove', moverArrastreRed);
         window.addEventListener('touchmove', function(e) { 
-            if (isDraggingNetwork && e.touches.length === 1) { moverArrastreRed(e.touches); } 
+            if (isDraggingNetwork && e.touches.length === 1) { moverArrastreRed(e); } 
         }, { passive: true });
 
         window.addEventListener('mouseup', detenerArrastreRed);
@@ -454,20 +458,24 @@
         function moverArrastreRed(e) {
             if (!isDraggingNetwork) return;
             const rect = canvas.getBoundingClientRect();
-            let currentX = e.clientX - rect.left;
-            let currentY = e.clientY - rect.top;
+            const punto = e.touches ? e.touches[0] : e;
             
-            // ESCUDO ISNAN RADICAL: Cancela el ciclo si los datos numéricos de la tablet se rompen
-            if (isNaN(currentX) || isNaN(currentY) || Math.abs(currentX) > 4000 || Math.abs(currentY) > 4000) return;
+            let currentX = punto.clientX - rect.left;
+            let currentY = punto.clientY - rect.top;
+            
+            // ESCUDO DE PROTECCIÓN CONTRA DESAPARICIONES ABSOLUTO
+            if (isNaN(currentX) || isNaN(currentY) || Math.abs(currentX) > 5000 || Math.abs(currentY) > 5000) return;
             
             let deltaX = currentX - previousMousePosition.x;
             let deltaY = currentY - previousMousePosition.y;
             
-            angY = Math.max(-0.05, Math.min(0.05, deltaX * 0.003));
-            angX = Math.max(-0.05, Math.min(0.05, deltaY * 0.003));
+            // Modificador Stark de velocidad orbital fluida
+            angY = deltaX * 0.005;
+            angX = deltaY * 0.005;
             
             previousMousePosition = { x: currentX, y: currentY };
         }
+
 // =====================================================================
 // NeoX STARK OS v17.0 - MOTOR GRÁFICO 3D BLINDADO - PARTE 3-B (HUD Y CONTROLES)
 // =====================================================================
