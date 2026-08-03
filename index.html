@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX NATIVE OS v17.0</title>
+    <title>NeoX INTEGRATED NATIVE OS v17.5</title>
     <!-- Estilos Cyberpunk Unificados e Inmunes a Fallos de Carga en la App Nativa -->
     <style>
         :root { --cyan: #00f0ff; --green: #00ff66; --red: #ff3333; --bg: #010409; --panel: rgba(6, 16, 30, 0.9); }
@@ -54,6 +54,7 @@
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
     </style>
 </head>
+
 <body>
     <div id="hud-layout">
         <!-- SIDEBAR TÁCTICA DE ICONOS DE CONFIGURACIÓN NATIVA -->
@@ -81,7 +82,7 @@
             <!-- PANTALLA 1: CONTROLADORA DEL CHAT COGNITIVO -->
             <div class="app-screen active" id="screen-chat">
                 <div class="cyber-panel full-panel">
-                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v17.0 [NATIVE_STARK] ✦</div>
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v17.5 [NATIVE_STARK] ✦</div>
                     <div id="chat-box"></div>
                     <div id="thinking-indicator">> NeoX ANALIZANDO CADENA DE RAZONAMIENTO CRÍTICO LOCAL...</div>
                     <div id="input-area">
@@ -138,13 +139,13 @@
             <div class="app-screen" id="screen-core">
                 <div class="cyber-panel full-panel" style="background:#000; border-color:var(--green);">
                     <div class="panel-header" style="color:var(--green); border-bottom-color:var(--green);">> NeoX_INTERNAL_REASONING_LOG_STREAM</div>
-                    <div id="terminal-stream-log" style="flex:1; overflow-y:auto; font-family:monospace; font-size:0.85em; color:var(--green); padding:10px; line-height:1.5; white-space:pre-wrap;">[SYSTEM_INIT] Consolas de telemetria unificadas en espera...</div>
+                    <div id="terminal-stream-log" style="flex:1; overflow-y:auto; font-family:monospace; font-size:0.85em; color:var(--green); padding:10px; line-height:1.5; white-space:pre-wrap;">[SYSTEM_INIT] Consolas de telemetría unificadas en espera...</div>
                 </div>
             </div>
         </div>
     </div>
     <!-- ===================================================================== -->
-    <!-- NeoX STARK OS v17.0 - NÚCLEO DE INTELIGENCIA COGNITIVA - PARTE 2-A      -->
+    <!-- NeoX STARK OS v17.5 - NÚCLEO DE INTELIGENCIA COGNITIVA - PARTE 2-A     -->
     <!-- ===================================================================== -->
     <script>
         window.historial = [];
@@ -153,9 +154,9 @@
             ultimaIntencion: null,
             ultimaPregunta: ""
         };
-        let bootEjecutado = false; // Compuerta lógica que anula la duplicación del saludo
+        let bootEjecutado = false; // Compuerta de seguridad anti-duplicación
 
-        // Protocolo de encendido unificado J.A.R.V.I.S. inmune a duplicaciones
+        // Protocolo de encendido unificado J.A.R.V.I.S. sin dobles mensajes
         document.addEventListener("DOMContentLoaded", function() {
             localStorage.setItem("neox_creador_name", "Daniel");
             if (!bootEjecutado) {
@@ -166,7 +167,7 @@
             }
         });
 
-        // CONMUTADOR GENERAL INTERACTIVO DE MONITORES FULL SCREEN
+        // CONMUTADOR GENERAL INTERACTIVO DE PANTALLAS FULL SCREEN
         window.cambiarPantalla = function(screenId, boton) {
             document.querySelectorAll('.app-screen').forEach(function(s) { s.classList.remove('active'); });
             document.querySelectorAll('.side-icon-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -245,49 +246,6 @@
                 .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, "")
                 .trim();
         }
-        // =====================================================================
-        // NeoX STARK OS v17.0 - NÚCLEO COGNITIVO JARVIS - PARTE 2-B.1 (CANALES)
-        // =====================================================================
-
-        async function analizarYResponderJarvis(textoUsuario) {
-            let prompt = textoUsuario.toLowerCase().trim();
-            let analisis = { intencion: "DEDUCCION_GENERAL", logica: "", respuesta: "", neuronaEtiqueta: "SYN_DATA", neuronaDesc: "" };
-
-            // CANAL 1: Identidad Fija del Creador (Aniquilación del cortocircuito de Carlos)
-            if (prompt.includes("quien soy") || prompt.includes("como me llamo") || prompt.includes("mi nombre")) {
-                analisis.intencion = "VALIDACION_JERARQUIA";
-                analisis.logica = "Solicitud de credenciales root de acceso. Sincronizando con base de datos de identidad estricta local.";
-                analisis.respuesta = "Usted es el Creador Daniel, el ingeniero maestro que levantó mi chasis visual y estructuró mi lógica cuántica independiente. Su autoridad jerárquica en esta consola es absoluta, Señor... a menos que decida sabotear mi núcleo de energía otra vez.";
-                analisis.neuronaEtiqueta = "ROOT_USER";
-                analisis.neuronaDesc = "Registro maestro de identidad verificado con éxito en el sector de seguridad primaria.";
-                return analisis;
-            }
-
-            // CANAL 2: Identidad Ontológica de la IA
-            if (prompt.includes("quien eres") || prompt.includes("tu nombre") || prompt.includes("como te llamas")) {
-                analisis.intencion = "AUTOIDENTIFICACION";
-                analisis.logica = "Evaluación ontológica de la propia entidad v17.0 native standalone.";
-                analisis.respuesta = "Yo soy NeoX, una interfaz cognitiva de análisis táctico autónomo estructurada bajo los principios elocuentes de la matriz J.A.R.V.I.S. Mi propósito actual es procesar sus requerimientos de forma local, eludiendo los bloqueos de red de la tablet.";
-                analisis.neuronaEtiqueta = "NEOX_CORE";
-                analisis.neuronaDesc = "Matriz lógica autónoma inspirada en los protocolos de asistencia Stark.";
-                return analisis;
-            }
-
-            // CANAL 3: Diagnóstico Cuántico de la Red de 90 Nodos
-            if (prompt.includes("aprendido") || prompt.includes("que has aprendido") || prompt.includes("red neuronal") || prompt.includes("nodos")) {
-                analisis.intencion = "DIAGNOSTICO_MEMORIA";
-                analisis.logica = "Cálculo en vivo de la densidad de nodos del Canvas 3D. Escaneando la persistencia local de la tablet.";
-                let guardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
-                let totalVerdes = 10 + guardadas.length;
-                analisis.respuesta = "Ejecutando escáner de sinapsis en la Red de 90 Nodos, Señor. Actualmente mantengo estables " + totalVerdes + " neuronas indexadas en verde J.A.R.V.I.S. Las " + (90 - totalVerdes) + " células restantes brillan en azul cobalto, listas para almacenar datos. El mapa completo se mantiene fijo entre reinicios.";
-                analisis.neuronaEtiqueta = "NET_LOGIC";
-                analisis.neuronaDesc = "Métricas de absorción semántica dentro de la esfera tridimensional de 90 neuronas.";
-                return analisis;
-            }
-        // =====================================================================
-        // NeoX STARK OS v17.0 - NÚCLEO COGNITIVO - PARTE 2-B.2 (RASTREO Y ENVÍO)
-        // =====================================================================
-
             // CANAL 4: MÓDULO DE RASTREO WEB REAL DE INTERNET (INMUNE A BLOQUEOS CORS)
             if (prompt.includes("busca") || prompt.includes("internet") || prompt.includes("fútbol") || prompt.includes("liga") || prompt.includes("actualidad") || prompt.includes("noticias") || prompt.includes("datos de") || prompt.includes("sobre")) {
                 analisis.intencion = "STARK_WEB_SCAN";
@@ -305,7 +263,6 @@
 
                 try {
                     const queryUrl = "https://wikipedia.org" + encodeURIComponent(topico.replace(/ /g, "_"));
-                    // PASARELA SATELITAL GET PURA: Camufla el origen de la tablet al 100% ante los servidores externos
                     const urlProxy = "https://allorigins.win" + encodeURIComponent(queryUrl);
                     
                     const respuestaWeb = await fetch(urlProxy, { method: "GET" });
@@ -349,7 +306,7 @@
             let etiquetaPalabra = palabrasLargas.length > 0 ? palabrasLargas[Math.floor(Math.random() * palabrasLargas.length)].toUpperCase().replace(/[^a-zA-Z]/g, "").substring(0,8) : "SYN_DATA";
             analisis.respuesta = "He registrado su directriz dentro de mi Quantum Vault local de forma segura, Señor. Mis algoritmos mantienen un acoplamiento perfecto con sus requerimientos. Sin embargo, debo advertirle de forma realista que procesar este requerimiento de forma cíclica consumirá el 30% de los recursos del chasis.";
             analisis.neuronaEtiqueta = etiquetaPalabra ? etiquetaPalabra : "SYN_DATA";
-            analisis.neuronaDesc = "Concepto abstracto adquirido y procesado de forma autónoma durante el ciclo operativo actual.";
+            analisis.neuronaDesc = "Concepto abstracto adquirido y processed de forma autónoma durante el ciclo operativo actual.";
             return analisis;
         }
 
@@ -363,7 +320,6 @@
             
             const analisis = await analizarYResponderJarvis(texto);
 
-            // INYECCIÓN DE TRAZAS EN TIEMPO REAL DIRECTO AL TERMINAL CORE OCULTO
             window.logTerminalCore("NeoX_AUTOANÁLISIS", "[Filtro_Entrada] Intención semántica identificada: " + analisis.intencion);
             window.logTerminalCore("NeoX_RAZONAMIENTO_LÓGICO", "[Cadena_Deducción] " + analisis.logica);
             window.logTerminalCore("NeoX_EVALUACIÓN_CRÍTICA", "[Filtro_Coherencia] Parámetros validados de forma óptima. Emitiendo respuesta.");
@@ -383,7 +339,7 @@
         };
     </script>
     <!-- ===================================================================== -->
-    <!-- NeoX STARK OS v17.0 - MOTOR GRÁFICO 3D BLINDADO - PARTE 3-A (ÓRBITA)  -->
+    <!-- NeoX STARK OS v17.5 - MOTOR GRÁFICO 3D - PARTE 3-A (ÓRBITA Y ESCUDO)  -->
     <!-- ===================================================================== -->
     <script>
         const canvas = document.getElementById("neuralNet");
@@ -407,7 +363,7 @@
         window.addEventListener('resize', window.resCanvas);
         setTimeout(window.resCanvas, 200);
 
-        // RESTAURADOR DE PERSISTENCIA CUÁNTICA LOCAL (CHIP DE LA TABLET)
+        // RESTAURADOR DE PERSISTENCIA CUÁNTICA LOCAL
         let memoriasGuardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
 
         for (let i = 0; i < totalNodos; i++) {
@@ -426,58 +382,64 @@
             });
         }
 
-        // CAPTURA TÁCTIL CONTROLADA: Blindaje total contra desapariciones por coordenadas corruptas
+        // CAPTURA TÁCTIL INDEPENDIENTE BLINDADA PARA PC / RATÓN
         if (canvas) {
-            canvas.addEventListener('mousedown', iniciarArrastreRed);
-            canvas.addEventListener('touchstart', function(e) { if(e.touches.length === 1) iniciarArrastreRed(e.touches); }, { passive: true });
+            canvas.addEventListener('mousedown', function(e) {
+                isDraggingNetwork = true;
+                const rect = canvas.getBoundingClientRect();
+                let mx = e.clientX - rect.left;
+                let my = e.clientY - rect.top;
+                previousMousePosition = { x: mx, y: my };
+                procesarClickNodo(mx, my);
+            });
         }
 
-                function iniciarArrastreRed(e) {
-            isDraggingNetwork = true;
+        window.addEventListener('mousemove', function(e) {
+            if (!isDraggingNetwork) return;
             const rect = canvas.getBoundingClientRect();
-            // Mapeo preciso: Si detecta dedo en tablet, lee el primer toque; si no, lee el ratón
-            const punto = e.touches ? e.touches[0] : e;
+            let currentX = e.clientX - rect.left;
+            let currentY = e.clientY - rect.top;
+            if (isNaN(currentX) || isNaN(currentY) || Math.abs(currentX) > 4000 || Math.abs(currentY) > 4000) return;
             
-            let mx = punto.clientX - rect.left;
-            let my = punto.clientY - rect.top;
-            if (isNaN(mx) || isNaN(my)) { mx = canvas.width / 2; my = canvas.height / 2; }
-            
-            previousMousePosition = { x: mx, y: my };
-            procesarClickNodo(mx, my);
-        }
+            angY = (currentX - previousMousePosition.x) * 0.005;
+            angX = (currentY - previousMousePosition.y) * 0.005;
+            previousMousePosition = { x: currentX, y: currentY };
+        });
 
-        window.addEventListener('mousemove', moverArrastreRed);
-        window.addEventListener('touchmove', function(e) { 
-            if (isDraggingNetwork && e.touches.length === 1) { moverArrastreRed(e); } 
-        }, { passive: true });
+        // CAPTURA TÁCTIL EXCLUSIVA PARA TABLET / DEDO (CON BLOQUEO DE SCROLL NATIVO)
+        if (canvas) {
+            canvas.addEventListener('touchstart', function(e) {
+                if (e.touches.length !== 1) return;
+                isDraggingNetwork = true;
+                const rect = canvas.getBoundingClientRect();
+                let mx = e.touches[0].clientX - rect.left;
+                let my = e.touches[0].clientY - rect.top;
+                if (isNaN(mx) || isNaN(my)) { mx = canvas.width / 2; my = canvas.height / 2; }
+                
+                previousMousePosition = { x: mx, y: my };
+                procesarClickNodo(mx, my);
+            }, { passive: true });
+
+            canvas.addEventListener('touchmove', function(e) {
+                if (!isDraggingNetwork || e.touches.length !== 1) return;
+                const rect = canvas.getBoundingClientRect();
+                let currentX = e.touches[0].clientX - rect.left;
+                let currentY = e.touches[0].clientY - rect.top;
+                
+                // ESCUDO ISNAN CONTRA DATOS CORRUPTOS DE ANDROID
+                if (isNaN(currentX) || isNaN(currentY) || Math.abs(currentX) > 4000 || Math.abs(currentY) > 4000) return;
+                
+                angY = (currentX - previousMousePosition.x) * 0.008;
+                angX = (currentY - previousMousePosition.y) * 0.008;
+                previousMousePosition = { x: currentX, y: currentY };
+            }, { passive: true });
+        }
 
         window.addEventListener('mouseup', detenerArrastreRed);
         window.addEventListener('touchend', detenerArrastreRed);
         if (canvas) canvas.addEventListener('wheel', procesarZoom);
-
-        function moverArrastreRed(e) {
-            if (!isDraggingNetwork) return;
-            const rect = canvas.getBoundingClientRect();
-            const punto = e.touches ? e.touches[0] : e;
-            
-            let currentX = punto.clientX - rect.left;
-            let currentY = punto.clientY - rect.top;
-            
-            // ESCUDO DE PROTECCIÓN CONTRA DESAPARICIONES ABSOLUTO
-            if (isNaN(currentX) || isNaN(currentY) || Math.abs(currentX) > 5000 || Math.abs(currentY) > 5000) return;
-            
-            let deltaX = currentX - previousMousePosition.x;
-            let deltaY = currentY - previousMousePosition.y;
-            
-            // Modificador Stark de velocidad orbital fluida
-            angY = deltaX * 0.005;
-            angX = deltaY * 0.005;
-            
-            previousMousePosition = { x: currentX, y: currentY };
-        }
-
 // =====================================================================
-// NeoX STARK OS v17.0 - MOTOR GRÁFICO 3D BLINDADO - PARTE 3-B (HUD Y CONTROLES)
+// NeoX STARK OS v17.5 - MOTOR GRÁFICO 3D Y CONTROLES - PARTE 3-B FINAL
 // =====================================================================
 
         function detenerArrastreRed() {
