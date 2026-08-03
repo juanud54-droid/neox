@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX COGNITIVE OS v12.0 - CANAL DE RED SEGURO NATIVO - PARTE 1 DE 2
+// NeoX COGNITIVE OS v12.1 - CANAL DE RED BLINDADO - brain_network.js
 // =====================================================================
 
 const claves = [
@@ -12,7 +12,6 @@ const claves = [
 let idxActual = 0;
 window.historial = [];
 
-// Protocolo automático de lectura de memoria persistente de NeoX
 if (localStorage.getItem("neox_web_history")) {
     window.historial = JSON.parse(localStorage.getItem("neox_web_history"));
     setTimeout(function() {
@@ -25,7 +24,6 @@ if (localStorage.getItem("neox_web_history")) {
     }, 500);
 }
 
-// CONMUTADOR GENERAL DE PANTALLA COMPLETA DIRECTO (SIDEBAR DE ICONOS)
 window.cambiarPantalla = function(screenId, boton) {
     document.querySelectorAll('.app-screen').forEach(function(s) { s.classList.remove('active'); });
     document.querySelectorAll('.side-icon-btn').forEach(function(b) { b.classList.remove('active'); });
@@ -34,7 +32,6 @@ window.cambiarPantalla = function(screenId, boton) {
     if (pantalla) pantalla.classList.add('active');
     if (boton) boton.classList.add('active');
     
-    // Forzar el auto-escalado del Canvas 3D al conmutar monitores
     if (screenId === 'screen-neural' && typeof window.resCanvas === 'function') {
         setTimeout(window.resCanvas, 50);
     }
@@ -51,9 +48,6 @@ window.limpiarMemoria = function() {
     document.getElementById("memory-vault-list").innerHTML = "";
     window.efectoEscribir("REESTRUCTURACION", "Bancos de memoria purgados de forma segura. Listo.", "neox");
 };
-// =====================================================================
-// NeoX COGNITIVE OS v12.0 - CANAL DE RED SEGURO NATIVO - PARTE 2 DE 2
-// =====================================================================
 
 window.reconstruirPantalla = function() {
     const box = document.getElementById("chat-box");
@@ -125,12 +119,13 @@ window.enviarMensaje = async function() {
 };
 
 async function procesarPeticion(prompt) {
-    // LLAMADA PURA AL BACKEND OFICIAL DE GOOGLE GEMINI
-    const urlApi = "https://googleapis.com" + claves[idxActual];
+    const urlGemini = "https://googleapis.com" + claves[idxActual];
+    
+    // PASARELA RAW DE PRODUCCIÓN: Elude el CORS saltando las restricciones de red nativas de Google sin alterar datos
+    const urlApi = "https://allorigins.win" + encodeURIComponent(urlGemini);
     const datos = { contents: [{ parts: [{ text: prompt }] }] };
     
     try {
-        // Petición HTTP nativa directa sin proxies conflictivos
         const r = await fetch(urlApi, { 
             method: "POST", 
             headers: { "Content-Type": "application/json" }, 
@@ -142,7 +137,7 @@ async function procesarPeticion(prompt) {
         
         if (r.status === 200) {
             const json = await r.json(); 
-            const txt = json.candidates[0].content.parts[0].text; // Ajuste estructural estricto de Google
+            const txt = json.candidates[0].content.parts[0].text; // Corrección estructural estricta de la API de Google
             window.historial.push({ role: "model", text: txt });
             localStorage.setItem("neox_web_history", JSON.stringify(window.historial));
             
@@ -158,9 +153,9 @@ async function procesarPeticion(prompt) {
                 if (coreInd) coreInd.innerText = "NÚCLEO_ACTIVO: [0" + (idxActual + 1) + "]";
                 await procesarPeticion(prompt);
             } else { alert("Bancos de energia de la boveda agotados."); }
-        } else { alert("Error de respuesta del núcleo: " + r.status); }
+        } else { alert("Error de pasarela: " + r.status); }
     } catch (err) {
         document.getElementById("thinking-indicator").style.display = "none";
-        alert("Fallo critico de enlace nativo: " + err);
+        alert("Desviacion de red: " + err);
     }
 }
