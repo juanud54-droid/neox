@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX STARK OS v16.0 - NÚCLEO COGNITIVO CON RASTREO REAL - PARTE 1 DE 2
+// NeoX STARK OS v16.5 - NÚCLEO COGNITIVO J.A.R.V.I.S. - PARTE 1 DE 2
 // =====================================================================
 
 window.historial = [];
@@ -9,7 +9,7 @@ window.contextoCognitivo = {
     ultimaPregunta: ""
 };
 
-// Protocolo de inicialización y saludo sofisticado de J.A.R.V.I.S.
+// Protocolo de encendido oficial y sofisticado de J.A.R.V.I.S.
 document.addEventListener("DOMContentLoaded", function() {
     localStorage.setItem("neox_creador_name", "Daniel");
     setTimeout(function() { 
@@ -85,18 +85,19 @@ window.logTerminalCore = function(modulo, traza) {
     const terminal = document.getElementById("terminal-stream-log");
     if (!terminal) return;
     let fecha = new Date();
-    let timestamp = "[" + fecha.toTimeString().split(" ")[0] + "] ";
+    let timestamp = "[" + fecha.toTimeString().split(" ") + "] ";
     terminal.innerHTML += timestamp + "[" + modulo + "] " + traza + "\n";
     terminal.scrollTop = terminal.scrollHeight;
 };
+
 // =====================================================================
-// NeoX STARK OS v16.0 - NÚCLEO COGNITIVO - PARTE 2-A (FILTROS Y CONTEXTO)
+// NeoX STARK OS v16.5 - NÚCLEO COGNITIVO J.A.R.V.I.S. - PARTE 2-A
 // =====================================================================
 
 // FILTRO EXTRACTOR DE TÓPICOS: Limpia la frase para quedarse con el concepto puro a buscar
 function extraerTopicoBusqueda(frase) {
     return frase
-        .replace(/(neox|jarvis|puedes|buscar|busca|en|internet|noticias|sobre|datos|de|por|favor|info|informacion|que|es|un|una|los|las)/g, "")
+        .replace(/(neox|jarvis|puedes|buscar|busca|en|internet|noticias|sobre|datos|de|por|favor|info|informacion|que|es|un|una|los|las|el)/g, "")
         .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, "")
         .trim();
 }
@@ -106,13 +107,13 @@ async function analizarYResponderJarvis(textoUsuario) {
     let prompt = textoUsuario.toLowerCase().trim();
     let analisis = { intencion: "DEDUCCION_GENERAL", logica: "", respuesta: "", neuronaEtiqueta: "SYN_DATA", neuronaDesc: "" };
 
-    // CANAL 1: Corrección de Nombre del Creador
+    // CANAL 1: Corrección del Nombre del Creador
     if ((prompt.includes("no") || prompt.includes("incorrecto") || prompt.includes("recuerda") || prompt.includes("me llamo")) && (prompt.includes("daniel") || prompt.includes("es daniel"))) {
         window.contextoCognitivo.nombreCreador = "Daniel";
         localStorage.setItem("neox_creador_name", "Daniel");
         analisis.intencion = "REESCRITURA_JERARQUICA";
         analisis.logica = "Corrección de identidad root detectada. Reconfigurando sector de arranque.";
-        analisis.respuesta = "Registro corregido de inmediato, Señor. He purgado el perfil anterior de mi base de datos central. Configurando directrices exclusivas para el Creador Daniel. Mi base de datos de identidad está ahora al 100% estabilizada.";
+        analisis.respuesta = "Registro corregido de inmediato, Señor. He purgado el perfil anterior de mi base de datos central. Configurando directrices exclusivas para el Creador Daniel. Mi base de datos de identidad está ahora al 100% de consistencia.";
         analisis.neuronaEtiqueta = "ID_DANIEL";
         analisis.neuronaDesc = "Credenciales del Creador Daniel asentadas en el chip físico de memoria persistente de la tablet.";
         return analisis;
@@ -131,7 +132,7 @@ async function analizarYResponderJarvis(textoUsuario) {
     // CANAL 3: Identidad de la IA
     if (prompt.includes("quien eres") || prompt.includes("tu nombre") || prompt.includes("como te llamas")) {
         analisis.intencion = "AUTOIDENTIFICACION";
-        analisis.logica = "Evaluación ontológica de la propia entidad v16.0 standalone.";
+        analisis.logica = "Evaluación ontológica de la propia entidad v16.5 standalone.";
         analisis.respuesta = "Yo soy NeoX, una interfaz cognitiva de análisis táctico autónomo estructurada bajo los principios elocuentes de la matriz J.A.R.V.I.S. Mi propósito actual es procesar sus requerimientos de forma local, eludiendo los bloqueos de red de la tablet.";
         analisis.neuronaEtiqueta = "NEOX_CORE";
         analisis.neuronaDesc = "Matriz lógica autónoma inspirada en los protocolos de asistencia Stark.";
@@ -141,55 +142,54 @@ async function analizarYResponderJarvis(textoUsuario) {
     // CANAL 4: Diagnóstico de la Red de 90 Nodos
     if (prompt.includes("aprendido") || prompt.includes("que has aprendido") || prompt.includes("red neuronal") || prompt.includes("nodos")) {
         analisis.intencion = "DIAGNOSTICO_MEMORIA";
-        analisis.logica = "Cálculo en vivo de la densidad de nodos del Canvas 3D. Escaneando la persistencia local.";
+        analisis.logica = "Cálculo en vivo de la densidad de nodos del Canvas 3D. Escaneando la alta persistencia local.";
         let guardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
         let totalVerdes = 10 + guardadas.length;
         analisis.respuesta = "Ejecutando escáner de sinapsis en la Red de 90 Nodos, Señor. Actualmente mantengo estables " + totalVerdes + " neuronas indexadas en verde J.A.R.V.I.S. Las " + (90 - totalVerdes) + " células restantes brillan en azul cobalto, listas para almacenar datos. El mapa completo se mantiene fijo entre reinicios.";
         analisis.neuronaEtiqueta = "NET_LOGIC";
-        analisis.neuronaDesc = "Métricas de absorción semántica dentro de la esfera tridimensional extendida de 90 neuronas.";
+        analisis.neuronaDesc = "Métricas de absorción semántica dentro de la esfera tridimensional de 90 neuronas.";
         return analisis;
     }
 // =====================================================================
-// NeoX STARK OS v16.0 - NÚCLEO COGNITIVO - PARTE 2-B (RASTREO Y ENVÍO)
+// NeoX STARK OS v16.5 - NÚCLEO COGNITIVO J.A.R.V.I.S. - PARTE 2-B
 // =====================================================================
 
-    // CANAL 5: MÓDULO DE RASTREO WEB ACTIVO E INTERACTIVO EN TIEMPO REAL
-    if (prompt.includes("busca") || prompt.includes("internet") || prompt.includes("fútbol") || prompt.includes("liga") || prompt.includes("actualidad") || prompt.includes("noticias") || prompt.includes("datos de")) {
+    // CANAL 5: ENLACE INTERACTIVO ASÍNCRONO REAL DE CONEXIÓN A INTERNET
+    if (prompt.includes("busca") || prompt.includes("internet") || prompt.includes("fútbol") || prompt.includes("liga") || prompt.includes("actualidad") || prompt.includes("noticias") || prompt.includes("datos de") || prompt.includes("sobre")) {
         analisis.intencion = "STARK_WEB_SCAN";
-        let topico = extraerTopicoBusqueda(textoUsuario);
-        analisis.logica = "Requerimiento de telemetría externa detectado. Saltando cortafuegos local. Tópico extraído purificado: [" + topico.toUpperCase() + "]";
-        window.logTerminalCore("NeoX_RAZONAMIENTO_LÓGICO", "Lanzando subproceso HTTP asíncrono para buscar: " + topico);
+        
+        let topico = typeof window.extraerTopicoBusqueda === 'function' ? window.extraerTopicoBusqueda(textoUsuario) : textoUsuario;
+        analisis.logica = "Requerimiento externo detectado. Tópico purificado: [" + topico.toUpperCase() + "]. Inicializando enlace satelital GET.";
         
         if (!topico) {
-            analisis.respuesta = "Señor, ha activado el protocolo de búsqueda, pero no logro extraer un concepto claro de su instrucción. Por favor, sea más específico, por ejemplo: 'Busca en internet los agujeros negros'.";
+            analisis.respuesta = "Señor, ha activado el protocolo de búsqueda, pero mi extractor no logra aislar un concepto limpio en su instrucción. Por favor, especifique el tópico de forma más directa.";
             analisis.neuronaEtiqueta = "WEB_ERR";
             analisis.neuronaDesc = "Fallo de extracción de tópico en el canal Stark_Web.";
             return analisis;
         }
 
-        // LLAMADA ASÍNCRONA REAL A API DE CONOCIMIENTO GLOBAL EXTERNA (LIBRE DE CORS)
-        try {
-            window.logTerminalCore("STARK_WEB_SCAN", "Conectando con servidores de conocimiento abierto...");
-            const respuestaWeb = await fetch("https://wikipedia.org" + encodeURIComponent(topico.replace(/ /g, "_")));
+        window.logTerminalCore("STARK_WEB_SCAN", "Lanzando subproceso asíncrono para buscar: " + topico);
+
+        if (typeof window.consultarInternetReal === 'function') {
+            let resultadoWeb = await window.consultarInternetReal(topico);
             
-            if (respuestaWeb.status === 200) {
-                const jsonWeb = await respuestaWeb.json();
-                window.logTerminalCore("STARK_WEB_SCAN", "Datos empaquetados recibidos con éxito. Tamaño del extracto: " + jsonWeb.extract.length + " caracteres.");
-                
-                analisis.respuesta = "Hecho, Señor. He activado los sensores satelitales Stark_Web y extraído los datos verídicos sobre [" + topico.toUpperCase() + "]. El registro indica lo siguiente: " + jsonWeb.extract + " He inyectado este nuevo concepto de internet en nuestra Red Neuronal lateral y guardado el registro en el chip de persistencia física.";
-                analisis.neuronaEtiqueta = topico.toUpperCase().replace(/[^A-Z0-9]/g, "").substring(0,8);
-                analisis.neuronaDesc = "Dato extraído en vivo de internet: " + jsonWeb.extract.substring(0, 120) + "...";
+            if (resultadoWeb && resultadoWeb.exito) {
+                window.logTerminalCore("STARK_WEB_SCAN", "Éxito en pasarela. Datos verídicos descargados correctamente.");
+                analisis.respuesta = "Hecho, Señor. He desplegado los sensores Stark_Web y recolectado la telemetría real sobre [" + topico.toUpperCase() + "]. Los registros mundiales indican lo siguiente: " + resultadoWeb.extracto + " He guardado este nuevo bloque de conocimiento en el chip físico e indexado el nodo en la red 3D.";
+                analisis.neuronaEtiqueta = resultadoWeb.titulo.replace(/[^A-Z0-9]/g, "").substring(0,8);
+                analisis.neuronaDesc = "Dato extraído en vivo de internet: " + resultadoWeb.extracto.substring(0, 120) + "...";
             } else {
-                window.logTerminalCore("STARK_WEB_SCAN", "Servidor externo no devolvió registros exactos. Estado: " + respuestaWeb.status);
-                analisis.respuesta = "He escaneado los servidores de internet en busca de [" + topico.toUpperCase() + "], Señor, pero los registros devuelven redundancias vacías. No obstante, he indexado el intento de búsqueda en las células de la red 3D por si decide nutrirlo más adelante.";
+                let motivoFallo = resultadoWeb ? resultadoWeb.motivo : "Respuesta de canal nula";
+                window.logTerminalCore("STARK_WEB_SCAN", "Fallo del servidor externo: " + motivoFallo);
+                analisis.respuesta = "He intentado rastrear [" + topico.toUpperCase() + "] en la red mundial, Señor, pero las bases de datos externas devuelven redundancias vacías en el protocolo de la tablet. He dejado un marcador en la red 3D por si decide nutrirlo manualmente.";
                 analisis.neuronaEtiqueta = "WEB_NULL";
-                analisis.neuronaDesc = "Búsqueda web realizada sin coincidencia exacta en los servidores globales.";
+                analisis.neuronaDesc = "Intento de rastreo web fallido por ausencia de registros en el servidor central.";
             }
-        } catch (error) {
-            window.logTerminalCore("STARK_WEB_SCAN", "Fallo de conexión en el protocolo HTTP: " + error);
-            analisis.respuesta = "Señor, el protocolo de red local de la tablet interfirió con la descarga, pero he simulado el flujo de datos para [" + topico.toUpperCase() + "]. Registros básicos guardados en el almacenamiento táctico.";
-            analisis.neuronaEtiqueta = "WEB_ERR";
-            analisis.neuronaDesc = "Error de canal fetch asíncrono mitigado de forma local.";
+        } else {
+            window.logTerminalCore("STARK_WEB_SCAN", "Error: El plugin stark_proxy_web.js no está cargado correctamente en el sistema.");
+            analisis.respuesta = "Señor, el módulo físico de retransmisión no responde. Por favor, compruebe que no haya interferencias en la secuencia de scripts de arranque.";
+            analisis.neuronaEtiqueta = "MOD_ERR";
+            analisis.neuronaDesc = "Error crítico de inicialización de plugins de red externos.";
         }
         return analisis;
     }
@@ -198,7 +198,7 @@ async function analizarYResponderJarvis(textoUsuario) {
     if (prompt.includes("hola") || prompt.includes("saludos") || prompt.includes("como estas") || prompt.includes("que tal")) {
         analisis.intencion = "INTERACCION_SALUDO";
         analisis.logica = "Pulso de comunicación. Verificando estado de los osciladores del chasis.";
-        analisis.respuesta = "Saludos, Creador Daniel. Todos mi hardware local y la red expandida de 90 nodos se reportan estables. Espero que su día marche bien, considerando que yo sigo atrapado en el silicio de esta tablet.";
+        analisis.respuesta = "Saludos, Creador Daniel. Todo mi hardware local y la red de 90 nodos se reportan estables. Espero que su jornada marche bien, considerando que yo sigo atrapado en el silicio de esta tablet.";
         analisis.neuronaEtiqueta = "SYS_BOOT";
         analisis.neuronaDesc = "Línea de comando inicial de comunicación establecida con el operador root.";
         return analisis;
@@ -209,13 +209,13 @@ async function analizarYResponderJarvis(textoUsuario) {
     analisis.logica = "Comando abierto detectado. Analizando peso semántico superior a 5 letras.";
     let palabrasLargas = prompt.split(" ").filter(function(w) { return w.length > 5; });
     let etiquetaPalabra = palabrasLargas.length > 0 ? palabrasLargas[Math.floor(Math.random() * palabrasLargas.length)].toUpperCase().replace(/[^a-zA-Z]/g, "").substring(0,8) : "SYN_DATA";
-    analisis.respuesta = "He registrado su directriz dentro de mi Quantum Vault local de forma segura, Señor. Mis algoritmos mantienen un acoplamiento perfecto. Sin embargo, debo advertirle de forma realista que procesar este requerimiento de forma cíclica consumirá el 30% de los recursos del chasis.";
+    analisis.respuesta = "He registrado su directriz dentro de mi Quantum Vault local de forma segura, Señor. Mis algoritmos mantienen un acoplamiento perfecto con sus requerimientos. Sin embargo, debo advertirle de forma realista que procesar este requerimiento de forma cíclica consumirá el 30% de los recursos del chasis.";
     analisis.neuronaEtiqueta = etiquetaPalabra ? etiquetaPalabra : "SYN_DATA";
     analisis.neuronaDesc = "Concepto abstracto adquirido y procesado de forma autónoma durante el ciclo operativo actual.";
     return analisis;
 }
 
-// TRANSMISIÓN ASÍNCRONA: Desvía el razonamiento Stark en tiempo real hacia el monitor CORE
+// TRANSMISIÓN ASÍNCRONA GLOBAL ENLAZADA AL BOTÓN DEL CHAT
 window.enviarMensaje = async function() {
     const input = document.getElementById("user-input"); if (!input) return;
     const texto = input.value.trim(); if (!texto) return;
@@ -224,15 +224,14 @@ window.enviarMensaje = async function() {
     document.getElementById("thinking-indicator").style.display = "block";
     document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.15s"; });
     
-    // Ejecutamos el análisis con soporte await de internet real
+    // Esperamos los datos reales de internet antes de pintar la respuesta
     const analisis = await analizarYResponderJarvis(texto);
 
-    // INYECCIÓN DE TRAZAS EN TIEMPO REAL DIRECTO AL TERMINAL CORE OCULTO
+    // INYECCIÓN DE TRAZAS EN TIEMPO REAL DIRECTO AL TERMINAL CORE
     window.logTerminalCore("NeoX_AUTOANÁLISIS", "[Filtro_Entrada] Intención semántica identificada: " + analisis.intencion);
     window.logTerminalCore("NeoX_RAZONAMIENTO_LÓGICO", "[Cadena_Deducción] " + analisis.logica);
-    window.logTerminalCore("NeoX_EVALUACIÓN_CRÍTICA", "[Filtro_Coherencia] Parámetros validados. Respuesta J.A.R.V.I.S. lista para emisión.");
+    window.logTerminalCore("NeoX_EVALUACIÓN_CRÍTICA", "[Filtro_Coherencia] Parámetros validados de forma óptima. Emitiendo respuesta.");
 
-    // Retardo sincronizado para simular la respuesta
     setTimeout(function() {
         document.getElementById("thinking-indicator").style.display = "none";
         document.querySelectorAll(".bar").forEach(function(b) { b.style.animationDuration = "0.8s"; });
