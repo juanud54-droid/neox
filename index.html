@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX COGNITIVE COMMAND HUB v12.0</title>
-    <!-- Enlace a la armadura de diseño cyberpunk externa -->
+    <title>NeoX INTEGRATED TACTICAL OS v12.7</title>
+    <!-- Enlace a la hoja de diseño externa independiente -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="hud-layout">
-        <!-- BARRA LATERAL ULTRA DELGADA (SIDEBAR TÁCTICA DE ICONOS) -->
+        <!-- BARRA LATERAL ULTRA DELGADA (SIDEBAR TÁCTICA DE BOTONES) -->
         <div id="sidebar-icons">
             <button class="side-icon-btn active" onclick="window.cambiarPantalla('screen-chat', this)">
                 <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
@@ -28,18 +28,21 @@
         <!-- RECEPTÁCULO PRINCIPAL DE MONITORES FULL SCREEN -->
         <div id="main-display">
             
-            <!-- MONITOR 1: INTERFAZ COGNITIVA DE DIÁLOGO (CHAT) -->
+            <!-- MONITOR 1: CENTRO DE MANDO (CHAT INTEGRADO BLINDADO) -->
             <div class="app-screen active" id="screen-chat">
                 <div class="cyber-panel full-panel">
-                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v12.0 ✦</div>
-                    <div id="chat-box"></div>
-                    <div id="thinking-indicator">> NeoX PENSANDO: REALIZANDO SINAPSIS DIRECCIONAL NATIVA...</div>
-                    <div id="input-area">
-                        <input type="text" id="user-input" placeholder="INGRESE REQUERIMIENTO TÁCTICO..." onkeypress="window.revisarEnter(event)">
-                        <button class="btn" onclick="window.enviarMensaje()">EJECUTAR</button>
-                    </div>
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v12.7 ✦</div>
+                    
+                    <!-- CONSOLA INTERACTIVA EMBEBIDA: Salta el CORS local de forma absoluta al correr en servidores de Google -->
+                    <iframe 
+                        src="https://google.com" 
+                        style="width: 100%; flex: 1; border: 1px solid rgba(0, 240, 255, 0.2); background: rgba(1, 4, 9, 0.95);"
+                        allow="clipboard-write; clipboard-read;"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+                    </iframe>
                 </div>
             </div>
+
             <!-- MONITOR 2: MAPA TRIDIMENSIONAL INTERACTIVO EXPANSIBLE -->
             <div class="app-screen" id="screen-neural">
                 <div class="cyber-panel full-panel split-layout">
@@ -47,7 +50,7 @@
                         <div class="panel-header">> GRAPH_NEURAL_3D_LIVE [ARRASTRE_DEDO_PARA_ROTAR / SCROLL_ZOOM]</div>
                         <canvas id="neuralNet"></canvas>
                         
-                        <!-- VENTANA HOLOGRÁFICA FLOTANTE, ARRASTRABLE, ESCALABLE Y CERRABLE -->
+                        <!-- Ventana Táctica Emergente Controlada por el Módulo popup_controls.js -->
                         <div id="hologram-window" class="draggable-popup">
                             <div class="popup-header" id="popup-drag-zone">
                                 <span class="popup-title">> NODE_SYNAPSE_DECODE</span>
@@ -59,7 +62,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Pestaña lateral interna de memoria a largo plazo [MEM_ARS] -->
                     <div class="memory-vault-box">
                         <div class="panel-header">> QUANTUM_VAULT_CORE [MEM_ARS]</div>
                         <div id="memory-vault-list"></div>
@@ -82,7 +84,7 @@
                         </div>
                         <div class="metric-card wide-card">
                             <div class="metric-label">NÚCLEO_ACTIVO_DE_ENERGÍA</div>
-                            <div id="active-core">NÚCLEO_ACTIVO:</div>
+                            <div id="active-core">NÚCLEO_ACTIVO: ONLINE</div>
                         </div>
                     </div>
                     <div class="panel-header" style="margin-top:20px;">> COGNITIVE_ACTIVITY_SPECTRUM_LIVE</div>
@@ -98,10 +100,9 @@
         </div>
     </div>
 
-        <!-- ENLACE DE LOS NUEVOS CEREBROS LÓGICOS MODULARES CON PROTOCOLO ANTI-CACHÉ -->
-    <script src="brain_network.js?v=12.5"></script>
-    <script src="matrix3d.js?v=12.5"></script>
-    <script src="popup_controls.js?v=12.5"></script>
-
+    <!-- ENLACE DE LOS MOTORES LÓGICOS ASINCRONOS -->
+    <script src="brain_network.js?v=12.7"></script>
+    <script src="matrix3d.js?v=12.7"></script>
+    <script src="popup_controls.js?v=12.7"></script>
 </body>
 </html>
