@@ -1,17 +1,18 @@
 // =====================================================================
-// NeoX OS v21.0 - MOTOR GRÁFICO 3D EXPANDIDO - PARTE 1 (140 NODOS FIJOS)
+// NeoX OS v21.0 - MOTOR GRÁFICO 3D EXPANDIDO - PARTE 1 (Variables Base)
 // =====================================================================
 
 const canvas = document.getElementById("neuralNet");
 const ctx = canvas ? canvas.getContext("2d") : null;
 window.nodos = [];
-const totalNodos = 140; // Densidad expansible Stark escalada de 90 a 140
+const totalNodos = 140; // Densidad Stark escalada a 140 neuronas fijas
 
 let angY = 0.003, angX = 0.001;
 let isDraggingNetwork = false;
 let previousMousePosition = { x: 0, y: 0 };
 let fov = 130;
 let seleccionadoIndex = null;
+let multiplicadorVelocidad = 1; // Controlador del conmutador de la pantalla BRAIN
 window.resCanvas = function() {
     if (!canvas || !canvas.parentNode) return;
     canvas.width = canvas.parentNode.clientWidth;
@@ -20,10 +21,10 @@ window.resCanvas = function() {
 window.addEventListener('resize', window.resCanvas);
 setTimeout(window.resCanvas, 200);
 
-// Recuperador de sinapsis grabadas a largo plazo en Hermit
+// Sincronizador de base de datos local para la persistencia en Hermit
 let memoriasGuardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
 
-// Población de la esfera de 140 nodos integrando las 20 neuronas maestras pre-codificadas
+// Población de la esfera de 140 nodos integrando las 20 neuronas maestras
 for (let i = 0; i < totalNodos; i++) {
     let theta = Math.random() * 2 * Math.PI;
     let phi = Math.acos(2 * Math.random() - 1);
@@ -37,8 +38,7 @@ for (let i = 0; i < totalNodos; i++) {
         y: r * Math.sin(phi) * Math.sin(theta),
         z: r * Math.cos(phi),
         label: memoriaHistorica ? memoriaHistorica.label : (esMaestra ? neuronasMaestrasBase[i].label : null),
-        desc: memoriaHistorica ? memoriaHistorica.desc : (esMaestra ? neuronasMaestrasBase[i].desc : null),
-        colorTipo: esMaestra ? "rgba(0, 136, 255, " : "rgba(0, 240, 255, "
+        desc: memoriaHistorica ? memoriaHistorica.desc : (esMaestra ? neuronasMaestrasBase[i].desc : null)
     });
 }
 // Activadores unificados con soporte absoluto para PC y Tablet Móvil
@@ -84,7 +84,13 @@ function dragMove(punto) {
 
 function dragEnd() { 
     isDraggingNetwork = false; 
-    setTimeout(function() { if (!isDraggingNetwork) { angY = 0.003; angX = 0.001; } }, 1200); 
+    setTimeout(function() { 
+        if (!isDraggingNetwork) { 
+            if (multiplicadorVelocidad === 1) { angY = 0.003; angX = 0.001; }
+            else if (multiplicadorVelocidad === 4) { angY = 0.012; angX = 0.004; }
+            else { angY = 0; angX = 0; }
+        } 
+    }, 1200); 
 }
 
 function procesarZoom(e) { 
@@ -102,13 +108,28 @@ function procesarClickNodo(mx, my) {
         let dist = Math.sqrt(Math.pow(mx - nx, 2) + Math.pow(my - ny, 2));
         if (dist < minDist) { minDist = dist; det = n; seleccionadoIndex = idx; }
     });
+    
     const pW = document.getElementById("hologram-window"); if (pW) pW.style.display = "flex";
     const pH = document.getElementById("card-content");
+    const fBtn = document.getElementById("floating-node-btn");
+    
     if (pH && det) {
         pH.innerHTML = '<div><strong>[ID] :</strong> N_' + (seleccionadoIndex < 100 ? "0" : "") + seleccionadoIndex + '</div>' +
                        '<div><strong>[STATUS] :</strong> ' + (det.label ? "INDEXADO" : "VACIA") + '</div>' +
                        '<div><strong>[ETIQUETA] :</strong> ' + (det.label || "DISPONIBLE") + '</div>' +
                        '<div><strong>[REGISTRO] :</strong> ' + (det.desc || "Bahía Stark_Web lista.") + '</div>';
+        
+        // Proyección exacta del botón Ampliar en coordenadas 2D junto a la neurona
+        if (fBtn) {
+            let e = fov / (fov + det.z);
+            let nx = cx + det.x * e;
+            let ny = cy + det.y * e;
+            fBtn.style.left = (nx + 25) + "px";
+            fBtn.style.top = (ny - 15) + "px";
+            fBtn.style.display = "block";
+        }
+    } else if (fBtn) {
+        fBtn.style.display = "none";
     }
 }
 
@@ -135,7 +156,6 @@ function rotar() {
         n.x = x1; n.y = y2; n.z = z2;
     });
 }
-
         function render() {
             if (!canvas || !ctx) return; if (canvas.width === 0) window.resCanvas();
             ctx.clearRect(0, 0, canvas.width, canvas.height); rotar();
@@ -154,28 +174,59 @@ function rotar() {
             window.nodos.forEach(function(n, idx) {
                 let e = fov / (fov + n.z), x = cx + n.x * e, y = cy + n.y * e, rd = Math.max(1, 2.8 * e), al = (fov - n.z) / (2 * fov);
                 
-                // Cromatismo dinámico según intención semántica actual
                 if (idx === seleccionadoIndex) {
                     ctx.fillStyle = "var(--red)";
                 } else if (n.label) {
                     if (idx < 20) {
-                        ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.5) + ")"; // Nodos Maestros estables
-                    } else if (n.label.startsWith("ID_") || n.label.startsWith("ROOT")) {
-                        ctx.fillStyle = "rgba(255, 51, 51, " + (al + 0.5) + ")";  // Rojo Crítico (Daniel/Identidad)
-                    } else if (n.label.includes("WEB")) {
-                        ctx.fillStyle = "rgba(255, 204, 0, " + (al + 0.5) + ")";   // Amarillo (Internet)
+                        ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.5) + ")"; 
+                    } else if (n.label.startsWith("ROOT") || n.label.startsWith("ID_")) {
+                        ctx.fillStyle = "rgba(255, 51, 51, " + (al + 0.5) + ")";  
+                    } else if (n.label.includes("WEB") || n.label.includes("SCAN")) {
+                        ctx.fillStyle = "rgba(255, 204, 0, " + (al + 0.5) + ")";   
                     } else {
-                        ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")";  // Verde Neón (Nodos Libres Adquiridos)
+                        ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")";  
                     }
                 } else {
-                    ctx.fillStyle = "rgba(0, 240, 255, " + (al + 0.15) + ")";     // Azul base disponible
+                    ctx.fillStyle = "rgba(0, 240, 255, " + (al + 0.15) + ")";     
                 }
                 
                 ctx.beginPath(); ctx.arc(x, y, rd, 0, 2 * Math.PI); ctx.fill();
                 if (n.label && n.z < 25) { ctx.fillStyle = "rgba(230, 237, 243, " + (al + 0.3) + ")"; ctx.font = "9px sans-serif"; ctx.fillText("[" + n.label + "]", x + 6, y + 3); }
             });
             
-            const p = document.getElementById("load-percentage"); if (p) p.innerText = Math.floor(95 + Math.random() * 6) + "%";
+            const loadPct = document.getElementById("load-percentage"); if (loadPct) loadPct.innerText = Math.floor(95 + Math.random() * 6) + "%";
             requestAnimationFrame(render);
         }
         requestAnimationFrame(render);
+
+        // =====================================================================
+        // INTERFACES Y HERRAMIENTAS REALES EXCLUSIVAS DEL MONITOR BRAIN
+        // =====================================================================
+
+        window.ajustarVelocidadNodos = function() {
+            const indicador = document.getElementById("speed-indicator");
+            if (multiplicadorVelocidad === 1) {
+                multiplicadorVelocidad = 4; angY = 0.012; angX = 0.004;
+                if (indicador) indicador.innerText = "4x";
+                window.logTerminalCore("BRAIN_TOOLS", "Aceleración de rotación forzada. Frecuencia crítica: 4x.");
+            } else if (multiplicadorVelocidad === 4) {
+                multiplicadorVelocidad = 0; angY = 0; angX = 0;
+                if (indicador) indicador.innerText = "0x";
+                window.logTerminalCore("BRAIN_TOOLS", "Frenado cuántico activado. Esfera congelada para examen.");
+            } else {
+                multiplicadorVelocidad = 1; angY = 0.003; angX = 0.001;
+                if (indicador) indicador.innerText = "1x";
+                window.logTerminalCore("BRAIN_TOOLS", "Restaurando velocidad base estable de 1x en el chasis.");
+            }
+        };
+
+        window.inyectarNodoPrueba = function() {
+            window.actualizarNeuronasDesdeChat("TEST_SYN", "Sinapsis de telemetría inyectada manualmente desde la consola del monitor BRAIN.");
+            window.logTerminalCore("BRAIN_TOOLS", "Inyección forzada de nodo experimental exitosa.");
+            window.efectoEscribir("SYSTEM_MONITOR", "Se ha inyectado una sinapsis de prueba [TEST_SYN] en la red de 140 nodos.", "neox");
+        };
+
+        window.forzarRefrescoCachera = function() {
+            window.logTerminalCore("BRAIN_TOOLS", "Enviando pulso de recarga destructiva de caché a Hermit...");
+            location.reload(true);
+        };
