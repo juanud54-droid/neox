@@ -95,10 +95,18 @@
         </div>
     </div>
 
-                                <!-- COMPILACIÓN ABSOLUTA EN UN ÚNICO SECTOR DE MEMORIA -->
-    <script src="stark_brain_v25.js"></script>
-    <script src="popup_controls.js"></script>
+                                    <!-- PROTOCOLO DE CONEXIÓN INMUNE A LA CACHÉ PERSISTENTE DE CHROME -->
+    <script>
+        (function() {
+            var timestamp = new Date().getTime();
+            var scripts = ["stark_brain_v25.js", "popup_controls.js"];
+            scripts.forEach(function(src) {
+                var s = document.createElement("script");
+                s.src = src + "?v=" + timestamp;
+                s.async = false;
+                document.body.appendChild(s);
+            });
+        })();
+    </script>
 </body>
 </html>
-
-
