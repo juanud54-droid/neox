@@ -1,5 +1,5 @@
 /* =====================================================================
-   NeoX COGNITIVE OS v12.0 - HOJA DE ESTILOS MODULAR - PARTE 1 DE 2
+   NeoX OS v21.0 - ARMADURA ESTÉTICA CYBERPUNK STANDALONE - PARTE 1
    ===================================================================== */
 
 :root { 
@@ -12,25 +12,22 @@
 
 * { 
     box-sizing: border-box; 
-    font-family: 'Share Tech Mono', monospace; 
+    font-family: monospace; 
     margin: 0; 
     padding: 0; 
     user-select: none; 
 }
 
-/* Evitar desbordamiento vertical ante teclados táctiles y barras de Android */
 body { 
     background-color: var(--bg); 
     color: var(--cyan); 
     display: flex; 
-    flex-direction: row;
+    flex-direction: row; 
     height: 100vh; 
     height: 100dvh; 
     width: 100vw; 
     overflow: hidden; 
-    background-image: radial-gradient(rgba(0, 240, 255, 0.05) 1.5px, transparent 0); 
-    background-size: 30px 30px; 
-    padding: 10px;
+    padding: 10px; 
 }
 
 #hud-layout { 
@@ -41,92 +38,75 @@ body {
     gap: 12px; 
 }
 
-/* BARRA LATERAL IZQUIERDA ULTRA DELGADA (SIDEBAR TÁCTICA) */
-#sidebar-icons {
-    width: 65px;
-    background: rgba(6, 16, 30, 0.85);
-    border: 1px solid var(--cyan);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-    gap: 25px;
-    flex-shrink: 0;
-    height: 100%;
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+#sidebar-icons { 
+    width: 65px; 
+    background: rgba(6, 16, 30, 0.85); 
+    border: 1px solid var(--cyan); 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 20px 0; 
+    gap: 25px; 
+    flex-shrink: 0; 
+    height: 100%; 
+}
+.side-icon-btn { 
+    width: 48px; 
+    height: 48px; 
+    background: rgba(0, 240, 255, 0.03); 
+    border: 1px solid var(--cyan); 
+    color: var(--cyan); 
+    cursor: pointer; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 0.65em; 
+    font-weight: bold; 
+    gap: 3px; 
 }
 
-.side-icon-btn {
-    width: 48px;
-    height: 48px;
-    background: rgba(0, 240, 255, 0.03);
-    border: 1px solid var(--cyan);
-    color: var(--cyan);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.65em;
-    font-weight: bold;
-    gap: 3px;
-    transition: all 0.2s ease;
-    clip-path: polygon(0 0, 80% 0, 100% 20%, 100% 100%, 0 100%);
+.side-icon-btn.active { 
+    background: var(--cyan); 
+    color: var(--bg); 
+    box-shadow: 0 0 15px var(--cyan); 
 }
 
-.side-icon-btn:hover {
-    background: rgba(0, 240, 255, 0.12);
-    box-shadow: 0 0 10px var(--cyan);
+.side-icon-btn svg { 
+    width: 20px; 
+    height: 20px; 
+    fill: currentColor; 
 }
 
-.side-icon-btn.active {
-    background: var(--cyan);
-    color: var(--bg);
-    box-shadow: 0 0 15px var(--cyan);
+#main-display { 
+    flex: 1; 
+    height: 100%; 
+    position: relative; 
+    min-width: 0; 
 }
 
-.side-icon-btn svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
+.app-screen { 
+    display: none; 
+    width: 100%; 
+    height: 100%; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
 }
 
-/* RECEPTÁCULO PRINCIPAL DE MONITORES */
-#main-display {
-    flex: 1;
-    height: 100%;
-    position: relative;
-    min-width: 0;
-}
-
-.app-screen {
-    display: none;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.app-screen.active {
-    display: flex;
+.app-screen.active { 
+    display: flex; 
 }
 
 .cyber-panel { 
     background: var(--panel); 
     border: 1px solid var(--cyan); 
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.1); 
-    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); 
     display: flex; 
     flex-direction: column; 
     padding: 18px; 
     position: relative; 
-}
-
-.full-panel {
-    width: 100%;
-    height: 100%;
+    width: 100%; 
+    height: 100%; 
 }
 
 .panel-header { 
@@ -139,78 +119,299 @@ body {
     flex-shrink: 0; 
 }
 
-/* =====================================================================
-   NeoX COGNITIVE OS v12.0 - HOJA DE ESTILOS MODULAR - PARTE 2 DE 2
-   ===================================================================== */
+.split-layout { 
+    display: flex; 
+    flex-direction: row; 
+    gap: 12px; 
+    height: 100%; 
+}
 
-/* MAQUETACIÓN SPLIT-LAYOUT */
-.split-layout { display: flex; flex-direction: row; gap: 12px; height: 100%; }
-.map-view-box { flex: 1; display: flex; flex-direction: column; position: relative; height: 100%; min-width: 0; }
+.map-view-box { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    position: relative; 
+    height: 100%; 
+    min-width: 0; 
+}
 
 canvas { 
-    width: 100%; flex: 1; display: block; background: rgba(0, 0, 0, 0.4); 
-    border: 1px solid rgba(0, 240, 255, 0.1); cursor: grab;
+    width: 100%; 
+    flex: 1; 
+    display: block; 
+    background: rgba(0, 0, 0, 0.4); 
+    border: 1px solid var(--cyan); 
+    touch-action: none; 
 }
-canvas:active { cursor: grabbing; }
-
-/* NUEVA INTERFAZ: VENTANA HOLOGRÁFICA FLOTANTE ARRASTRABLE Y ESCALABLE */
-.draggable-popup {
-    position: absolute; top: 20px; left: 20px; width: 280px; height: 200px;
-    min-width: 200px; min-height: 150px; background: rgba(1, 4, 9, 0.95);
-    border: 1px solid var(--cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
-    display: flex; flex-direction: column; z-index: 100; overflow: hidden;
-    clip-path: polygon(0 0, 92% 0, 100% 12px, 100% 100%, 0 100%);
-}
-.popup-header {
-    background: rgba(0, 240, 255, 0.1); padding: 8px 12px; display: flex;
-    justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.3);
-    cursor: move; flex-shrink: 0;
-}
-.popup-title { color: var(--cyan); font-weight: bold; font-size: 0.8em; letter-spacing: 1px; }
-.popup-close-btn {
-    background: transparent; border: none; color: var(--red); font-family: inherit;
-    font-weight: bold; cursor: pointer; font-size: 1em; padding: 0 4px;
-}
-.popup-close-btn:hover { text-shadow: 0 0 8px var(--red); }
-.popup-body { flex: 1; padding: 12px; overflow-y: auto; font-size: 0.85em; color: #e6edf3; line-height: 1.4; position: relative; }
-
-/* Tirador inferior derecho para redimensionar con el dedo o ratón */
-.popup-scale-handle {
-    position: absolute; bottom: 0; right: 0; width: 15px; height: 15px;
-    background: linear-gradient(135deg, transparent 50%, var(--cyan) 50%); cursor: se-resize;
+.draggable-popup { 
+    position: absolute; 
+    top: 20px; 
+    left: 20px; 
+    width: 280px; 
+    height: 230px; 
+    min-width: 220px; 
+    min-height: 160px; 
+    background: rgba(1, 4, 9, 0.95); 
+    border: 1px solid var(--cyan); 
+    display: flex; 
+    flex-direction: column; 
+    z-index: 1000; 
+    overflow: hidden; 
+    display: none; 
+    touch-action: none; 
 }
 
-/* PANEL LATERAL DE REGISTRO DE RECUERDOS [MEM_ARS] */
-.memory-vault-box { width: 260px; display: flex; flex-direction: column; flex-shrink: 0; height: 100%; background: rgba(0, 0, 0, 0.2); border-left: 1px dashed rgba(0, 240, 255, 0.2); padding-left: 12px; }
-#memory-vault-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
-.memory-item { background: rgba(0, 240, 255, 0.03); border: 1px solid rgba(0, 240, 255, 0.2); padding: 8px; font-size: 0.75em; color: #e6edf3; clip-path: polygon(0 0, 95% 0, 100% 6px, 100% 100%, 0 100%); }
-.memory-item span { color: var(--green); display: block; font-weight: bold; margin-bottom: 2px; }
+.popup-header { 
+    background: rgba(0, 240, 255, 0.1); 
+    padding: 10px 12px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid rgba(0, 240, 255, 0.3); 
+    cursor: move; 
+    touch-action: none; 
+}
 
-/* CONSOLA CENTRAL DEL CHAT HOLOGRÁFICO */
-#chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; margin-bottom: 10px; }
-.msg { padding: 12px 16px; max-width: 85%; font-size: 0.9em; letter-spacing: 0.5px; line-height: 1.4; }
-.user { border: 1px solid var(--green); align-self: flex-end; clip-path: polygon(0 0, 96% 0, 100% 12px, 100% 100%, 4% 100%, 0 calc(100% - 12px)); background: rgba(0, 255, 102, 0.03); }
-.neox { border: 1px solid var(--cyan); align-self: flex-start; clip-path: polygon(4% 0, 100% 0, 100% calc(100% - 12px), 96% 100%, 0 100%, 0 12px); background: rgba(0, 240, 255, 0.03); }
-.prefix { font-weight: bold; display: block; margin-bottom: 4px; font-size: 0.75em; letter-spacing: 1px; }
-.user .prefix { color: var(--green); } .neox .prefix { color: var(--cyan); }
-#thinking-indicator { display: none; color: var(--cyan); font-size: 0.85em; padding: 6px 10px; animation: blink 1s infinite; letter-spacing: 2px; flex-shrink: 0; }
-#input-area { display: flex; gap: 10px; height: 48px; flex-shrink: 0; width: 100%; }
-input { flex: 1; background: rgba(11, 21, 36, 0.95); border: 1px solid var(--cyan); color: var(--green); padding: 0 16px; outline: none; font-size: 0.95em; font-family: inherit; clip-path: polygon(0 0, 98% 0, 100% 10px, 100% 100%, 0 100%); height: 100%; }
-input:focus { border-color: var(--green); box-shadow: 0 0 12px rgba(0, 255, 102, 0.2); }
+.popup-title { 
+    color: var(--cyan); 
+    font-weight: bold; 
+    font-size: 0.8em; 
+}
 
-/* PESTAÑA BRAIN: CUADRÍCULA DE MÉTRICAS */
-.metrics-grid { display: flex; flex-direction: row; gap: 12px; flex-shrink: 0; }
-.metric-card { flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 240, 255, 0.15); padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.wide-card { flex: 1.5; justify-content: center; align-items: stretch; }
-.metric-label { font-size: 0.7em; color: rgba(0, 240, 255, 0.6); letter-spacing: 1px; text-align: center; width: 100%; }
-.radar-box { width: 75px; height: 75px; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 50%; position: relative; overflow: hidden; }
-.radar-box::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, rgba(0, 240, 255, 0.4) 0%, transparent 50%); transform-origin: center; animation: rotHUD 2.5s linear infinite; }
-.ring-box { width: 75px; height: 75px; border: 3px dotted var(--green); border-radius: 50%; animation: rotHUDBack 6s linear infinite; display: flex; align-items: center; justify-content: center; font-size: 0.85em; color: var(--green); font-weight: bold; }
-#active-core { font-size: 0.9em; text-align: center; font-weight: bold; background: rgba(0, 240, 255, 0.05); padding: 14px; border: 1px dashed rgba(0, 240, 255, 0.2); color: var(--cyan); }
-#brain-activity { height: 140px; display: flex; align-items: flex-end; justify-content: space-between; padding: 12px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 240, 255, 0.15); flex-shrink: 0; }
-.bar { width: 7px; background-color: var(--cyan); animation: pulseBar 0.8s infinite ease-in-out; transform-origin: bottom; box-shadow: 0 0 8px var(--cyan); }
+.popup-close-btn { 
+    background: transparent; 
+    border: none; 
+    color: var(--red); 
+    font-weight: bold; 
+    cursor: pointer; 
+    padding: 4px 8px; 
+    font-size: 1.1em; 
+}
 
-@keyframes rotHUD { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes rotHUDBack { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-@keyframes pulseBar { 0%, 100% { transform: scaleY(0.2); } 50% { transform: scaleY(1); } }
-@keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+.popup-body { 
+    flex: 1; 
+    padding: 12px; 
+    overflow-y: auto; 
+    font-size: 0.85em; 
+    color: #e6edf3; 
+    line-height: 1.4; 
+    position: relative; 
+}
+
+.popup-scale-handle { 
+    position: absolute; 
+    bottom: 0; 
+    right: 0; 
+    width: 20px; 
+    height: 20px; 
+    background: linear-gradient(135deg, transparent 50%, var(--cyan) 50%); 
+    cursor: se-resize; 
+    touch-action: none; 
+    z-index: 1001; 
+}
+
+#floating-node-btn { 
+    position: absolute; 
+    display: none; 
+    z-index: 1005; 
+    background: rgba(0, 255, 102, 0.9); 
+    color: #000; 
+    border: 1px solid var(--green); 
+    padding: 5px 10px; 
+    font-size: 0.75em; 
+    font-weight: bold; 
+    cursor: pointer; 
+    border-radius: 3px; 
+    box-shadow: 0 0 10px var(--green); 
+}
+
+.memory-vault-box { 
+    width: 220px; 
+    display: flex; 
+    flex-direction: column; 
+    flex-shrink: 0; 
+    height: 100%; 
+    background: rgba(0, 0, 0, 0.2); 
+    border-left: 1px dashed rgba(0, 240, 255, 0.2); 
+    padding-left: 12px; 
+}
+
+#memory-vault-list { 
+    flex: 1; 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+}
+
+.memory-item { 
+    background: rgba(0, 240, 255, 0.03); 
+    border: 1px solid rgba(0, 240, 255, 0.2); 
+    padding: 8px; 
+    font-size: 0.75em; 
+}
+
+#chat-box { 
+    flex: 1; 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    padding: 10px; 
+}
+
+.msg { 
+    padding: 12px 16px; 
+    max-width: 85%; 
+    font-size: 0.9em; 
+    line-height: 1.4; 
+}
+
+.user { 
+    border: 1px solid var(--green); 
+    align-self: flex-end; 
+    background: rgba(0, 255, 102, 0.03); 
+}
+
+.neox { 
+    border: 1px solid var(--cyan); 
+    align-self: flex-start; 
+    background: rgba(0, 240, 255, 0.03); 
+}
+
+.prefix { 
+    font-weight: bold; 
+    display: block; 
+    margin-bottom: 4px; 
+    font-size: 0.75em; 
+}
+
+.user .prefix { 
+    color: var(--green); 
+} 
+
+.neox .prefix { 
+    color: var(--cyan); 
+}
+
+#thinking-indicator { 
+    display: none; 
+    color: var(--cyan); 
+    font-size: 0.85em; 
+    padding: 6px 10px; 
+}
+
+#input-area { 
+    display: flex; 
+    gap: 10px; 
+    height: 48px; 
+    flex-shrink: 0; 
+    width: 100%; 
+}
+
+input { 
+    flex: 1; 
+    background: rgba(11, 21, 36, 0.95); 
+    border: 1px solid var(--cyan); 
+    color: var(--green); 
+    padding: 0 16px; 
+    outline: none; 
+    font-size: 0.95em; 
+    user-select: text !important; 
+}
+
+.btn { 
+    background: transparent; 
+    border: 1px solid var(--cyan); 
+    color: var(--cyan); 
+    padding: 0 20px; 
+    cursor: pointer; 
+    font-weight: bold; 
+}
+
+.metrics-grid { 
+    display: flex; 
+    flex-direction: row; 
+    gap: 12px; 
+    flex-shrink: 0; 
+}
+
+.metric-card { 
+    flex: 1; 
+    background: rgba(0, 0, 0, 0.3); 
+    border: 1px solid rgba(0, 240, 255, 0.15); 
+    padding: 12px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 8px; 
+}
+
+.wide-card { 
+    flex: 1.5; 
+    justify-content: center; 
+}
+
+.metric-label { 
+    font-size: 0.7em; 
+    color: rgba(0, 240, 255, 0.6); 
+    text-align: center; 
+}
+
+.radar-box { 
+    width: 50px; 
+    height: 50px; 
+    border: 1px solid rgba(0, 240, 255, 0.3); 
+    border-radius: 50%; 
+}
+
+.ring-box { 
+    width: 50px; 
+    height: 50px; 
+    border: 2px dotted var(--green); 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 0.8em; 
+    color: var(--green); 
+}
+
+#active-core { 
+    font-size: 0.85em; 
+    text-align: center; 
+    color: var(--cyan); 
+}
+
+#brain-activity { 
+    height: 100px; 
+    display: flex; 
+    align-items: flex-end; 
+    justify-content: space-between; 
+    padding: 10px; 
+    background: rgba(0, 0, 0, 0.4); 
+    border: 1px solid rgba(0, 240, 255, 0.15); 
+}
+
+.bar { 
+    width: 6px; 
+    background-color: var(--cyan); 
+    transition: height 0.3s ease; 
+}
+
+.brain-controls-row { 
+    display: flex; 
+    gap: 10px; 
+    margin-top: 15px; 
+    flex-wrap: wrap; 
+}
+
+.brain-controls-row .btn { 
+    padding: 8px 12px; 
+    font-size: 0.8em; 
+}
+
+@keyframes blink { 
+    0%, 100% { opacity: 0.3; } 
+    50% { opacity: 1; } 
+}
