@@ -1,8 +1,9 @@
 // =====================================================================
-// NeoX OS v21.0 - PASARELA DE RETRANSMISIÓN WEB ASÍNCRONA SIN BLOQUEOS
+// NeoX OS v21.0 - PROXIES DINÁMICOS REDUNDANTES - PARTE 1 (EXTRACTOR)
 // =====================================================================
 
 window.consultarPasarelaWeb = async function(fraseUsuario) {
+    // Sanitizador estricto inmune a las mayúsculas automáticas de la tablet
     let topico = fraseUsuario.toLowerCase()
         .replace(/(neox|jarvis|puedes|buscar|busca|en|internet|noticias|sobre|datos|de|por|favor|info|que|es|un|una|los|las|el|significa|la|palabra)/g, "")
         .replace(/[^a-zA-Z0-9áéíóúñ ]/g, "")
