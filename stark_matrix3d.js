@@ -1,18 +1,21 @@
 // =====================================================================
-// NeoX OS v21.0 - MOTOR GRÁFICO 3D EXPANDIDO - PARTE 1 (Variables Base)
+// NeoX OS v22.0 - MOTOR GRÁFICO 3D EXPANDIDO - PARTE 1 (200 NODOS)
 // =====================================================================
 
 const canvas = document.getElementById("neuralNet");
 const ctx = canvas ? canvas.getContext("2d") : null;
 window.nodos = [];
-const totalNodos = 140; // Densidad Stark escalada a 140 neuronas fijas
+const totalNodos = 200; // Escala definitiva de 200 neuronas totales
 
 let angY = 0.003, angX = 0.001;
 let isDraggingNetwork = false;
 let previousMousePosition = { x: 0, y: 0 };
 let fov = 130;
 let seleccionadoIndex = null;
-let multiplicadorVelocidad = 1; // Controlador del conmutador de la pantalla BRAIN
+let multiplicadorVelocidad = 1;
+
+// Bandera centinela para destruir el bucle infinito de reapertura automática
+let bloqueoToqueRedencion = false;
 window.resCanvas = function() {
     if (!canvas || !canvas.parentNode) return;
     canvas.width = canvas.parentNode.clientWidth;
@@ -24,21 +27,21 @@ setTimeout(window.resCanvas, 200);
 // Sincronizador de base de datos local para la persistencia en Hermit
 let memoriasGuardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
 
-// Población de la esfera de 140 nodos integrando las 20 neuronas maestras
+// Población de la esfera de 200 nodos integrando de forma nativa las 60 neuronas maestras
 for (let i = 0; i < totalNodos; i++) {
     let theta = Math.random() * 2 * Math.PI;
     let phi = Math.acos(2 * Math.random() - 1);
     let r = 95;
     
     let memoriaHistorica = memoriasGuardadas.find(function(m) { return m.index === i; });
-    let esMaestra = i < 20;
+    let esMaestra = i < 60;
     
     window.nodos.push({
         x: r * Math.sin(phi) * Math.cos(theta),
         y: r * Math.sin(phi) * Math.sin(theta),
         z: r * Math.cos(phi),
-        label: memoriaHistorica ? memoriaHistorica.label : (esMaestra ? neuronasMaestrasBase[i].label : null),
-        desc: memoriaHistorica ? memoriaHistorica.desc : (esMaestra ? neuronasMaestrasBase[i].desc : null)
+        label: memoriaHistorica ? memoriaHistorica.label : (esMaestra && window.neuronasMaestras && window.neuronasMaestras[i] ? window.neuronasMaestras[i].label : null),
+        desc: memoriaHistorica ? memoriaHistorica.desc : (esMaestra && window.neuronasMaestras && window.neuronasMaestras[i] ? window.neuronasMaestras[i].desc : (esMaestra ? "Célula analítica maestra." : null))
     });
 }
 // Activadores unificados con soporte absoluto para PC y Tablet Móvil
@@ -61,12 +64,12 @@ window.addEventListener('touchend', dragEnd);
 
 function dragStart(punto) {
     isDraggingNetwork = true; 
+    bloqueoToqueRedencion = false; // Resetea el rastreador de arrastre
     const rect = canvas.getBoundingClientRect();
     let mx = punto.clientX - rect.left; 
     let my = punto.clientY - rect.top;
     if (isNaN(mx) || isNaN(my)) { mx = canvas.width / 2; my = canvas.height / 2; }
     previousMousePosition = { x: mx, y: my }; 
-    procesarClickNodo(mx, my);
 }
 function dragMove(punto) {
     if (!isDraggingNetwork) return; 
@@ -74,16 +77,32 @@ function dragMove(punto) {
     let cx = punto.clientX - rect.left; 
     let cy = punto.clientY - rect.top;
     
-    // Escudo matemático radical contra lecturas corruptas NaN en tablets
     if (isNaN(cx) || isNaN(cy) || Math.abs(cx) > 4000 || Math.abs(cy) > 4000) return;
     
-    angY = (cx - previousMousePosition.x) * 0.005; 
-    angX = (cy - previousMousePosition.y) * 0.005;
+    let dx = cx - previousMousePosition.x;
+    let dy = cy - previousMousePosition.y;
+    
+    // Si el dedo se desplaza más de 4 píxeles, se considera rotación y se bloquea el clic fortuito
+    if (Math.sqrt(dx*dx + dy*dy) > 4) {
+        bloqueoToqueRedencion = true;
+    }
+    
+    angY = dx * 0.005; 
+    angX = dy * 0.005;
     previousMousePosition = { x: cx, y: cy };
 }
 
-function dragEnd() { 
+function dragEnd(e) { 
     isDraggingNetwork = false; 
+    
+    // Si no fue un arrastre de rotación, procesamos el toque como un clic real en un nodo
+    if (!bloqueoToqueRedencion) {
+        const rect = canvas.getBoundingClientRect();
+        let mx = previousMousePosition.x;
+        let my = previousMousePosition.y;
+        procesarClickNodo(mx, my);
+    }
+    
     setTimeout(function() { 
         if (!isDraggingNetwork) { 
             if (multiplicadorVelocidad === 1) { angY = 0.003; angX = 0.001; }
@@ -135,7 +154,7 @@ function procesarClickNodo(mx, my) {
 
 window.actualizarNeuronasDesdeChat = function(lbl, desc) {
     let vacios = []; 
-    window.nodos.forEach(function(n, idx) { if (!n.label && idx >= 20) vacios.push(idx); });
+    window.nodos.forEach(function(n, idx) { if (!n.label && idx >= 60) vacios.push(idx); });
     let idxObj = vacios.length > 0 ? vacios[Math.floor(Math.random() * vacios.length)] : Math.floor(Math.random() * window.nodos.length);
     let obj = window.nodos[idxObj];
     if (obj) {
@@ -177,17 +196,17 @@ function rotar() {
                 if (idx === seleccionadoIndex) {
                     ctx.fillStyle = "var(--red)";
                 } else if (n.label) {
-                    if (idx < 20) {
-                        ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.5) + ")"; 
+                    if (idx < 60) {
+                        ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.5) + ")"; // 60 Nodos Maestros Estables (Azul)
                     } else if (n.label.startsWith("ROOT") || n.label.startsWith("ID_")) {
-                        ctx.fillStyle = "rgba(255, 51, 51, " + (al + 0.5) + ")";  
-                    } else if (n.label.includes("WEB") || n.label.includes("SCAN")) {
-                        ctx.fillStyle = "rgba(255, 204, 0, " + (al + 0.5) + ")";   
+                        ctx.fillStyle = "rgba(255, 51, 51, " + (al + 0.5) + ")";  // Rojo Crítico (Daniel/Identidad)
+                    } else if (n.label.includes("WEB") || n.label.includes("SCAN") || n.label.includes("POL")) {
+                        ctx.fillStyle = "rgba(255, 204, 0, " + (al + 0.5) + ")";   // Amarillo (Internet / Política)
                     } else {
-                        ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")";  
+                        ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")";  // Verde Neón (Nodos Adquiridos)
                     }
                 } else {
-                    ctx.fillStyle = "rgba(0, 240, 255, " + (al + 0.15) + ")";     
+                    ctx.fillStyle = "rgba(0, 240, 255, " + (al + 0.15) + ")";     // Azul base disponible
                 }
                 
                 ctx.beginPath(); ctx.arc(x, y, rd, 0, 2 * Math.PI); ctx.fill();
@@ -216,14 +235,14 @@ function rotar() {
             } else {
                 multiplicadorVelocidad = 1; angY = 0.003; angX = 0.001;
                 if (indicador) indicador.innerText = "1x";
-                window.logTerminalCore("BRAIN_TOOLS", "Restaurando velocidad base estable de 1x en el chasis.");
+                window.logTerminalCore("BRAIN_TOOLS", "Restaurando velocidad base stable de 1x en el chasis.");
             }
         };
 
         window.inyectarNodoPrueba = function() {
             window.actualizarNeuronasDesdeChat("TEST_SYN", "Sinapsis de telemetría inyectada manualmente desde la consola del monitor BRAIN.");
             window.logTerminalCore("BRAIN_TOOLS", "Inyección forzada de nodo experimental exitosa.");
-            window.efectoEscribir("SYSTEM_MONITOR", "Se ha inyectado una sinapsis de prueba [TEST_SYN] en la red de 140 nodos.", "neox");
+            window.efectoEscribir("SYSTEM_MONITOR", "Se ha inyectado una sinapsis de prueba [TEST_SYN] en la red de 200 nodos.", "neox");
         };
 
         window.forzarRefrescoCachera = function() {
