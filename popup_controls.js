@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX OS v22.0 - CONTROLADOR DE VENTANAS HOLOGRÁFICAS DRAGGABLE & RESIZE
+// NeoX OS v25.0 - CONTROLADOR DRAGGABLE & RESIZE SIN COLISIONES 3D
 // =====================================================================
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -18,15 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
     window.addEventListener("mousemove", moveAction);
     window.addEventListener("mouseup", stopAction);
 
-    function startDrag(e) {
-        isDragging = true;
-        const p = e.touches ? e.touches : e;
-        startX = p.clientX; 
-        startY = p.clientY; 
-        startLeft = popup.offsetLeft; 
-        startTop = popup.offsetTop;
-    }
-    // Inyectores táctiles directos con captura nativa para la tablet
+    // Inyectores táctiles directos con captura de alta prioridad para la tablet
     dragZone.addEventListener("touchstart", function(e) {
         if (e.touches.length !== 1) return;
         startDrag(e.touches[0]);
@@ -46,6 +38,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.addEventListener("touchend", stopAction);
 
+    function startDrag(e) {
+        isDragging = true;
+        startX = e.clientX; 
+        startY = e.clientY; 
+        startLeft = popup.offsetLeft; 
+        startTop = popup.offsetTop;
+    }
+
     function startResize(e) {
         isResizing = true;
         startX = e.clientX; 
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     function moveAction(e) {
         if (!isDragging && !isResizing) return;
-        const p = e.touches ? e.touches[0] : e;
+        const p = e.touches ? e.touches : e;
         
         if (isDragging) {
             popup.style.left = (startLeft + (p.clientX - startX)) + "px";
@@ -81,7 +81,9 @@ window.ampliarNeuronaCompleta = function() {
     popup.style.left = "80px";
     popup.style.width = "calc(100% - 95px)";
     popup.style.height = "calc(100% - 20px)";
-    window.logTerminalCore("HUD_INTERFACE", "Maximizando terminal de sinapsis a pantalla completa.");
+    if (typeof window.logTerminalCore === 'function') {
+        window.logTerminalCore("HUD_INTERFACE", "Maximizando terminal de sinapsis a pantalla completa.");
+    }
 };
 
 window.cerrarPopup = function() {
@@ -89,5 +91,7 @@ window.cerrarPopup = function() {
     const b = document.getElementById("floating-node-btn");
     if (p) p.style.display = "none";
     if (b) b.style.display = "none";
-    window.logTerminalCore("HUD_INTERFACE", "Cerrando consolas flotantes y limpiando Canvas.");
+    if (typeof window.logTerminalCore === 'function') {
+        window.logTerminalCore("HUD_INTERFACE", "Cerrando consolas flotantes y limpiando Canvas.");
+    }
 };
