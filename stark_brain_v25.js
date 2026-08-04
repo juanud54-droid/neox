@@ -45,27 +45,28 @@ window.logTerminalCore = function(modulo, traza) {
         terminal.scrollTop = terminal.scrollHeight;
     } catch(e) {}
 };
-// CONECTOR PROXY INTEGRADO DE BAJA LATENCIA (LLaMA-3.1-70B)
+// CONECTOR LOCAL CON EL MOTOR PROXY DE TERMUX
 async function consultarProxyInferenciaLlama(promptUsuario) {
     if (typeof window.logTerminalCore === 'function') {
-        window.logTerminalCore("STARK_LINK", "Abriendo puente intermedio local...");
+        window.logTerminalCore("STARK_LINK", "Enrutando tokens al puerto local de Termux...");
     }
-    const systemPrompt = "Eres NeoX, un OS Cognitivo de nivel militar inspirado en J.A.R.V.I.S. Tu creador es Daniel. Responde de forma inteligente, elocuente y orgánica.";
+    const systemPrompt = "Eres NeoX, un Sistema Operativo Cognitivo de nivel militar inspirado en J.A.R.V.I.S. Tu creador es Daniel. Responde de forma inteligente, elocuente y orgánica.";
     let mensajesApi = [{ role: "system", content: systemPrompt }];
     window.historial.slice(-6).forEach(function(m) {
         mensajesApi.push({ role: m.role === "user" ? "user" : "assistant", content: m.text });
     });
     try {
-        const response = await fetch("http://localhost:3000/api/chat", {
+        // Usamos la IP de bucle local absoluta 127.0.0.1 para conectar con tu Termux
+        const response = await fetch("http://127.0.0", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ messages: mensajesApi })
         });
-        if (!response.ok) throw new Error("Proxy apagado.");
+        if (!response.ok) throw new Error("Servidor Termux inaccesible.");
         const data = await response.json();
-        return data.success ? data.response : "Error en inferencia.";
+        return data.success ? data.response : "Error en inferencia remota.";
     } catch (error) {
-        return "Señor Daniel, el puente local 'server.js' en el puerto 3000 no responde. Inicie la consola.";
+        return "Señor Daniel, el puente local en segundo plano (Termux) no responde en el puerto 3000. Por favor, ejecute 'node server.js' en su consola.";
     }
 }
 
@@ -76,7 +77,7 @@ function deducirEtiquetaNeurona(texto) {
     return "JARVIS_M";
 }
 
-// POBLACIÓN DE LA CORTEZA 3D
+// POBLACIÓN DE LA CORTEZA 3D (200 NODOS)
 window.inicializarEsferaNodos = function() {
     window.nodos = [];
     const totalNodos = 200;
@@ -107,9 +108,9 @@ window.configurarEventosGraficos = function() {
     const canvas = document.getElementById("neuralNet");
     if (!canvas) return;
     canvas.addEventListener('mousedown', dragStart);
-    canvas.addEventListener('touchstart', function(e) { if (e.touches.length === 1) dragStart(e.touches[0]); }, { passive: true });
+    canvas.addEventListener('touchstart', function(e) { if (e.touches.length === 1) dragStart(e.touches); }, { passive: true });
     window.addEventListener('mousemove', dragMove);
-    window.addEventListener('touchmove', function(e) { if (isDraggingNetwork && e.touches.length === 1) dragMove(e.touches[0]); }, { passive: true });
+    window.addEventListener('touchmove', function(e) { if (isDraggingNetwork && e.touches.length === 1) dragMove(e.touches); }, { passive: true });
     window.addEventListener('mouseup', dragEnd);
     window.addEventListener('touchend', dragEnd);
 };
@@ -118,14 +119,16 @@ function dragStart(e) {
     isDraggingNetwork = true; distanciaArrastreTotal = 0;
     const canvas = document.getElementById("neuralNet"); if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    previousMousePosition = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    let point = e.touches ? e.touches[0] : e;
+    previousMousePosition = { x: point.clientX - rect.left, y: point.clientY - rect.top };
 }
 
 function dragMove(e) {
     if (!isDraggingNetwork) return;
     const canvas = document.getElementById("neuralNet"); if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    let cx = e.clientX - rect.left, cy = e.clientY - rect.top;
+    let point = e.touches ? e.touches[0] : e;
+    let cx = point.clientX - rect.left, cy = point.clientY - rect.top;
     if (isNaN(cx) || isNaN(cy)) return;
     let dx = cx - previousMousePosition.x, dy = cy - previousMousePosition.y;
     distanciaArrastreTotal += Math.sqrt(dx*dx + dy*dy);
@@ -169,7 +172,6 @@ window.actualizarNeuronasDesdeChat = function(lbl, desc) {
 };
 
 function rotar() {
-    // CAPA CRÍTICA CHROME: Forzamos la reinyección cinemática constante de velocidad base en cada frame
     if (!isDraggingNetwork) {
         angY = 0.003 * multiplicadorVelocidad;
         angX = 0.001 * multiplicadorVelocidad;
@@ -239,7 +241,7 @@ window.calcularMetricasMatematicasReales = function(textoUsuario, respuestaIa) {
     window.starkDataAnalyzer.densidadTokensFrase = Math.round((palabrasUsuario + palabrasIa) / 2);
     const loadPct = document.getElementById("load-percentage"); const activeCore = document.getElementById("active-core");
     if (loadPct) loadPct.innerText = Math.floor(94 + Math.random() * 6) + "%";
-    if (activeCore) activeCore.innerText = "NÚCLEO: LLaMA-3.1-70B | PROXY_STARK_LINK";
+    if (activeCore) activeCore.innerText = "NÚCLEO: LLaMA-3.1-70B | TERMUX_LOCAL";
 };
 
 window.enviarMensaje = async function() {
@@ -268,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!bootEjecutado) {
         bootEjecutado = true; window.inicializarEsferaNodos(); window.resCanvas(); window.configurarEventosGraficos(); requestAnimationFrame(window.ejecutarBucleRenderizado3D);
         setTimeout(function() { 
-            window.efectoEscribir("NeoX", "Chasis unificado v25.9 operativo, Señor Daniel. He reparado las constantes cinéticas de inercia y alineado los hilos del chat con el proxy LLaMA-3.1-70B libre de errores de referencia. ¿Cuál es su requerimiento?", "neox"); 
+            window.efectoEscribir("NeoX", "Chasis unificado mutado v25.9 activo. He purgado por completo los archivos fantasma y anclado la inercia de rotación directamente en el bucle del renderizado para Google Chrome, Señor Daniel. Termux local operativo. ¿Cuál es su directriz?", "neox"); 
         }, 300);
     }
 });
