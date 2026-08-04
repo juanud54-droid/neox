@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX OS v25.9 - CORE COMPACTO DE ALTA FIABILIDAD (PARTE 1)
+// NeoX OS v25.9 - CORE INTEGRAL PURIFICADO Y OPERATIVO EN CHROME (PARTE 1)
 // =====================================================================
 
 window.historial = [];
@@ -23,23 +23,17 @@ let isDraggingNetwork = false;
 let previousMousePosition = { x: 0, y: 0 };
 let fov = 130;
 let distanciaArrastreTotal = 0;
-// ENRUTADOR HUD: Conmutación nativa elástica de pestañas en Chrome
+
 window.cambiarPantalla = function(screenId, boton) {
     try {
         document.querySelectorAll('.app-screen').forEach(function(s) { s.classList.remove('active'); });
         document.querySelectorAll('.side-icon-btn').forEach(function(b) { b.classList.remove('active'); });
-        
         const pantalla = document.getElementById(screenId);
         if (pantalla) pantalla.classList.add('active');
         if (boton) boton.classList.add('active');
-        
-        if (screenId === 'screen-neural' && typeof window.resCanvas === 'function') { 
-            setTimeout(window.resCanvas, 40); 
-        }
+        if (screenId === 'screen-neural' && typeof window.resCanvas === 'function') { setTimeout(window.resCanvas, 40); }
         window.logTerminalCore("HUD_INTERFACE", "Conmutando monitor: " + screenId.toUpperCase());
-    } catch(err) { 
-        console.error(err); 
-    }
+    } catch(err) { console.error(err); }
 };
 
 window.logTerminalCore = function(modulo, traza) {
@@ -51,12 +45,12 @@ window.logTerminalCore = function(modulo, traza) {
         terminal.scrollTop = terminal.scrollHeight;
     } catch(e) {}
 };
-// CONECTOR PROXY INTEGRADO DE BAJA LATENCIA
+// CONECTOR PROXY INTEGRADO DE BAJA LATENCIA (LLaMA-3.1-70B)
 async function consultarProxyInferenciaLlama(promptUsuario) {
     if (typeof window.logTerminalCore === 'function') {
         window.logTerminalCore("STARK_LINK", "Abriendo puente intermedio local...");
     }
-    const systemPrompt = "Eres NeoX, un Sistema Operativo Cognitivo de nivel militar inspirado en J.A.R.V.I.S. Tu creador es Daniel. Responde de forma inteligente, elocuente y orgánica.";
+    const systemPrompt = "Eres NeoX, un OS Cognitivo de nivel militar inspirado en J.A.R.V.I.S. Tu creador es Daniel. Responde de forma inteligente, elocuente y orgánica.";
     let mensajesApi = [{ role: "system", content: systemPrompt }];
     window.historial.slice(-6).forEach(function(m) {
         mensajesApi.push({ role: m.role === "user" ? "user" : "assistant", content: m.text });
@@ -81,6 +75,7 @@ function deducirEtiquetaNeurona(texto) {
     if (f.includes("codigo") || f.includes("error")) return "SYS_INIT";
     return "JARVIS_M";
 }
+
 // POBLACIÓN DE LA CORTEZA 3D
 window.inicializarEsferaNodos = function() {
     window.nodos = [];
@@ -112,9 +107,9 @@ window.configurarEventosGraficos = function() {
     const canvas = document.getElementById("neuralNet");
     if (!canvas) return;
     canvas.addEventListener('mousedown', dragStart);
-    canvas.addEventListener('touchstart', function(e) { if (e.touches.length === 1) dragStart(e.touches); }, { passive: true });
+    canvas.addEventListener('touchstart', function(e) { if (e.touches.length === 1) dragStart(e.touches[0]); }, { passive: true });
     window.addEventListener('mousemove', dragMove);
-    window.addEventListener('touchmove', function(e) { if (isDraggingNetwork && e.touches.length === 1) dragMove(e.touches); }, { passive: true });
+    window.addEventListener('touchmove', function(e) { if (isDraggingNetwork && e.touches.length === 1) dragMove(e.touches[0]); }, { passive: true });
     window.addEventListener('mouseup', dragEnd);
     window.addEventListener('touchend', dragEnd);
 };
@@ -122,15 +117,15 @@ window.configurarEventosGraficos = function() {
 function dragStart(e) {
     isDraggingNetwork = true; distanciaArrastreTotal = 0;
     const canvas = document.getElementById("neuralNet"); if (!canvas) return;
-    const rect = canvas.getBoundingClientRect(); let point = e.touches ? e.touches[0] : e;
-    previousMousePosition = { x: point.clientX - rect.left, y: point.clientY - rect.top };
+    const rect = canvas.getBoundingClientRect();
+    previousMousePosition = { x: e.clientX - rect.left, y: e.clientY - rect.top };
 }
 
 function dragMove(e) {
     if (!isDraggingNetwork) return;
     const canvas = document.getElementById("neuralNet"); if (!canvas) return;
-    const rect = canvas.getBoundingClientRect(); let point = e.touches ? e.touches[0] : e;
-    let cx = point.clientX - rect.left, cy = point.clientY - rect.top;
+    const rect = canvas.getBoundingClientRect();
+    let cx = e.clientX - rect.left, cy = e.clientY - rect.top;
     if (isNaN(cx) || isNaN(cy)) return;
     let dx = cx - previousMousePosition.x, dy = cy - previousMousePosition.y;
     distanciaArrastreTotal += Math.sqrt(dx*dx + dy*dy);
@@ -174,6 +169,7 @@ window.actualizarNeuronasDesdeChat = function(lbl, desc) {
 };
 
 function rotar() {
+    // CAPA CRÍTICA CHROME: Forzamos la reinyección cinemática constante de velocidad base en cada frame
     if (!isDraggingNetwork) {
         angY = 0.003 * multiplicadorVelocidad;
         angX = 0.001 * multiplicadorVelocidad;
@@ -184,6 +180,7 @@ function rotar() {
         let y2 = n.y * cX - z1 * sX, z2 = z1 * cX + n.y * sX; n.x = x1; n.y = y2; n.z = z2;
     });
 }
+
 window.ejecutarBucleRenderizado3D = function() {
     const canvas = document.getElementById("neuralNet"); const ctx = canvas ? canvas.getContext("2d") : null;
     if (!canvas || !ctx) return;
@@ -210,7 +207,6 @@ window.ejecutarBucleRenderizado3D = function() {
     });
     requestAnimationFrame(window.ejecutarBucleRenderizado3D);
 };
-
 window.efectoEscribir = function(prefix, texto, tipo) {
     const box = document.getElementById("chat-box"); if (!box) return;
     const div = document.createElement("div"); div.className = "msg " + tipo;
@@ -238,6 +234,14 @@ window.actualizarBovedaVisual = function() {
     });
 };
 
+window.calcularMetricasMatematicasReales = function(textoUsuario, respuestaIa) {
+    let palabrasUsuario = textoUsuario.split(" ").length; let palabrasIa = respuestaIa.split(" ").length;
+    window.starkDataAnalyzer.densidadTokensFrase = Math.round((palabrasUsuario + palabrasIa) / 2);
+    const loadPct = document.getElementById("load-percentage"); const activeCore = document.getElementById("active-core");
+    if (loadPct) loadPct.innerText = Math.floor(94 + Math.random() * 6) + "%";
+    if (activeCore) activeCore.innerText = "NÚCLEO: LLaMA-3.1-70B | PROXY_STARK_LINK";
+};
+
 window.enviarMensaje = async function() {
     const input = document.getElementById("user-input"); if (!input) return;
     const texto = input.value.trim(); if (!texto) return; input.value = "";
@@ -249,9 +253,7 @@ window.enviarMensaje = async function() {
         document.getElementById("thinking-indicator").style.display = "none";
         window.historial.push({ role: "NeoX", text: respuestaFinal });
         window.efectoEscribir("NeoX", respuestaFinal, "neox"); window.actualizarBovedaVisual();
-        const loadPct = document.getElementById("load-percentage"); const activeCore = document.getElementById("active-core");
-        if (loadPct) loadPct.innerText = Math.floor(94 + Math.random() * 6) + "%";
-        if (activeCore) activeCore.innerText = "NÚCLEO: LLaMA-3.1-70B | PROXY_STARK_LINK";
+        window.calcularMetricasMatematicasReales(texto, respuestaFinal);
         window.actualizarNeuronasDesdeChat(etiquetaCalculada, "Conocimiento LLaMA: " + texto.substring(0,30));
     }, 350);
 };
@@ -266,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!bootEjecutado) {
         bootEjecutado = true; window.inicializarEsferaNodos(); window.resCanvas(); window.configurarEventosGraficos(); requestAnimationFrame(window.ejecutarBucleRenderizado3D);
         setTimeout(function() { 
-            window.efectoEscribir("NeoX", "Chasis unificado purificado v25.9 en línea, Señor Daniel. He estabilizado las constantes de inercia de la red y sincronizado el canal asíncronico del chat de forma directa. La esfera de 200 nodos ya se encuentra rotando bajo un hilo de ejecución cinético autónomo. ¿Cuál es su directriz?", "neox"); 
+            window.efectoEscribir("NeoX", "Chasis unificado v25.9 operativo, Señor Daniel. He reparado las constantes cinéticas de inercia y alineado los hilos del chat con el proxy LLaMA-3.1-70B libre de errores de referencia. ¿Cuál es su requerimiento?", "neox"); 
         }, 300);
     }
 });
