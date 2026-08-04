@@ -1,5 +1,5 @@
 /* =====================================================================
-   NeoX CORE v23.0 - HOJA DE ESTILOS DE ALTA PRIORIDAD CYBERPUNK - PARTE 1
+   NeoX CORE v24.1 - ENTORNO DESBLOQUEADO PARA TABLET ANDROID - PARTE 1
    ===================================================================== */
 
 :root { 
@@ -10,12 +10,16 @@
     --panel: rgba(6, 16, 30, 0.95); 
 }
 
-* { 
-    box-sizing: border-box; 
-    font-family: monospace; 
-    margin: 0; 
-    padding: 0; 
+/* CORRECCIÓN DE BUG: Bloqueo de selección seguro sin romper botones */
+body, div, span, p { 
+    -webkit-user-select: none;
     user-select: none; 
+}
+
+/* Liberación absoluta de los campos de entrada de texto */
+input, textarea {
+    -webkit-user-select: text !important;
+    user-select: text !important;
 }
 
 body { 
@@ -50,7 +54,6 @@ body {
     flex-shrink: 0; 
     height: 100%; 
 }
-
 .side-icon-btn { 
     width: 48px; 
     height: 48px; 
@@ -66,6 +69,7 @@ body {
     font-weight: bold; 
     gap: 5px; 
     padding: 2px 0;
+    touch-action: manipulation; /* Fuerza el impacto táctil inmediato en Android */
 }
 
 .side-icon-btn.active { 
@@ -326,6 +330,7 @@ input {
     padding: 0 20px; 
     cursor: pointer; 
     font-weight: bold; 
+    touch-action: manipulation;
 }
 
 .metrics-grid { 
