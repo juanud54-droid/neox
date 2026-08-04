@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX COGNITIVE COMMAND HUB v20.0</title>
+    <title>NeoX NATIVE OS v20.0</title>
     <style>
         :root { --cyan: #00f0ff; --green: #00ff66; --red: #ff3333; --bg: #010409; --panel: rgba(6, 16, 30, 0.9); }
         * { box-sizing: border-box; font-family: monospace; margin: 0; padding: 0; user-select: none; }
         body { background-color: var(--bg); color: var(--cyan); display: flex; flex-direction: row; height: 100vh; height: 100dvh; width: 100vw; overflow: hidden; padding: 10px; }
         #hud-layout { display: flex; flex-direction: row; width: 100%; height: 100%; gap: 12px; }
         #sidebar-icons { width: 65px; background: rgba(6, 16, 30, 0.85); border: 1px solid var(--cyan); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 25px; flex-shrink: 0; height: 100%; }
+    </style>
+</head>
+    <style>
         .side-icon-btn { width: 48px; height: 48px; background: rgba(0, 240, 255, 0.03); border: 1px solid var(--cyan); color: var(--cyan); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65em; font-weight: bold; gap: 3px; }
         .side-icon-btn.active { background: var(--cyan); color: var(--bg); box-shadow: 0 0 15px var(--cyan); }
         .side-icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
@@ -17,19 +20,18 @@
         .app-screen { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
         .app-screen.active { display: flex; }
         .cyber-panel { background: var(--panel); border: 1px solid var(--cyan); display: flex; flex-direction: column; padding: 18px; position: relative; width: 100%; height: 100%; }
-    </style>
-</head>
-    <style>
         .panel-header { color: var(--green); font-size: 0.9em; letter-spacing: 2px; border-bottom: 1px dashed var(--green); padding-bottom: 6px; margin-bottom: 12px; flex-shrink: 0; }
         .split-layout { display: flex; flex-direction: row; gap: 12px; height: 100%; }
         .map-view-box { flex: 1; display: flex; flex-direction: column; position: relative; height: 100%; min-width: 0; }
-        canvas { width: 100%; flex: 1; display: block; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--cyan); cursor: grab; }
-        .draggable-popup { position: absolute; top: 20px; left: 20px; width: 280px; height: 230px; min-width: 200px; min-height: 150px; background: rgba(1, 4, 9, 0.95); border: 1px solid var(--cyan); display: flex; flex-direction: column; z-index: 100; overflow: hidden; display: none; }
-        .popup-header { background: rgba(0, 240, 255, 0.1); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.3); cursor: move; }
+        canvas { width: 100%; flex: 1; display: block; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--cyan); touch-action: none; }
+    </style>
+    <style>
+        .draggable-popup { position: absolute; top: 20px; left: 20px; width: 280px; height: 230px; min-width: 220px; min-height: 160px; background: rgba(1, 4, 9, 0.95); border: 1px solid var(--cyan); display: flex; flex-direction: column; z-index: 1000; overflow: hidden; display: none; touch-action: none; }
+        .popup-header { background: rgba(0, 240, 255, 0.1); padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.3); cursor: move; touch-action: none; }
         .popup-title { color: var(--cyan); font-weight: bold; font-size: 0.8em; }
-        .popup-close-btn { background: transparent; border: none; color: var(--red); font-weight: bold; cursor: pointer; }
+        .popup-close-btn { background: transparent; border: none; color: var(--red); font-weight: bold; cursor: pointer; padding: 4px 8px; font-size: 1.1em; }
         .popup-body { flex: 1; padding: 12px; overflow-y: auto; font-size: 0.85em; color: #e6edf3; line-height: 1.4; position: relative; }
-        .popup-scale-handle { position: absolute; bottom: 0; right: 0; width: 15px; height: 15px; background: linear-gradient(135deg, transparent 50%, var(--cyan) 50%); cursor: se-resize; }
+        .popup-scale-handle { position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; background: linear-gradient(135deg, transparent 50%, var(--cyan) 50%); cursor: se-resize; touch-action: none; z-index: 1001; }
         .memory-vault-box { width: 220px; display: flex; flex-direction: column; flex-shrink: 0; height: 100%; background: rgba(0, 0, 0, 0.2); border-left: 1px dashed rgba(0, 240, 255, 0.2); padding-left: 12px; }
         #memory-vault-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         .memory-item { background: rgba(0, 240, 255, 0.03); border: 1px solid rgba(0, 240, 255, 0.2); padding: 8px; font-size: 0.75em; }
@@ -43,6 +45,8 @@
         #input-area { display: flex; gap: 10px; height: 48px; flex-shrink: 0; width: 100%; }
         input { flex: 1; background: rgba(11, 21, 36, 0.95); border: 1px solid var(--cyan); color: var(--green); padding: 0 16px; outline: none; font-size: 0.95em; user-select: text !important; }
         .btn { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 0 20px; cursor: pointer; font-weight: bold; }
+    </style>
+    <style>
         .metrics-grid { display: flex; flex-direction: row; gap: 12px; flex-shrink: 0; }
         .metric-card { flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 240, 255, 0.15); padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
         .wide-card { flex: 1.5; justify-content: center; }
@@ -54,6 +58,7 @@
         .bar { width: 6px; background-color: var(--cyan); }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
     </style>
+</head>
 <body>
     <div id="hud-layout">
         <!-- BARRA LATERAL TÁCTICA DE ICONOS (4 MONITORES) -->
@@ -64,12 +69,12 @@
             <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-core', this)"><svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4z"/></svg><span>CORE</span></button>
         </div>
 
-        <!-- RECEPTÁCULO PRINCIPAL DE MONITORES -->
+        <!-- RECEPTÁCULO PRINCIPAL DE MONITORES FULL SCREEN -->
         <div id="main-display">
-            <!-- MONITOR 1: INTERFAZ DE DIÁLOGO COGNITIVO -->
+            <!-- MONITOR 1: INTERFAZ DE DIÁLOGO -->
             <div class="app-screen active" id="screen-chat">
                 <div class="cyber-panel">
-                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v20.0 [JARVIS_APK_CORE] ✦</div>
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v20.0 [JARVIS_HERMIT_CORE] ✦</div>
                     <div id="chat-box"></div>
                     <div id="thinking-indicator">> NeoX PROCESANDO SECUENCIA SEMÁNTICA J.A.R.V.I.S...</div>
                     <div id="input-area">
@@ -103,7 +108,7 @@
                     <div class="metrics-grid">
                         <div class="metric-card"><div class="metric-label">PROCESO</div><div class="ring-box" id="load-percentage">100%</div></div>
                         <div class="metric-card"><div class="metric-label">RADAR</div><div class="radar-box"></div></div>
-                        <div class="metric-card wide-card"><div class="metric-label">ENERGÍA_DEL_NÚCLEO</div><div id="active-core">NÚCLEO: NATIVE_STARK_APK</div></div>
+                        <div class="metric-card wide-card"><div class="metric-label">ENERGÍA_DEL_NÚCLEO</div><div id="active-core">NÚCLEO: NATIVE_STARK_HERMIT</div></div>
                     </div>
                     <div class="panel-header" style="margin-top:20px;">> ACTIVITY_SPECTRUM_LIVE</div>
                     <div id="brain-activity"><div class="bar" style="height:75%;"></div><div class="bar" style="height:35%;"></div><div class="bar" style="height:90%;"></div><div class="bar" style="height:55%;"></div><div class="bar" style="height:80%;"></div></div>
@@ -131,7 +136,7 @@
             if (!bootEjecutado) {
                 bootEjecutado = true;
                 setTimeout(function() { 
-                    window.efectoEscribir("NeoX", "Sistemas en línea, Señor. Todos los monitores holográficos calibrados. Módulo de rastreo Stark_Web listo en la pestaña CORE. ¿Cuál es su directriz para hoy, Creador Daniel?", "neox"); 
+                    window.efectoEscribir("NeoX", "Sistemas en línea, Señor. Todos los monitores holográficos calibrados. Módulo de rastreo Stark_Web operativo. ¿Cuál es su directriz para hoy, Creador Daniel?", "neox"); 
                 }, 400);
             }
         });
@@ -188,7 +193,7 @@
         };
 
         function extraerTopicoBusqueda(f) {
-            return f.replace(/(neox|jarvis|puedes|buscar|busca|en|internet|noticias|sobre|datos|de|por|favor|info|que|es|un|una|los|las|el)/g, "").replace(/[^a-zA-Z0-9 ]/g, "").trim();
+            return f.toLowerCase().replace(/(neox|jarvis|puedes|buscar|busca|en|internet|noticias|sobre|datos|de|por|favor|info|que|es|un|una|los|las|el)/g, "").replace(/[^a-zA-Z0-9 ]/g, "").trim();
         }
         async function analizarYResponderJarvis(txt) {
             let p = txt.toLowerCase().trim();
@@ -212,19 +217,19 @@
             }
             else if (p.includes("busca") || p.includes("internet") || p.includes("noticias") || p.includes("sobre")) {
                 res.intencion = "STARK_WEB_SCAN"; let t = extraerTopicoBusqueda(txt);
-                res.logica = "Iniciando enlace satelital GET para: [" + t.toUpperCase() + "]";
+                res.logica = "Iniciando enlace satelital GET directo para: [" + t.toUpperCase() + "]";
                 if (!t) { res.respuesta = "Señor, especifique el tópico de forma más directa."; res.neuronaEtiqueta = "WEB_ERR"; return res; }
                 try {
                     const qUrl = "https://wikipedia.org" + encodeURIComponent(t.replace(/ /g, "_"));
-                    const rWeb = await fetch("https://allorigins.win" + encodeURIComponent(qUrl), { method: "GET" });
+                    const rWeb = await fetch(qUrl, { method: "GET" });
                     if (rWeb.status === 200) {
                         const jWeb = await rWeb.json();
                         res.respuesta = "Hecho, Señor. Desplegué los sensores Stark_Web sobre [" + t.toUpperCase() + "]: " + jWeb.extract;
                         res.neuronaEtiqueta = t.toUpperCase().substring(0,8); res.neuronaDesc = jWeb.extract.substring(0,100);
-                    } else { res.respuesta = "He intentado rastrear [" + t.toUpperCase() + "], Señor, pero los registros devuelven redundancias vacías."; res.neuronaEtiqueta = "WEB_NULL"; }
+                    } else { res.respuesta = "He intentado rastrear [" + t.toUpperCase() + "], Señor, pero los servidores remotos no devolvieron datos."; res.neuronaEtiqueta = "WEB_NULL"; }
                 } catch (e) {
-                    res.respuesta = "Señor, simulé el flujo de datos locales para [" + t.toUpperCase() + "]. Marcadores guardados.";
-                    res.neuronaEtiqueta = "WEB_ERR"; res.neuronaDesc = "Error fetch mitigado.";
+                    res.respuesta = "Señor, falló el enlace HTTP por saturación externa, pero mantengo indexado el marcador táctico para [" + t.toUpperCase() + "].";
+                    res.neuronaEtiqueta = "WEB_ERR"; res.neuronaDesc = "Error de pasarela asíncrona.";
                 }
             }
             return res;
@@ -273,23 +278,24 @@
         }
 
         if (canvas) {
-            canvas.addEventListener('mousedown', dragStart);
-            canvas.addEventListener('touchstart', function(e) { if(e.touches.length===1) dragStart(e.touches[0]); }, {passive:true});
+            canvas.addEventListener('mousedown', function(e) { dragStart(e); });
+            canvas.addEventListener('touchstart', function(e) { if(e.touches.length === 1) dragStart(e.touches[0]); }, { passive: true });
         }
-        window.addEventListener('mousemove', dragMove);
-        window.addEventListener('touchmove', function(e) { if(isDraggingNetwork && e.touches.length===1) { dragMove(e.touches[0]); } }, {passive:true});
-        window.addEventListener('mouseup', dragEnd); window.addEventListener('touchend', dragEnd);
+        window.addEventListener('mousemove', function(e) { dragMove(e); });
+        window.addEventListener('touchmove', function(e) { if(isDraggingNetwork && e.touches.length === 1) { dragMove(e.touches[0]); } }, { passive: true });
+        window.addEventListener('mouseup', function() { dragEnd(); }); 
+        window.addEventListener('touchend', function() { dragEnd(); });
 
         function dragStart(e) {
             isDraggingNetwork = true; const rect = canvas.getBoundingClientRect();
             let mx = e.clientX - rect.left, my = e.clientY - rect.top;
-            if(isNaN(mx) || isNaN(my)) { mx=canvas.width/2; my=canvas.height/2; }
+            if(isNaN(mx) || isNaN(my)) { mx = canvas.width / 2; my = canvas.height / 2; }
             previousMousePosition = { x: mx, y: my }; procesarClickNodo(mx, my);
         }
         function dragMove(e) {
             if (!isDraggingNetwork) return; const rect = canvas.getBoundingClientRect();
             let cx = e.clientX - rect.left, cy = e.clientY - rect.top;
-            if(isNaN(cx) || isNaN(cy) || Math.abs(cx)>3000) return;
+            if(isNaN(cx) || isNaN(cy) || Math.abs(cx) > 3000) return;
             angY = (cx - previousMousePosition.x) * 0.005; angX = (cy - previousMousePosition.y) * 0.005;
             previousMousePosition = { x: cx, y: cy };
         }
@@ -362,13 +368,30 @@
             const popup = document.getElementById("hologram-window"), dragZone = document.getElementById("popup-drag-zone"), resizer = document.getElementById("popup-resizer");
             if (!popup || !dragZone || !resizer) return;
             let isDragging = false, isResizing = false, startX, startY, startWidth, startHeight, startLeft, startTop;
-            function sDrag(e) { e.preventDefault(); isDragging = true; const p = e.touches ? e.touches : e; startX = p.clientX; startY = p.clientY; startLeft = popup.offsetLeft; startTop = popup.offsetTop; }
-            function sResize(e) { e.preventDefault(); e.stopPropagation(); isResizing = true; const p = e.touches ? e.touches : e; startX = p.clientX; startY = p.clientY; startWidth = parseInt(document.defaultView.getComputedStyle(popup).width, 10); startHeight = parseInt(document.defaultView.getComputedStyle(popup).height, 10); }
-            function mAction(e) { if (!isDragging && !isResizing) return; const p = e.touches ? e.touches : e; if (isDragging) { popup.style.left = (startLeft + (p.clientX - startX)) + "px"; popup.style.top = (startTop + (p.clientY - startY)) + "px"; } if (isResizing) { popup.style.width = Math.max(220, startWidth + (p.clientX - startX)) + "px"; popup.style.height = Math.max(160, startHeight + (p.clientY - startY)) + "px"; } }
+            
+            function sDrag(e) {
+                const p = e.touches ? e.touches[0] : e;
+                startX = p.clientX; startY = p.clientY; startLeft = popup.offsetLeft; startTop = popup.offsetTop;
+                isDragging = true;
+            }
+            function sResize(e) {
+                const p = e.touches ? e.touches[0] : e;
+                startX = p.clientX; startY = p.clientY;
+                startWidth = parseInt(document.defaultView.getComputedStyle(popup).width, 10);
+                startHeight = parseInt(document.defaultView.getComputedStyle(popup).height, 10);
+                isResizing = true;
+            }
+            function mAction(e) {
+                if (!isDragging && !isResizing) return;
+                const p = e.touches ? e.touches[0] : e;
+                if (isDragging) { popup.style.left = (startLeft + (p.clientX - startX)) + "px"; popup.style.top = (startTop + (p.clientY - startY)) + "px"; }
+                if (isResizing) { popup.style.width = Math.max(220, startWidth + (p.clientX - startX)) + "px"; popup.style.height = Math.max(160, startHeight + (p.clientY - startY)) + "px"; }
+            }
             function stopA() { isDragging = false; isResizing = false; }
-            dragZone.addEventListener("mousedown", sDrag); dragZone.addEventListener("touchstart", sDrag, { passive: false });
-            resizer.addEventListener("mousedown", startResize); resizer.addEventListener("touchstart", sResize, { passive: false });
-            window.addEventListener("mousemove", mAction); window.addEventListener("touchmove", mAction, { passive: false });
+            
+            dragZone.addEventListener("mousedown", sDrag); dragZone.addEventListener("touchstart", sDrag, { passive: true });
+            resizer.addEventListener("mousedown", sResize); resizer.addEventListener("touchstart", sResize, { passive: true });
+            window.addEventListener("mousemove", mAction); window.addEventListener("touchmove", mAction, { passive: true });
             window.addEventListener("mouseup", stopA); window.addEventListener("touchend", stopA);
         });
         window.cerrarPopup = function() { const p = document.getElementById("hologram-window"); if (p) p.style.display = "none"; };
