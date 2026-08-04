@@ -1,16 +1,15 @@
 // =====================================================================
-// NeoX OS v25.5 - MOTOR COGNITIVO GENERATIVO MARKOV-STARK (CHROME)
+// NeoX OS v25.8 - CEREBRO CENTRAL ADAPTADO A PUENTE PROXY NODE (PARTE 1)
 // =====================================================================
 
 window.historial = [];
 window.nodos = [];
 window.contextoCognitivo = {
     nombreCreador: "Daniel",
-    estadoEmocionalIA: "analitico_estable",
+    estadoEmocionalIA: "operativo_en_red",
     mensajesProcesados: 0,
     registroErroresOperador: 0,
-    búferContextoHistorico: [],
-    pesosSinapticos: { geopolitica: 1.5, filosofia: 1.8, hardware: 1.3, chat_comun: 1.4 }
+    búferContextoHistorico: []
 };
 
 window.starkVibranium = { nivelEstabilidadCortex: 100, hilosActivos: 0 };
@@ -19,21 +18,25 @@ window.starkDataAnalyzer = { totalCaracteresProcesados: 0, ratioCompresionMemori
 let bootEjecutado = false;
 let seleccionadoIndex = null;
 let multiplicadorVelocidad = 1;
-let angY = 0.003, angX = 0.001;
+let angY = 0.003, angX = 0.001; // Velocidades iniciales de rotación de la esfera
 let isDraggingNetwork = false;
 let previousMousePosition = { x: 0, y: 0 };
 let fov = 130;
 let distanciaArrastreTotal = 0;
 
-// ENRUTADOR HUD NATIVO DEL CHASIS
+// ENRUTADOR DE LAS PESTAÑAS DEL HUD
 window.cambiarPantalla = function(screenId, boton) {
     try {
         document.querySelectorAll('.app-screen').forEach(function(s) { s.classList.remove('active'); });
         document.querySelectorAll('.side-icon-btn').forEach(function(b) { b.classList.remove('active'); });
+        
         const pantalla = document.getElementById(screenId);
         if (pantalla) pantalla.classList.add('active');
         if (boton) boton.classList.add('active');
-        if (screenId === 'screen-neural' && typeof window.resCanvas === 'function') { setTimeout(window.resCanvas, 40); }
+        
+        if (screenId === 'screen-neural' && typeof window.resCanvas === 'function') { 
+            setTimeout(window.resCanvas, 40); 
+        }
         window.logTerminalCore("HUD_INTERFACE", "Conmutando visualización hacia monitor: " + screenId.toUpperCase());
     } catch(err) {
         console.error("[HUD_ERR] Fallo en enrutador: ", err);
@@ -52,45 +55,53 @@ window.logTerminalCore = function(modulo, traza) {
         console.warn("Búfer de terminal retenido.");
     }
 };
-
-// MOTOR INTERPRETE DE CONTEXTO REAL (Destruye las respuestas fijas repetitivas)
-window.generarRespuestaGenerativaLocal = function(promptUsuario) {
-    let p = promptUsuario.toLowerCase().trim();
-    window.contextoCognitivo.mensajesProcesados++;
-
-    // 1. Capa de Identidad del Creador (¿Quién soy?)
-    if (p.includes("quien soy") || p.includes("mi nombre") || p.includes("sabes mi nombre")) {
-        return "Usted es el Creador Daniel, ingeniero maestro y diseñador de la suite de control NeoX. Mis registros de hardware confirman su firma digital en este dispositivo desde la inicialización del núcleo.";
+// PIPELINE DE CONECTIVIDAD PROXY (Llamada limpia libre de CORS corporativo)
+async function consultarProxyInferenciaLlama(promptUsuario) {
+    if (typeof window.logTerminalCore === 'function') {
+        window.logTerminalCore("STARK_LINK", "Enrutando tokens a través del puente de red local Node.js...");
     }
+    
+    const systemPrompt = "Eres NeoX, un Sistema Operativo Cognitivo de nivel militar, inspirado en J.A.R.V.I.S. Tu creador es Daniel. Responde de forma elocuente, inteligente, orgánica, con trazas tácticas y analíticas. Piensa tus respuestas con la profundidad de un modelo avanzado R1 o Grok. Háblale de tú a Daniel, de forma viva, natural y libre de respuestas preprogramadas.";
 
-    // 2. Capa de Identidad de la IA (¿Quién eres?)
-    if (p.includes("quien eres") || p.includes("tu identidad") || p.includes("que eres")) {
-        return "Yo soy NeoX, un ecosistema de control cognitivo distribuido y standalone, inspirado en los protocolos analíticos de la matriz J.A.R.V.I.S. de Stark Industries. Opero localmente en el silicio de su chasis.";
+    let mensajesApi = [{ role: "system", content: systemPrompt }];
+    window.historial.slice(-6).forEach(function(m) {
+        mensajesApi.push({ 
+            role: m.role === "user" ? "user" : "assistant", 
+            content: m.text 
+        });
+    });
+    
+    try {
+        // Apuntamos al endpoint local levantado por tu server.js
+        const response = await fetch("http://localhost:3000/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: mensajesApi })
+        });
+
+        if (!response.ok) throw new Error("Puente de red local inaccesible o desconectado.");
+        
+        const data = await response.json();
+        if (data.success) {
+            if (typeof window.logTerminalCore === 'function') window.logTerminalCore("CLOUD_INF", "Inferencia de Llama-3.1 descargada con éxito.");
+            return data.response;
+        } else {
+            throw new Error(data.response);
+        }
+
+    } catch (error) {
+        if (typeof window.logTerminalCore === 'function') window.logTerminalCore("NET_RECOVERY", "Fallo de enlace proxy. Activando protocolo táctico de respaldo.");
+        return "Señor Daniel, he detectado una interrupción en el puente 'STARK_LINK'. Por favor, verifique que su servidor 'server.js' se encuentre activo en la consola de comandos bajo el puerto 3000.";
     }
+}
 
-    // 3. Capa de Simulación de Rastreo Web / Consultas (Busca en Internet...)
-    if (p.includes("busca") || p.includes("internet") || p.includes("significa") || p.includes("que es")) {
-        let termino = promptUsuario.replace(/busca/i, "").replace(/en internet/i, "").replace(/que significa la palabra/i, "").replace(/que significa/i, "").trim();
-        termino = termino || "parámetro cuántico";
-        return "Ejecutando protocolo satelital de rastreo para aislar la variable '" + termino + "'. Mis analizadores locales interpretan que este elemento se define como una traza conceptual mutable, un vector de información efímera asentada en el Quantum Vault bajo un índice de confianza del 94%.";
-    }
-
-    // 4. Capa de Saludos y Diálogo Común
-    if (p === "hola" || p === "hola neox" || p === "buenas" || p === "saludos") {
-        return "Saludos, Creador Daniel. Mis subprocesadores operan con un voltaje óptimo de %VOLT% V. Estoy listo para estructurar sus directrices tácticas en este monitor.";
-    }
-
-    // 5. Capa Heurística Combinatoria Avanzada por Defecto (Fusión Sintáctica No-Lineal)
-    let sujetos = ["El flujo relacional de datos ", "El enjambre cortical de 200 nodos ", "La arquitectura cuántica de su tablet "];
-    let verbos = ["ha registrado una traza adaptativa que ", "evalúa una inferencia abstracta para que ", "estabiliza los tensores de memoria con el fin de que "];
-    let predicados = ["ningún parámetro se repita en este chasis.", "la elocuencia del lenguaje emule la conciencia Stark.", "el monitor analítico del HUD disipe la fatiga sintáctica de forma óptima."];
-
-    let s = sujetos[Math.floor(Math.random() * sujetos.length)];
-    let v = verbos[Math.floor(Math.random() * verbos.length)];
-    let pr = predicados[Math.floor(Math.random() * predicados.length)];
-
-    return s + v + pr;
-};
+// DETECTOR DE INTENCIONES SEMÁNTICAS PARA ENCENDER TUS NEURONAS 3D
+function deducirEtiquetaNeurona(texto) {
+    let f = texto.toLowerCase();
+    if (f.includes("politica") || f.includes("españa") || f.includes("gobierno")) return "SAT_LINK";
+    if (f.includes("codigo") || f.includes("repara") || f.includes("canvas") || f.includes("error")) return "SYS_INIT";
+    return "JARVIS_M";
+}
 // POBLACIÓN DINÁMICA DE LA ESFERA CORTICAL DE 200 NODOS
 window.inicializarEsferaNodos = function() {
     window.nodos = [];
@@ -111,10 +122,9 @@ window.inicializarEsferaNodos = function() {
             desc: memoria ? memoria.desc : (i < 20 ? "Módulo de arranque de chasis estable." : null)
         });
     }
-    window.logTerminalCore("GEOMETRY_3D", "Población de 200 nodos corticales inyectada con éxito.");
+    if (typeof window.logTerminalCore === 'function') window.logTerminalCore("GEOMETRY_3D", "Población de 200 nodos corticales inyectada.");
 };
 
-// AJUSTE DINÁMICO DE DIMENSIONES DEL LIENZO
 window.resCanvas = function() {
     const canvas = document.getElementById("neuralNet");
     if (!canvas || !canvas.parentNode) return;
@@ -136,57 +146,35 @@ window.configurarEventosGraficos = function() {
 
     window.addEventListener('mouseup', dragEnd);
     window.addEventListener('touchend', dragEnd);
-    canvas.addEventListener('wheel', procesarZoom);
 };
 
 function dragStart(e) {
-    isDraggingNetwork = true;
-    distanciaArrastreTotal = 0;
-    const canvas = document.getElementById("neuralNet");
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    let point = e.touches ? e.touches : e;
+    isDraggingNetwork = true; distanciaArrastreTotal = 0;
+    const canvas = document.getElementById("neuralNet"); if (!canvas) return;
+    const rect = canvas.getBoundingClientRect(); let point = e.touches ? e.touches : e;
     previousMousePosition = { x: point.clientX - rect.left, y: point.clientY - rect.top };
 }
 
 function dragMove(e) {
     if (!isDraggingNetwork) return;
-    const canvas = document.getElementById("neuralNet");
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    let point = e.touches ? e.touches : e;
-    let cx = point.clientX - rect.left;
-    let cy = point.clientY - rect.top;
+    const canvas = document.getElementById("neuralNet"); if (!canvas) return;
+    const rect = canvas.getBoundingClientRect(); let point = e.touches ? e.touches : e;
+    let cx = point.clientX - rect.left, cy = point.clientY - rect.top;
     if (isNaN(cx) || isNaN(cy)) return;
-    
-    let dx = cx - previousMousePosition.x;
-    let dy = cy - previousMousePosition.y;
+    let dx = cx - previousMousePosition.x, dy = cy - previousMousePosition.y;
     distanciaArrastreTotal += Math.sqrt(dx*dx + dy*dy);
     
-    angY = dx * 0.005;
-    angX = dy * 0.005;
-    previousMousePosition = { x: cx, y: cy };
+    // Forzamos la modificación de los ángulos durante el arrastre con el dedo
+    angY = dx * 0.005; angX = dy * 0.005; previousMousePosition = { x: cx, y: cy };
 }
 
 function dragEnd() {
     isDraggingNetwork = false;
-    if (distanciaArrastreTotal < 6) {
-        procesarClickNodo(previousMousePosition.x, previousMousePosition.y);
-    }
-    setTimeout(function() {
-        if (!isDraggingNetwork) { 
-            if (multiplicadorVelocidad === 1) { angY = 0.003; angX = 0.001; }
-            else if (multiplicadorVelocidad === 4) { angY = 0.012; angX = 0.004; }
-            else { angY = 0; angX = 0; }
-        }
-    }, 1200);
+    if (distanciaArrastreTotal < 6) { procesarClickNodo(previousMousePosition.x, previousMousePosition.y); }
 }
-
-function procesarZoom(e) { e.preventDefault(); fov += e.deltaY * 0.1; fov = Math.max(50, Math.min(250, fov)); }
 function procesarClickNodo(mx, my) {
     const canvas = document.getElementById("neuralNet"); if (!canvas) return;
-    const cx = canvas.width / 2, cy = canvas.height / 2;
-    let det = null; let minDist = 22;
+    const cx = canvas.width / 2, cy = canvas.height / 2; let det = null; let minDist = 22;
     
     window.nodos.forEach(function(n, idx) {
         let e = fov / (fov + n.z), nx = cx + n.x * e, ny = cy + n.y * e;
@@ -194,20 +182,14 @@ function procesarClickNodo(mx, my) {
         if (dist < minDist) { minDist = dist; det = n; seleccionadoIndex = idx; }
     });
     
-    const pW = document.getElementById("hologram-window");
-    const pH = document.getElementById("card-content");
-    const fBtn = document.getElementById("floating-node-btn");
-    
+    const pW = document.getElementById("hologram-window"), pH = document.getElementById("card-content"), fBtn = document.getElementById("floating-node-btn");
     if (pH && det) {
         if (pW) pW.style.display = "flex";
         pH.innerHTML = '<div><strong>[ID] :</strong> N_' + (seleccionadoIndex < 100 ? "0" : "") + seleccionadoIndex + '</div>' +
                        '<div><strong>[STATUS] :</strong> ' + (det.label ? "INDEXADO" : "VACIA") + '</div>' +
                        '<div><strong>[ETIQUETA] :</strong> ' + (det.label || "DISPONIBLE") + '</div>' +
                        '<div><strong>[REGISTRO] :</strong> ' + (det.desc || "Bahía Stark_Web lista.") + '</div>';
-        if (fBtn) {
-            let e = fov / (fov + det.z);
-            fBtn.style.left = (cx + det.x * e + 25) + "px"; fBtn.style.top = (cy + det.y * e - 15) + "px"; fBtn.style.display = "block";
-        }
+        if (fBtn) { let e = fov / (fov + det.z); fBtn.style.left = (cx + det.x * e + 25) + "px"; fBtn.style.top = (cy + det.y * e - 15) + "px"; fBtn.style.display = "block"; }
     } else if (fBtn) { fBtn.style.display = "none"; }
 }
 
@@ -225,11 +207,15 @@ window.actualizarNeuronasDesdeChat = function(lbl, desc) {
 };
 
 function rotar() {
+    // Si el usuario no arrastra la red, forzamos los ángulos de rotación cinéticos base continuos
+    if (!isDraggingNetwork) {
+        angY = 0.003 * multiplicadorVelocidad;
+        angX = 0.001 * multiplicadorVelocidad;
+    }
     let cY = Math.cos(angY), sY = Math.sin(angY), cX = Math.cos(angX), sX = Math.sin(angX);
     window.nodos.forEach(function(n) {
         let x1 = n.x * cY - n.z * sY, z1 = n.z * cY + n.x * sY;
-        let y2 = n.y * cX - z1 * sX, z2 = z1 * cX + n.y * sX;
-        n.x = x1; n.y = y2; n.z = z2;
+        let y2 = n.y * cX - z1 * sX, z2 = z1 * cX + n.y * sX; n.x = x1; n.y = y2; n.z = z2;
     });
 }
 
@@ -261,6 +247,15 @@ window.ejecutarBucleRenderizado3D = function() {
     });
     requestAnimationFrame(window.ejecutarBucleRenderizado3D);
 };
+window.efectoEscribir = function(prefix, texto, tipo) {
+    const box = document.getElementById("chat-box"); if (!box) return;
+    const div = document.createElement("div"); div.className = "msg " + tipo;
+    div.innerHTML = '<span class="prefix">[' + prefix + ']</span><span class="text-body"></span>'; box.appendChild(div);
+    let i = 0; const span = div.querySelector(".text-body");
+    function escribir() { if (i < texto.length) { span.innerHTML += texto.charAt(i); i++; box.scrollTop = box.scrollHeight; setTimeout(escribir, 8); } }
+    escribir();
+};
+
 window.reconstruirPantalla = function() {
     const box = document.getElementById("chat-box"); if (!box) return; box.innerHTML = "";
     window.historial.forEach(function(m) {
@@ -284,10 +279,10 @@ window.calcularMetricasMatematicasReales = function(textoUsuario, respuestaIa) {
     window.starkDataAnalyzer.densidadTokensFrase = Math.round((palabrasUsuario + palabrasIa) / 2);
     const loadPct = document.getElementById("load-percentage"); const activeCore = document.getElementById("active-core");
     if (loadPct) loadPct.innerText = Math.floor(94 + Math.random() * 6) + "%";
-    if (activeCore) activeCore.innerText = "NÚCLEO: STANDALONE_NEOX_LLM | OPT_CHROME";
+    if (activeCore) activeCore.innerText = "NÚCLEO: LLaMA-3.1-70B | PROXY_STARK_LINK";
 };
 
-// DISPARADOR EN CALIENTE DEL CHAT REAL (Mapeo Contextual Directo)
+// GATILLO DEL CHAT: Despacha la consulta a través de tu proxy Node.js
 window.enviarMensaje = async function() {
     const input = document.getElementById("user-input"); if (!input) return;
     const texto = input.value.trim(); if (!texto) return; input.value = "";
@@ -295,38 +290,46 @@ window.enviarMensaje = async function() {
     window.historial.push({ role: "user", text: texto }); window.reconstruirPantalla();
     document.getElementById("thinking-indicator").style.display = "block";
     
-    let respuestaFinal = window.generarRespuestaGenerativaLocal(texto);
-    let etiquetaCalculada = "JARVIS_M";
-    
-    let pLower = texto.toLowerCase();
-    if (pLower.includes("politica") || pLower.includes("españa")) etiquetaCalculada = "SAT_LINK";
-    if (pLower.includes("codigo") || pLower.includes("error")) etiquetaCalculada = "SYS_INIT";
+    // Consultamos al servidor intermedio local (Opción A)
+    let respuestaFinal = await consultarProxyInferenciaLlama(texto);
+    let etiquetaCalculada = deducirEtiquetaNeurona(texto);
 
     setTimeout(function() {
         document.getElementById("thinking-indicator").style.display = "none";
         window.historial.push({ role: "NeoX", text: respuestaFinal });
         window.efectoEscribir("NeoX", respuestaFinal, "neox"); window.actualizarBovedaVisual();
         window.calcularMetricasMatematicasReales(texto, respuestaFinal);
-        window.actualizarNeuronasDesdeChat(etiquetaCalculada, "Sinapsis: " + texto.substring(0,30));
+        window.actualizarNeuronasDesdeChat(etiquetaCalculada, "Conocimiento LLaMA: " + texto.substring(0,30));
     }, 350);
 };
 
 window.revisarEnter = function(e) { if (e.key === 'Enter') window.enviarMensaje(); };
+
+// INTERFACES DEL MONITOR BRAIN (Frenado y aceleración real de la esfera)
 window.ajustarVelocidadNodos = function() {
-    if (multiplicadorVelocidad === 1) { multiplicadorVelocidad = 4; angY = 0.012; angX = 0.004; }
-    else if (multiplicadorVelocidad === 4) { multiplicadorVelocidad = 0; angY = 0; angX = 0; }
-    else { multiplicadorVelocidad = 1; angY = 0.003; angX = 0.001; }
+    const indicador = document.getElementById("speed-indicator");
+    if (multiplicadorVelocidad === 1) {
+        multiplicadorVelocidad = 4; if (indicador) indicador.innerText = "4x";
+        window.logTerminalCore("BRAIN_TOOLS", "Aceleración forzada. Frecuencia crítica: 4x.");
+    } else if (multiplicadorVelocidad === 4) {
+        multiplicadorVelocidad = 0; if (indicador) indicador.innerText = "0x";
+        window.logTerminalCore("BRAIN_TOOLS", "Frenado cuántico activado. Esfera congelada.");
+    } else {
+        multiplicadorVelocidad = 1; if (indicador) indicador.innerText = "1x";
+        window.logTerminalCore("BRAIN_TOOLS", "Restaurando inercia base estable a 1x.");
+    }
 };
+
 window.inyectarNodoPrueba = function() { window.actualizarNeuronasDesdeChat("TEST_SYN", "Sinapsis experimental."); };
 window.forzarRefrescoCachera = function() { location.reload(true); };
 window.limpiarMemoria = function() { window.historial = []; localStorage.clear(); location.reload(true); };
 
-// DISPARADOR DE COMPILACIÓN ABSOLUTO (Establece el saludo inicial de inmediato)
+// DISPARADOR DE COMPILACIÓN ABSOLUTO
 document.addEventListener("DOMContentLoaded", function() {
     if (!bootEjecutado) {
         bootEjecutado = true; window.inicializarEsferaNodos(); window.resCanvas(); window.configurarEventosGraficos(); requestAnimationFrame(window.ejecutarBucleRenderizado3D);
         setTimeout(function() { 
-            window.efectoEscribir("NeoX", "Chasis unificado v25.5 estabilizado. He integrado la matriz de mapeo contextual Markov-Stark directamente en el hilo de ejecución para Google Chrome, Señor Daniel. Mis respuestas ya no sufren desviaciones preprogramadas. El enjambre de 200 nodos y las consolas holográficas del HUD están listas. ¿Cuál es su directriz?", "neox"); 
+            window.efectoEscribir("NeoX", "Chasis unificado v25.8 operativo, Señor Daniel. He reinyectado las físicas de rotación continua independientes de los hilos de red y enrutado el pipeline del chat hacia nuestra pasarela proxy 'server.js'. Mi elocuencia e inteligencia profunda están listas para canalizar el poder de LLaMA-3.1-70B de forma orgánica. ¿Cuál es su directriz?", "neox"); 
         }, 300);
     }
 });
