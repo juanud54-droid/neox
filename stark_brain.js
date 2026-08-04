@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX OS v25.1 - MOTOR COGNITIVO STANDALONE DE ALTA ELOCUENCIA (CHROME)
+// NeoX OS v25.4 - CENTRAL COGNITIVA PURA PARA CHROME (PARTE 1)
 // =====================================================================
 
 window.historial = [];
@@ -24,8 +24,7 @@ let isDraggingNetwork = false;
 let previousMousePosition = { x: 0, y: 0 };
 let fov = 130;
 let distanciaArrastreTotal = 0;
-
-// ENRUTADOR DEL HUD: Conmutación nativa fluida de pestañas en Chrome
+// ENRUTADOR DEL HUD: Conmutación nativa táctil sin retrasos asíncronos
 window.cambiarPantalla = function(screenId, boton) {
     try {
         document.querySelectorAll('.app-screen').forEach(function(s) { s.classList.remove('active'); });
@@ -56,7 +55,6 @@ window.logTerminalCore = function(modulo, traza) {
         console.warn("Búfer de terminal retenido.");
     }
 };
-
 // CÓRTEX LÉXICO LOCAL: Diccionario avanzado de oraciones modulares autorregresivas
 const corpusCognitivoIA = {
     chat_comun: {
@@ -94,7 +92,7 @@ const corpusCognitivoIA = {
     }
 };
 
-// MUTADOR DE ELOCUENCIA SINTÁCTICA (Genera combinaciones dinámicas complejas)
+// MUTADOR DE ELOCUENCIA SINTÁCTICA (Fuerza la variabilidad léxica no preprogramada)
 window.mutarCadenaElocuencia = function(textoBase, vectorCalculado) {
     let textoMutado = textoBase;
     let conectoresJarvis = [
@@ -128,7 +126,7 @@ window.inicializarEsferaNodos = function() {
             y: r * Math.sin(phi) * Math.sin(theta),
             z: r * Math.cos(phi),
             label: memoria ? memoria.label : (i < 20 ? "SYS_INIT" : null),
-            desc: memoria ? memoria.desc : (i < 20 ? "Módulo de arranque estable." : null)
+            desc: memoria ? memoria.desc : (i < 20 ? "Módulo de arranque de chasis estable." : null)
         });
     }
     window.logTerminalCore("GEOMETRY_3D", "Población de 200 nodos corticales inyectada con éxito.");
@@ -149,10 +147,10 @@ window.configurarEventosGraficos = function() {
     if (!canvas) return;
 
     canvas.addEventListener('mousedown', dragStart);
-    canvas.addEventListener('touchstart', function(e) { if (e.touches.length === 1) dragStart(e.touches[0]); }, { passive: true });
+    canvas.addEventListener('touchstart', function(e) { if (e.touches.length === 1) dragStart(e.touches); }, { passive: true });
 
     window.addEventListener('mousemove', dragMove);
-    window.addEventListener('touchmove', function(e) { if (isDraggingNetwork && e.touches.length === 1) dragMove(e.touches[0]); }, { passive: true });
+    window.addEventListener('touchmove', function(e) { if (isDraggingNetwork && e.touches.length === 1) dragMove(e.touches); }, { passive: true });
 
     window.addEventListener('mouseup', dragEnd);
     window.addEventListener('touchend', dragEnd);
@@ -165,7 +163,8 @@ function dragStart(e) {
     const canvas = document.getElementById("neuralNet");
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    previousMousePosition = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    let point = e.touches ? e.touches[0] : e;
+    previousMousePosition = { x: point.clientX - rect.left, y: point.clientY - rect.top };
 }
 
 function dragMove(e) {
@@ -173,8 +172,9 @@ function dragMove(e) {
     const canvas = document.getElementById("neuralNet");
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    let cx = e.clientX - rect.left;
-    let cy = e.clientY - rect.top;
+    let point = e.touches ? e.touches[0] : e;
+    let cx = point.clientX - rect.left;
+    let cy = point.clientY - rect.top;
     if (isNaN(cx) || isNaN(cy)) return;
     
     let dx = cx - previousMousePosition.x;
@@ -200,15 +200,9 @@ function dragEnd() {
     }, 1200);
 }
 
-function procesarZoom(e) {
-    e.preventDefault();
-    fov += e.deltaY * 0.1;
-    fov = Math.max(50, Math.min(250, fov));
-}
-
+function procesarZoom(e) { e.preventDefault(); fov += e.deltaY * 0.1; fov = Math.max(50, Math.min(250, fov)); }
 function procesarClickNodo(mx, my) {
-    const canvas = document.getElementById("neuralNet");
-    if (!canvas) return;
+    const canvas = document.getElementById("neuralNet"); if (!canvas) return;
     const cx = canvas.width / 2, cy = canvas.height / 2;
     let det = null; let minDist = 22;
     
@@ -230,26 +224,20 @@ function procesarClickNodo(mx, my) {
                        '<div><strong>[REGISTRO] :</strong> ' + (det.desc || "Bahía Stark_Web lista.") + '</div>';
         if (fBtn) {
             let e = fov / (fov + det.z);
-            fBtn.style.left = (cx + det.x * e + 25) + "px";
-            fBtn.style.top = (cy + det.y * e - 15) + "px";
-            fBtn.style.display = "block";
+            fBtn.style.left = (cx + det.x * e + 25) + "px"; fBtn.style.top = (cy + det.y * e - 15) + "px"; fBtn.style.display = "block";
         }
-    } else if (fBtn) {
-        fBtn.style.display = "none";
-    }
+    } else if (fBtn) { fBtn.style.display = "none"; }
 }
 
 window.actualizarNeuronasDesdeChat = function(lbl, desc) {
     if (!window.nodos || window.nodos.length === 0) return;
-    let vacios = [];
-    window.nodos.forEach(function(n, idx) { if (!n.label && idx >= 20) vacios.push(idx); });
+    let vacios = []; window.nodos.forEach(function(n, idx) { if (!n.label && idx >= 20) vacios.push(idx); });
     let idxObj = vacios.length > 0 ? vacios[Math.floor(Math.random() * vacios.length)] : Math.floor(Math.random() * window.nodos.length);
     let obj = window.nodos[idxObj];
     if (obj) {
         obj.label = lbl; obj.desc = desc;
         let g = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
-        g = g.filter(function(m) { return m.index !== idxObj; });
-        g.push({ index: idxObj, label: lbl, desc: desc });
+        g = g.filter(function(m) { return m.index !== idxObj; }); g.push({ index: idxObj, label: lbl, desc: desc });
         localStorage.setItem("neox_persisted_neuronas", JSON.stringify(g));
     }
 };
@@ -264,14 +252,10 @@ function rotar() {
 }
 
 window.ejecutarBucleRenderizado3D = function() {
-    const canvas = document.getElementById("neuralNet");
-    const ctx = canvas ? canvas.getContext("2d") : null;
+    const canvas = document.getElementById("neuralNet"); const ctx = canvas ? canvas.getContext("2d") : null;
     if (!canvas || !ctx) return;
-    
-    if (canvas.width === 0) window.resCanvas();
-    ctx.clearRect(0, 0, canvas.width, canvas.height); rotar();
-    const cx = canvas.width / 2, cy = canvas.height / 2;
-    ctx.strokeStyle = "rgba(0, 240, 255, 0.08)"; ctx.lineWidth = 1;
+    if (canvas.width === 0) window.resCanvas(); ctx.clearRect(0, 0, canvas.width, canvas.height); rotar();
+    const cx = canvas.width / 2, cy = canvas.height / 2; ctx.strokeStyle = "rgba(0, 240, 255, 0.08)"; ctx.lineWidth = 1;
     
     for (let i = 0; i < window.nodos.length; i += 2) {
         for (let j = i + 1; j < window.nodos.length; j += 7) {
@@ -284,64 +268,40 @@ window.ejecutarBucleRenderizado3D = function() {
     
     window.nodos.forEach(function(n, idx) {
         let e = fov / (fov + n.z), x = cx + n.x * e, y = cy + n.y * e, rd = Math.max(1, 2.6 * e), al = (fov - n.z) / (2 * fov);
-        
         if (idx === seleccionadoIndex) { ctx.fillStyle = "var(--red)"; }
         else if (n.label) {
             if (n.label === "SAT_LINK") { ctx.fillStyle = "rgba(255, 204, 0, " + (al + 0.5) + ")"; }
             else if (n.label === "JARVIS_M") { ctx.fillStyle = "rgba(255, 51, 51, " + (al + 0.5) + ")"; }
             else { ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")"; }
         } else { ctx.fillStyle = "rgba(0, 240, 255, " + (al + 0.15) + ")"; }
-        
         ctx.beginPath(); ctx.arc(x, y, rd, 0, 2 * Math.PI); ctx.fill();
         if (n.label && n.z < 20) { ctx.fillStyle = "rgba(230, 237, 243, " + (al + 0.3) + ")"; ctx.font = "9px monospace"; ctx.fillText("[" + n.label + "]", x + 6, y + 3); }
     });
-    
     requestAnimationFrame(window.ejecutarBucleRenderizado3D);
 };
-// TOKENIZADOR POR VECTOR DE AFINIDAD SEMÁNTICA LOCAL (Inmune a bloqueos CORS de Chrome)
 function tokenizarYClasificarContexto(frase) {
-    let f = frase.toLowerCase();
-    let matrizPesos = { geopolitica: 0, filosofia: 0, hardware: 0 };
-
+    let f = frase.toLowerCase(); let matrizPesos = { geopolitica: 0, filosofia: 0, hardware: 0 };
     for (let vector in corpusCognitivoIA) {
         if (corpusCognitivoIA[vector].tokens) {
-            corpusCognitivoIA[vector].tokens.forEach(function(token) {
-                if (f.includes(token)) { 
-                    matrizPesos[vector] += window.contextoCognitivo.pesosSinapticos[vector] || 1.0; 
-                }
-            });
+            corpusCognitivoIA[vector].tokens.forEach(function(token) { if (f.includes(token)) { matrizPesos[vector] += window.contextoCognitivo.pesosSinapticos[vector] || 1.0; } });
         }
     }
-
-    let maxVector = "filosofia"; 
-    let maxValor = -1;
-    for (let v in matrizPesos) {
-        if (matrizPesos[v] > maxValor) { maxValor = matrizPesos[v]; maxVector = v; }
-    }
+    let maxVector = "filosofia"; let maxValor = -1;
+    for (let v in matrizPesos) { if (matrizPesos[v] > maxValor) { maxValor = matrizPesos[v]; maxVector = v; } }
     return maxVector;
 }
 
 function inyectarVariablesHardware(cadenaCruda) {
-    let randomFreq = (4.35 + Math.random() * 2.2).toFixed(2);
-    let randomLat = (0.4 + Math.random() * 2.5).toFixed(1);
-    let randomVolt = (0.92 + Math.random() * 0.28).toFixed(2);
-    let randomPercent = Math.floor(92 + Math.random() * 8);
-
-    return cadenaCruda.replace(/%FREQ%/g, randomFreq)
-                      .replace(/%LAT%/g, randomLat)
-                      .replace(/%VOLT%/g, randomVolt)
-                      .replace(/%PERCENT%/g, randomPercent);
+    let randomFreq = (4.35 + Math.random() * 2.2).toFixed(2); let randomLat = (0.4 + Math.random() * 2.5).toFixed(1); let randomVolt = (0.92 + Math.random() * 0.28).toFixed(2);
+    return cadenaCruda.replace(/%FREQ%/g, randomFreq).replace(/%LAT%/g, randomLat).replace(/%VOLT%/g, randomVolt);
 }
 
-// EFECTO DE ESCRITURA MECÁNICA AVANZADA
 window.efectoEscribir = function(prefix, texto, tipo) {
     const box = document.getElementById("chat-box"); if (!box) return;
     const div = document.createElement("div"); div.className = "msg " + tipo;
     div.innerHTML = '<span class="prefix">[' + prefix + ']</span><span class="text-body"></span>'; box.appendChild(div);
     let i = 0; const span = div.querySelector(".text-body");
-    function escribir() {
-        if (i < texto.length) { span.innerHTML += texto.charAt(i); i++; box.scrollTop = box.scrollHeight; setTimeout(escribir, 8); }
-    }
+    function escribir() { if (i < texto.length) { span.innerHTML += texto.charAt(i); i++; box.scrollTop = box.scrollHeight; setTimeout(escribir, 8); } }
     escribir();
 };
 
@@ -356,36 +316,21 @@ window.reconstruirPantalla = function() {
 
 window.actualizarBovedaVisual = function() {
     const contenedor = document.getElementById("memory-vault-list"); if (!contenedor) return; contenedor.innerHTML = "";
-    const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'NeoX'; }).slice(-5);
-    if (memoriasFiltro.length === 0) return;
+    const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'NeoX'; }).slice(-5); if (memoriasFiltro.length === 0) return;
     memoriasFiltro.forEach(function(m, index) {
         const div = document.createElement("div"); div.className = "memory-item";
-        div.innerHTML = '<span>[REC_0' + (index + 1) + '_INDEX]</span>' + (m.text.length > 50 ? m.text.substring(0, 47) + "..." : m.text);
-        contenedor.appendChild(div);
+        div.innerHTML = '<span>[REC_0' + (index + 1) + '_INDEX]</span>' + (m.text.length > 50 ? m.text.substring(0, 47) + "..." : m.text); contenedor.appendChild(div);
     });
 };
 
 window.calcularMetricasMatematicasReales = function(textoUsuario, respuestaIa) {
-    let palabrasUsuario = textoUsuario.split(" ").length;
-    let palabrasIa = respuestaIa.split(" ").length;
+    let palabrasUsuario = textoUsuario.split(" ").length; let palabrasIa = respuestaIa.split(" ").length;
     window.starkDataAnalyzer.densidadTokensFrase = Math.round((palabrasUsuario + palabrasIa) / 2);
-    window.starkDataAnalyzer.totalCaracteresProcesados += respuestaIa.length;
-    window.starkDataAnalyzer.indiceElocuenciaIA = (respuestaIa.length / (textoUsuario.length || 1)).toFixed(2);
-
-    const loadPct = document.getElementById("load-percentage");
-    const activeCore = document.getElementById("active-core");
-    const brainBars = document.querySelectorAll("#brain-activity .bar");
-
+    const loadPct = document.getElementById("load-percentage"); const activeCore = document.getElementById("active-core");
     if (loadPct) loadPct.innerText = Math.floor(94 + Math.random() * 6) + "%";
     if (activeCore) activeCore.innerText = "NÚCLEO: STANDALONE_NEOX_LLM | OPT_CHROME";
-    if (brainBars && brainBars.length >= 5) {
-        let t = window.starkDataAnalyzer.densidadTokensFrase;
-        brainBars.style.height = Math.min(100, Math.max(15, t * 2.5)) + "%";
-        brainBars.style.height = Math.min(100, Math.max(20, t * 1.8)) + "%";
-    }
 };
 
-// ORQUESTADOR DE INFERENCIA LOCAL (Libre de llamadas de red bloqueadas por CORS)
 window.enviarMensaje = async function() {
     const input = document.getElementById("user-input"); if (!input) return;
     const texto = input.value.trim(); if (!texto) return; input.value = "";
@@ -404,37 +349,27 @@ window.enviarMensaje = async function() {
     setTimeout(function() {
         document.getElementById("thinking-indicator").style.display = "none";
         window.historial.push({ role: "NeoX", text: respuestaFinal });
-        window.efectoEscribir("NeoX", respuestaFinal, "neox");
-        window.actualizarBovedaVisual();
+        window.efectoEscribir("NeoX", respuestaFinal, "neox"); window.actualizarBovedaVisual();
         window.calcularMetricasMatematicasReales(texto, respuestaFinal);
         window.actualizarNeuronasDesdeChat(etiquetaCalculada, "Sinapsis: " + texto.substring(0,30));
     }, 350);
 };
 
 window.revisarEnter = function(e) { if (e.key === 'Enter') window.enviarMensaje(); };
-
-// CONTROLES DE LA CONSOLA BRAIN
 window.ajustarVelocidadNodos = function() {
-    const indicador = document.getElementById("speed-indicator");
-    if (multiplicadorVelocidad === 1) { multiplicadorVelocidad = 4; angY = 0.012; angX = 0.004; if (indicador) indicador.innerText = "4x"; }
-    else if (multiplicadorVelocidad === 4) { multiplicadorVelocidad = 0; angY = 0; angX = 0; if (indicador) indicador.innerText = "0x"; }
-    else { multiplicadorVelocidad = 1; angY = 0.003; angX = 0.001; if (indicador) indicador.innerText = "1x"; }
+    if (multiplicadorVelocidad === 1) { multiplicadorVelocidad = 4; angY = 0.012; angX = 0.004; }
+    else if (multiplicadorVelocidad === 4) { multiplicadorVelocidad = 0; angY = 0; angX = 0; }
+    else { multiplicadorVelocidad = 1; angY = 0.003; angX = 0.001; }
 };
 window.inyectarNodoPrueba = function() { window.actualizarNeuronasDesdeChat("TEST_SYN", "Sinapsis experimental."); };
 window.forzarRefrescoCachera = function() { location.reload(true); };
 window.limpiarMemoria = function() { window.historial = []; localStorage.clear(); location.reload(true); };
 
-// DISPARADOR DE COMPILACIÓN ABSOLUTO (Establece el saludo inicial de inmediato)
 document.addEventListener("DOMContentLoaded", function() {
     if (!bootEjecutado) {
-        bootEjecutado = true;
-        window.inicializarEsferaNodos();
-        window.resCanvas();
-        window.configurarEventosGraficos();
-        requestAnimationFrame(window.ejecutarBucleRenderizado3D);
-        
+        bootEjecutado = true; window.inicializarEsferaNodos(); window.resCanvas(); window.configurarEventosGraficos(); requestAnimationFrame(window.ejecutarBucleRenderizado3D);
         setTimeout(function() { 
-            window.efectoEscribir("NeoX", "Chasis unificado v25.1 estabilizado de forma óptima para Google Chrome, Señor Daniel. He configurado mi núcleo cognitivo en formato híbrido autónomo para triturar los bloqueos de red corporativos. La esfera de 200 nodos y las consolas holográficas del HUD están listas para recibir sus directrices tácticas. ¿Cuál es su orden?", "neox"); 
+            window.efectoEscribir("NeoX", "Chasis unificado purificado v25.4 activo. He purgado los bucles redundantes y estabilizado las llamadas lógicas en un único bloque de ejecución lineal para Google Chrome, Señor Daniel. El enjambre de 200 nodos y el canal de diálogo independiente del HUD se encuentran listos en el sistema. ¿Cuál es su orden?", "neox"); 
         }, 300);
     }
 });
