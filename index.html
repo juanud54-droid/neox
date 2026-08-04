@@ -1,94 +1,60 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX COGNITIVE HUB v21.0</title>
-    <style>
-        :root { --cyan: #00f0ff; --green: #00ff66; --red: #ff3333; --bg: #010409; --panel: rgba(6, 16, 30, 0.9); }
-        * { box-sizing: border-box; font-family: monospace; margin: 0; padding: 0; user-select: none; }
-        body { background-color: var(--bg); color: var(--cyan); display: flex; flex-direction: row; height: 100vh; height: 100dvh; width: 100vw; overflow: hidden; padding: 10px; }
-        #hud-layout { display: flex; flex-direction: row; width: 100%; height: 100%; gap: 12px; }
-        #sidebar-icons { width: 65px; background: rgba(6, 16, 30, 0.85); border: 1px solid var(--cyan); display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 25px; flex-shrink: 0; height: 100%; }
-        .side-icon-btn { width: 48px; height: 48px; background: rgba(0, 240, 255, 0.03); border: 1px solid var(--cyan); color: var(--cyan); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65em; font-weight: bold; gap: 3px; }
-        .side-icon-btn.active { background: var(--cyan); color: var(--bg); box-shadow: 0 0 15px var(--cyan); }
-        .side-icon-btn svg { width: 20px; height: 20px; fill: currentColor; }
-        #main-display { flex: 1; height: 100%; position: relative; min-width: 0; }
-        .app-screen { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
-        .app-screen.active { display: flex; }
-        .cyber-panel { background: var(--panel); border: 1px solid var(--cyan); display: flex; flex-direction: column; padding: 18px; position: relative; width: 100%; height: 100%; }
-    </style>
-</head>
-    <style>
-        .panel-header { color: var(--green); font-size: 0.9em; letter-spacing: 2px; border-bottom: 1px dashed var(--green); padding-bottom: 6px; margin-bottom: 12px; flex-shrink: 0; }
-        .split-layout { display: flex; flex-direction: row; gap: 12px; height: 100%; }
-        .map-view-box { flex: 1; display: flex; flex-direction: column; position: relative; height: 100%; min-width: 0; }
-        canvas { width: 100%; flex: 1; display: block; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--cyan); touch-action: none; }
-        .draggable-popup { position: absolute; top: 20px; left: 20px; width: 280px; height: 230px; min-width: 220px; min-height: 160px; background: rgba(1, 4, 9, 0.95); border: 1px solid var(--cyan); display: flex; flex-direction: column; z-index: 1000; overflow: hidden; display: none; touch-action: none; }
-        .popup-header { background: rgba(0, 240, 255, 0.1); padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.3); cursor: move; touch-action: none; }
-        .popup-title { color: var(--cyan); font-weight: bold; font-size: 0.8em; }
-        .popup-close-btn { background: transparent; border: none; color: var(--red); font-weight: bold; cursor: pointer; padding: 4px 8px; font-size: 1.1em; }
-        .popup-body { flex: 1; padding: 12px; overflow-y: auto; font-size: 0.85em; color: #e6edf3; line-height: 1.4; position: relative; }
-        .popup-scale-handle { position: absolute; bottom: 0; right: 0; width: 20px; height: 20px; background: linear-gradient(135deg, transparent 50%, var(--cyan) 50%); cursor: se-resize; touch-action: none; z-index: 1001; }
-        #floating-node-btn { position: absolute; display: none; z-index: 1005; background: rgba(0, 255, 102, 0.9); color: #000; border: 1px solid var(--green); padding: 5px 10px; font-size: 0.75em; font-weight: bold; cursor: pointer; border-radius: 3px; box-shadow: 0 0 10px var(--green); }
-        .memory-vault-box { width: 220px; display: flex; flex-direction: column; flex-shrink: 0; height: 100%; background: rgba(0, 0, 0, 0.2); border-left: 1px dashed rgba(0, 240, 255, 0.2); padding-left: 12px; }
-    </style>
-    <style>
-        #memory-vault-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .memory-item { background: rgba(0, 240, 255, 0.03); border: 1px solid rgba(0, 240, 255, 0.2); padding: 8px; font-size: 0.75em; }
-        #chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; }
-        .msg { padding: 12px 16px; max-width: 85%; font-size: 0.9em; line-height: 1.4; }
-        .user { border: 1px solid var(--green); align-self: flex-end; background: rgba(0, 255, 102, 0.03); }
-        .neox { border: 1px solid var(--cyan); align-self: flex-start; background: rgba(0, 240, 255, 0.03); }
-        .prefix { font-weight: bold; display: block; margin-bottom: 4px; font-size: 0.75em; }
-        .user .prefix { color: var(--green); } .neox .prefix { color: var(--cyan); }
-        #thinking-indicator { display: none; color: var(--cyan); font-size: 0.85em; padding: 6px 10px; }
-        #input-area { display: flex; gap: 10px; height: 48px; flex-shrink: 0; width: 100%; }
-        input { flex: 1; background: rgba(11, 21, 36, 0.95); border: 1px solid var(--cyan); color: var(--green); padding: 0 16px; outline: none; font-size: 0.95em; user-select: text !important; }
-        .btn { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 0 20px; cursor: pointer; font-weight: bold; }
-        .metrics-grid { display: flex; flex-direction: row; gap: 12px; flex-shrink: 0; }
-        .metric-card { flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 240, 255, 0.15); padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .wide-card { flex: 1.5; justify-content: center; }
-        .metric-label { font-size: 0.7em; color: rgba(0, 240, 255, 0.6); text-align: center; }
-        .radar-box { width: 50px; height: 50px; border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 50%; }
-        .ring-box { width: 50px; height: 50px; border: 2px dotted var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8em; color: var(--green); }
-        #active-core { font-size: 0.85em; text-align: center; color: var(--cyan); }
-        #brain-activity { height: 100px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 240, 255, 0.15); }
-        .bar { width: 6px; background-color: var(--cyan); transition: height 0.3s ease; }
-        .brain-controls-row { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        .brain-controls-row .btn { padding: 8px 12px; font-size: 0.8em; }
-    </style>
+    <title>NeoX COGNITIVE HUB v23.0</title>
+    <link rel="stylesheet" href="style.css?v=23.0">
 </head>
 <body>
     <div id="hud-layout">
+        <!-- Barra elástica de navegación lateral -->
         <div id="sidebar-icons">
-            <button class="side-icon-btn active" onclick="window.cambiarPantalla('screen-chat', this)"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg><span>CHAT</span></button>
-            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-neural', this)"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg><span>NEURAL</span></button>
-            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-brain', this)"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-1-2z"/></svg><span>BRAIN</span></button>
-            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-core', this)"><svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4z"/></svg><span>CORE</span></button>
+            <button class="side-icon-btn active" onclick="window.cambiarPantalla('screen-chat', this)">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                <span>CHAT</span>
+            </button>
+            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-neural', this)">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                <span>NEURAL</span>
+            </button>
+            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-brain', this)">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-1-2z"/></svg>
+                <span>BRAIN</span>
+            </button>
+            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-core', this)">
+                <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4z"/></svg>
+                <span>CORE</span>
+            </button>
         </div>
         <div id="main-display">
+            <!-- PANTALLA 1: CONEXIÓN COGNITIVA CHAT -->
             <div class="app-screen active" id="screen-chat">
                 <div class="cyber-panel">
-                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v21.0 [DISTRIBUTED_STARK_OS] ✦</div>
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v23.0 [STANDALONE_CORE_LLM] ✦</div>
                     <div id="chat-box"></div>
-                    <div id="thinking-indicator">> NeoX EJECUTANDO PROTOCOLO COGNITIVO ASÍNCRONO...</div>
+                    <div id="thinking-indicator">> NeoX EVALUANDO INFERENCIA ESTOCÁSTICA EN RED LOCAL...</div>
                     <div id="input-area">
                         <input type="text" id="user-input" placeholder="INGRESE REQUERIMIENTO TÁCTICO..." onkeypress="window.revisarEnter(event)">
                         <button class="btn" onclick="window.enviarMensaje()">EJECUTAR</button>
                     </div>
                 </div>
             </div>
+
+            <!-- PANTALLA 2: LIENZO NEURAL INTERACTIVO -->
             <div class="app-screen" id="screen-neural">
                 <div class="cyber-panel split-layout">
                     <div class="map-view-box">
-                        <div class="panel-header">> GRAPH_NEURAL_3D_LIVE [140_NODOS_CONECTADOS - INTERACTIVO]</div>
+                        <div class="panel-header">> GRAPH_NEURAL_3D_LIVE [200_NODOS_CONECTADOS - ESCUDO_TÁCTIL]</div>
                         <canvas id="neuralNet"></canvas>
                         <button id="floating-node-btn" onclick="window.ampliarNeuronaCompleta()">AMPLIAR</button>
+                        
                         <div id="hologram-window" class="draggable-popup">
                             <div class="popup-header" id="popup-drag-zone"><span class="popup-title">> NODE_SYNAPSE_DECODE</span><button class="popup-close-btn" onclick="window.cerrarPopup()">X</button></div>
-                            <div class="popup-body"><div id="card-content">Toque una neurona activa para decodificar sus hilos...</div><div class="popup-scale-handle" id="popup-resizer"></div></div>
+                            <div class="popup-body">
+                                <div id="card-content">Toque un lóbulo activo para decodificar sus hilos...</div>
+                                <div class="popup-scale-handle" id="popup-resizer"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="memory-vault-box">
@@ -97,18 +63,19 @@
                     </div>
                 </div>
             </div>
+            <!-- PANTALLA 3: CONSOLA DE HERRAMIENTAS REALES BRAIN -->
             <div class="app-screen" id="screen-brain">
                 <div class="cyber-panel">
                     <div class="panel-header">> BRAIN_ACTIVITY_ANALYTICS & CONSOLE_TOOLS</div>
                     <div class="metrics-grid">
                         <div class="metric-card"><div class="metric-label">PROCESO</div><div class="ring-box" id="load-percentage">100%</div></div>
                         <div class="metric-card"><div class="metric-label">VELOCIDAD ROTACIÓN</div><div class="ring-box" id="speed-indicator" style="color:var(--cyan); border-color:var(--cyan);">1x</div></div>
-                        <div class="metric-card wide-card"><div class="metric-label">ENERGÍA_DEL_NÚCLEO</div><div id="active-core">NÚCLEO: ASYNC_STARK_CORE</div></div>
+                        <div class="metric-card wide-card"><div class="metric-label">ENERGÍA_DEL_NÚCLEO</div><div id="active-core">NÚCLEO: STANDALONE_NEOX_LLM</div></div>
                     </div>
                     <div class="panel-header" style="margin-top:20px;">> ACTIVITY_SPECTRUM_LIVE</div>
                     <div id="brain-activity"><div class="bar" style="height:75%;"></div><div class="bar" style="height:35%;"></div><div class="bar" style="height:90%;"></div><div class="bar" style="height:55%;"></div><div class="bar" style="height:80%;"></div></div>
                     
-                    <div class="panel-header" style="margin-top:20px;">> CONTROL_INTERFACES</div>
+                    <div class="panel-header" style="margin-top:20px;">> CONTROL_INTERFACES [GESTIÓN_EN_CALIENTE]</div>
                     <div class="brain-controls-row">
                         <button class="btn" onclick="window.ajustarVelocidadNodos()">CONMUTAR VELOCIDAD</button>
                         <button class="btn" onclick="window.inyectarNodoPrueba()" style="color:var(--green); border-color:var(--green);">INYECTAR SINAPSIS TEST</button>
@@ -117,17 +84,21 @@
                     <button class="btn danger" onclick="window.limpiarMemoria()" style="margin-top:20px; color:var(--red); border-color:var(--red); width:100%;">PURGAR_BANCOS_DE_MEMORIA_MUNDIAL</button>
                 </div>
             </div>
+
+            <!-- PANTALLA 4: TERMINAL DE LOGS COGNITIVOS EN VIVO -->
             <div class="app-screen" id="screen-core">
                 <div class="cyber-panel" style="background:#000; border-color:var(--green);">
                     <div class="panel-header" style="color:var(--green); border-bottom-color:var(--green);">> NeoX_INTERNAL_REASONING_LOG_STREAM</div>
-                    <div id="terminal-stream-log" style="flex:1; overflow-y:auto; color:var(--green); padding:10px; line-height:1.5; white-space:pre-wrap;">[SYSTEM_INIT] Canales distribuidos unificados v21.0 en línea...</div>
+                    <div id="terminal-stream-log" style="flex:1; overflow-y:auto; color:var(--green); padding:10px; line-height:1.5; white-space:pre-wrap;">[SYSTEM_INIT] Red cuántica unificada v23.0 activa...</div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="stark_brain.js?v=21.0"></script>
-    <script src="stark_proxy_web.js?v=21.0"></script>
-    <script src="stark_matrix3d.js?v=21.0"></script>
-    <script src="popup_controls.js?v=21.0"></script>
+
+    <!-- Orden estricto de compilación e inyección secuencial de dependencias -->
+    <script src="stark_brain.js?v=23.0"></script>
+    <script src="stark_proxy_web.js?v=23.0"></script>
+    <script src="stark_matrix3d.js?v=23.0"></script>
+    <script src="popup_controls.js?v=23.0"></script>
 </body>
 </html>
