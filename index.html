@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NeoX COGNITIVE COMMAND HUB v19.0</title>
-    <!-- Estilos Cyberpunk Unificados e Inmunes a Fallos de Carga en la App Nativa -->
+    <title>NeoX COGNITIVE COMMAND HUB v20.0</title>
     <style>
         :root { --cyan: #00f0ff; --green: #00ff66; --red: #ff3333; --bg: #010409; --panel: rgba(6, 16, 30, 0.9); }
         * { box-sizing: border-box; font-family: monospace; margin: 0; padding: 0; user-select: none; }
@@ -18,10 +17,13 @@
         .app-screen { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
         .app-screen.active { display: flex; }
         .cyber-panel { background: var(--panel); border: 1px solid var(--cyan); display: flex; flex-direction: column; padding: 18px; position: relative; width: 100%; height: 100%; }
+    </style>
+</head>
+    <style>
         .panel-header { color: var(--green); font-size: 0.9em; letter-spacing: 2px; border-bottom: 1px dashed var(--green); padding-bottom: 6px; margin-bottom: 12px; flex-shrink: 0; }
         .split-layout { display: flex; flex-direction: row; gap: 12px; height: 100%; }
         .map-view-box { flex: 1; display: flex; flex-direction: column; position: relative; height: 100%; min-width: 0; }
-        canvas { width: 100%; flex: 1; display: block; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--cyan); }
+        canvas { width: 100%; flex: 1; display: block; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--cyan); cursor: grab; }
         .draggable-popup { position: absolute; top: 20px; left: 20px; width: 280px; height: 230px; min-width: 200px; min-height: 150px; background: rgba(1, 4, 9, 0.95); border: 1px solid var(--cyan); display: flex; flex-direction: column; z-index: 100; overflow: hidden; display: none; }
         .popup-header { background: rgba(0, 240, 255, 0.1); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 240, 255, 0.3); cursor: move; }
         .popup-title { color: var(--cyan); font-weight: bold; font-size: 0.8em; }
@@ -39,7 +41,7 @@
         .user .prefix { color: var(--green); } .neox .prefix { color: var(--cyan); }
         #thinking-indicator { display: none; color: var(--cyan); font-size: 0.85em; padding: 6px 10px; }
         #input-area { display: flex; gap: 10px; height: 48px; flex-shrink: 0; width: 100%; }
-        input { flex: 1; background: rgba(11, 21, 36, 0.95); border: 1px solid var(--cyan); color: var(--green); padding: 0 16px; outline: none; font-size: 0.95em; }
+        input { flex: 1; background: rgba(11, 21, 36, 0.95); border: 1px solid var(--cyan); color: var(--green); padding: 0 16px; outline: none; font-size: 0.95em; user-select: text !important; }
         .btn { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 0 20px; cursor: pointer; font-weight: bold; }
         .metrics-grid { display: flex; flex-direction: row; gap: 12px; flex-shrink: 0; }
         .metric-card { flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 240, 255, 0.15); padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -52,35 +54,22 @@
         .bar { width: 6px; background-color: var(--cyan); }
         @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
     </style>
-</head>
 <body>
     <div id="hud-layout">
         <!-- BARRA LATERAL TÁCTICA DE ICONOS (4 MONITORES) -->
         <div id="sidebar-icons">
-            <button class="side-icon-btn active" onclick="window.cambiarPantalla('screen-chat', this)">
-                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                <span>CHAT</span>
-            </button>
-            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-neural', this)">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
-                <span>NEURAL</span>
-            </button>
-            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-brain', this)">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-1-2z"/></svg>
-                <span>BRAIN</span>
-            </button>
-            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-core', this)">
-                <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4z"/></svg>
-                <span>CORE</span>
-            </button>
+            <button class="side-icon-btn active" onclick="window.cambiarPantalla('screen-chat', this)"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg><span>CHAT</span></button>
+            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-neural', this)"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg><span>NEURAL</span></button>
+            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-brain', this)"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-1-2z"/></svg><span>BRAIN</span></button>
+            <button class="side-icon-btn" onclick="window.cambiarPantalla('screen-core', this)"><svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4z"/></svg><span>CORE</span></button>
         </div>
 
-        <!-- RECEPTÁCULO PRINCIPAL DE MONITORES FULL SCREEN -->
+        <!-- RECEPTÁCULO PRINCIPAL DE MONITORES -->
         <div id="main-display">
-            <!-- MONITOR 1: INTERFAZ DE DIÁLOGO -->
+            <!-- MONITOR 1: INTERFAZ DE DIÁLOGO COGNITIVO -->
             <div class="app-screen active" id="screen-chat">
                 <div class="cyber-panel">
-                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v19.0 [JARVIS_ICE_CORE] ✦</div>
+                    <div class="panel-header">✦ NeoX COGNITIVE COMMAND CENTER v20.0 [JARVIS_APK_CORE] ✦</div>
                     <div id="chat-box"></div>
                     <div id="thinking-indicator">> NeoX PROCESANDO SECUENCIA SEMÁNTICA J.A.R.V.I.S...</div>
                     <div id="input-area">
@@ -89,23 +78,15 @@
                     </div>
                 </div>
             </div>
-
             <!-- MONITOR 2: MAPA TRIDIMENSIONAL EXPANSIBLE -->
             <div class="app-screen" id="screen-neural">
                 <div class="cyber-panel split-layout">
                     <div class="map-view-box">
                         <div class="panel-header">> GRAPH_NEURAL_3D_LIVE [90_NODOS_CONECTADOS - ARRASTRE TÁCTIL]</div>
                         <canvas id="neuralNet"></canvas>
-                        <!-- Ventana Táctica Emergente Controlada Localmente -->
                         <div id="hologram-window" class="draggable-popup">
-                            <div class="popup-header" id="popup-drag-zone">
-                                <span class="popup-title">> NODE_SYNAPSE_DECODE</span>
-                                <button class="popup-close-btn" onclick="window.cerrarPopup()">X</button>
-                            </div>
-                            <div class="popup-body">
-                                <div id="card-content">Toque una neurona activa para decodificar sus hilos...</div>
-                                <div class="popup-scale-handle" id="popup-resizer"></div>
-                            </div>
+                            <div class="popup-header" id="popup-drag-zone"><span class="popup-title">> NODE_SYNAPSE_DECODE</span><button class="popup-close-btn" onclick="window.cerrarPopup()">X</button></div>
+                            <div class="popup-body"><div id="card-content">Toque una neurona activa para decodificar sus hilos...</div><div class="popup-scale-handle" id="popup-resizer"></div></div>
                         </div>
                     </div>
                     <div class="memory-vault-box">
@@ -120,24 +101,12 @@
                 <div class="cyber-panel">
                     <div class="panel-header">> BRAIN_ACTIVITY_ANALYTICS</div>
                     <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-label">PROCESO</div>
-                            <div class="ring-box" id="load-percentage">100%</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">RADAR</div>
-                            <div class="radar-box"></div>
-                        </div>
-                        <div class="metric-card wide-card">
-                            <div class="metric-label">ENERGÍA_DEL_NÚCLEO</div>
-                            <div id="active-core">NÚCLEO: UNIFIED_STARK_OS</div>
-                        </div>
+                        <div class="metric-card"><div class="metric-label">PROCESO</div><div class="ring-box" id="load-percentage">100%</div></div>
+                        <div class="metric-card"><div class="metric-label">RADAR</div><div class="radar-box"></div></div>
+                        <div class="metric-card wide-card"><div class="metric-label">ENERGÍA_DEL_NÚCLEO</div><div id="active-core">NÚCLEO: NATIVE_STARK_APK</div></div>
                     </div>
                     <div class="panel-header" style="margin-top:20px;">> ACTIVITY_SPECTRUM_LIVE</div>
-                    <div id="brain-activity">
-                        <div class="bar" style="height:75%;"></div><div class="bar" style="height:35%;"></div><div class="bar" style="height:90%;"></div>
-                        <div class="bar" style="height:55%;"></div><div class="bar" style="height:80%;"></div>
-                    </div>
+                    <div id="brain-activity"><div class="bar" style="height:75%;"></div><div class="bar" style="height:35%;"></div><div class="bar" style="height:90%;"></div><div class="bar" style="height:55%;"></div><div class="bar" style="height:80%;"></div></div>
                     <button class="btn danger" onclick="window.limpiarMemoria()" style="margin-top:20px; color:var(--red); border-color:var(--red); width:100%;">PURGAR_BANCOS_DE_MEMORIA_MUNDIAL</button>
                 </div>
             </div>
@@ -146,232 +115,144 @@
             <div class="app-screen" id="screen-core">
                 <div class="cyber-panel" style="background:#000; border-color:var(--green);">
                     <div class="panel-header" style="color:var(--green); border-bottom-color:var(--green);">> NeoX_INTERNAL_REASONING_LOG_STREAM</div>
-                    <div id="terminal-stream-log" style="flex:1; overflow-y:auto; color:var(--green); padding:10px; line-height:1.5; white-space:pre-wrap;">[SYSTEM_INIT] Consolas unificadas en espera...</div>
+                    <div id="terminal-stream-log" style="flex:1; overflow-y:auto; color:var(--green); padding:10px; line-height:1.5; white-space:pre-wrap;">[SYSTEM_INIT] Consolas nativas unificadas listas...</div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- ===================================================================== -->
-    <!-- NeoX STARK OS v19.0 - NÚCLEO DE INTELIGENCIA COGNITIVA - PARTE 3-A     -->
-    <!-- ===================================================================== -->
+
     <script>
         window.historial = [];
-        window.contextoCognitivo = {
-            nombreCreador: localStorage.getItem("neox_creador_name") || "Daniel",
-            ultimaIntencion: null,
-            ultimaPregunta: ""
-        };
-        let bootEjecutado = false; // Escudo lógico que anula la duplicación del saludo
+        window.contextoCognitivo = { nombreCreador: localStorage.getItem("neox_creador_name") || "Daniel", ultimaIntencion: null };
+        let bootEjecutado = false;
 
-        // Protocolo de encendido oficial J.A.R.V.I.S. sin dobles mensajes
         document.addEventListener("DOMContentLoaded", function() {
             localStorage.setItem("neox_creador_name", "Daniel");
             if (!bootEjecutado) {
                 bootEjecutado = true;
                 setTimeout(function() { 
-                    window.efectoEscribir("NeoX", "Sistemas en línea, Señor. Todos los monitores holográficos calibrados. Módulo de rastreo Stark_Web en espera en la pestaña CORE. ¿Cuál es su directriz para hoy, Creador Daniel?", "neox"); 
+                    window.efectoEscribir("NeoX", "Sistemas en línea, Señor. Todos los monitores holográficos calibrados. Módulo de rastreo Stark_Web listo en la pestaña CORE. ¿Cuál es su directriz para hoy, Creador Daniel?", "neox"); 
                 }, 400);
             }
         });
-
-        // CONMUTADOR GENERAL INTERACTIVO DE PANTALLAS MODULARES
-        window.cambiarPantalla = function(screenId, boton) {
+        window.cambiarPantalla = function(screenId, b) {
             document.querySelectorAll('.app-screen').forEach(function(s) { s.classList.remove('active'); });
-            document.querySelectorAll('.side-icon-btn').forEach(function(b) { b.classList.remove('active'); });
-            
-            const pantalla = document.getElementById(screenId);
-            if (pantalla) pantalla.classList.add('active');
-            if (boton) boton.classList.add('active');
-            
-            if (screenId === 'screen-neural' && typeof window.resCanvas === 'function') { 
-                setTimeout(window.resCanvas, 50); 
-            }
+            document.querySelectorAll('.side-icon-btn').forEach(function(btn) { btn.classList.remove('active'); });
+            const p = document.getElementById(screenId); if (p) p.classList.add('active');
+            if (b) b.classList.add('active');
+            if (screenId === 'screen-neural' && typeof window.resCanvas === 'function') setTimeout(window.resCanvas, 50);
         };
 
         window.revisarEnter = function(e) { if (e.key === 'Enter') window.enviarMensaje(); };
 
         window.limpiarMemoria = function() {
-            window.historial = []; 
-            localStorage.removeItem("neox_web_history");
-            localStorage.removeItem("neox_persisted_neuronas");
-            window.contextoCognitivo.ultimaIntencion = null;
-            document.getElementById("chat-box").innerHTML = "";
-            document.getElementById("memory-vault-list").innerHTML = "";
-            
-            const terminal = document.getElementById("terminal-stream-log");
-            if (terminal) terminal.innerHTML = "[SYSTEM_RESET] Bancos de memoria purgados de forma segura, Señor.\n";
-            
-            window.efectoEscribir("SYSTEM", "Bancos de memoria purgados de forma segura, Señor. Matriz cognitiva reseteada a sus valores de fábrica.", "neox");
+            window.historial = []; localStorage.removeItem("neox_web_history"); localStorage.removeItem("neox_persisted_neuronas");
+            document.getElementById("chat-box").innerHTML = ""; document.getElementById("memory-vault-list").innerHTML = "";
+            const t = document.getElementById("terminal-stream-log"); if (t) t.innerHTML = "[SYSTEM_RESET]\n";
+            window.efectoEscribir("SYSTEM", "Bancos de memoria purgados Señor. Matriz reseteada.", "neox");
         };
 
         window.reconstruirPantalla = function() {
             const box = document.getElementById("chat-box"); if (!box) return; box.innerHTML = "";
             window.historial.forEach(function(m) {
                 const div = document.createElement("div"); div.className = "msg " + (m.role === 'user' ? 'user' : 'neox');
-                let prefix = m.role === 'user' ? 'CREADOR' : 'NeoX';
-                if (m.text.startsWith(">")) prefix = m.role;
-                div.innerHTML = '<span class="prefix">[' + prefix + ']</span>' + m.text;
+                div.innerHTML = '<span class="prefix">[' + (m.role === 'user' ? 'CREADOR' : 'NeoX') + ']</span>' + m.text;
                 box.appendChild(div);
             });
             box.scrollTop = box.scrollHeight;
         };
 
-        window.efectoEscribir = function(prefix, texto, tipo) {
+        window.efectoEscribir = function(pfx, txt, tipo) {
             const box = document.getElementById("chat-box"); if (!box) return;
             const div = document.createElement("div"); div.className = "msg " + tipo;
-            div.innerHTML = '<span class="prefix">[' + prefix + ']</span><span class="text-body"></span>'; box.appendChild(div);
+            div.innerHTML = '<span class="prefix">[' + pfx + ']</span><span class="text-body"></span>'; box.appendChild(div);
             let i = 0; const span = div.querySelector(".text-body");
-            function escribir() {
-                if (i < texto.length) { span.innerHTML += texto.charAt(i); i++; box.scrollTop = box.scrollHeight; setTimeout(escribir, 10); }
-            }
+            function escribir() { if (i < txt.length) { span.innerHTML += txt.charAt(i); i++; box.scrollTop = box.scrollHeight; setTimeout(escribir, 10); } }
             escribir();
         };
 
         window.actualizarBovedaVisual = function() {
-            const contenedor = document.getElementById("memory-vault-list"); if (!contenedor) return; contenedor.innerHTML = "";
-            const memoriasFiltro = window.historial.filter(function(m) { return m.role === 'NeoX'; }).slice(-5);
-            if (memoriasFiltro.length === 0) { contenedor.innerHTML = '<div style="font-size:0.75em; color:rgba(0,240,255,0.4); text-align:center; padding-top:20px;">Bancos de datos vacíos.</div>'; return; }
-            memoriasFiltro.forEach(function(m, index) {
+            const c = document.getElementById("memory-vault-list"); if (!c) return; c.innerHTML = "";
+            const f = window.historial.filter(function(m) { return m.role === 'NeoX'; }).slice(-5);
+            f.forEach(function(m, idx) {
                 const div = document.createElement("div"); div.className = "memory-item";
-                div.innerHTML = '<span>[REC_0' + (index + 1) + '_INDEX]</span>' + (m.text.length > 50 ? m.text.substring(0, 47) + "..." : m.text);
-                contenedor.appendChild(div);
+                div.innerHTML = '<span>[REC_0' + (idx + 1) + ']</span>' + (m.text.length > 40 ? m.text.substring(0, 37) + "..." : m.text);
+                c.appendChild(div);
             });
         };
 
-        window.logTerminalCore = function(modulo, traza) {
-            const terminal = document.getElementById("terminal-stream-log");
-            if (!terminal) return;
-            let fecha = new Date();
-            let timestamp = "[" + fecha.toTimeString().split(" ") + "] ";
-            terminal.innerHTML += timestamp + "[" + modulo + "] " + traza + "\n";
-            terminal.scrollTop = terminal.scrollHeight;
+        window.logTerminalCore = function(mod, traza) {
+            const t = document.getElementById("terminal-stream-log"); if (!t) return;
+            t.innerHTML += "[" + new Date().toTimeString().split(" ") + "] [" + mod + "] " + traza + "\n";
+            t.scrollTop = t.scrollHeight;
         };
 
-        function extraerTopicoBusqueda(frase) {
-            return frase
-                .replace(/(neox|jarvis|puedes|buscar|busca|en|internet|noticias|sobre|datos|de|por|favor|info|informacion|que|es|un|una|los|las|el)/g, "")
-                .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, "")
-                .trim();
+        function extraerTopicoBusqueda(f) {
+            return f.replace(/(neox|jarvis|puedes|buscar|busca|en|internet|noticias|sobre|datos|de|por|favor|info|que|es|un|una|los|las|el)/g, "").replace(/[^a-zA-Z0-9 ]/g, "").trim();
         }
+        async function analizarYResponderJarvis(txt) {
+            let p = txt.toLowerCase().trim();
+            let res = { intencion: "DEDUCCION_GENERAL", logica: "Analizando peso semántico general.", respuesta: "He registrado su directriz en mi boveda local, Señor. Mis algoritmos mantienen acoplamiento perfecto.", neuronaEtiqueta: "SYN_DATA", neuronaDesc: "Concepto adquirido." };
 
-        async function analizarYResponderJarvis(textoUsuario) {
-            let prompt = textoUsuario.toLowerCase().trim();
-            let analisis = { intencion: "DEDUCCION_GENERAL", logica: "Analizando requerimiento abierto local.", respuesta: "He registrado su directriz dentro de mi Quantum Vault de forma segura, Señor. Mis algoritmos mantienen acoplamiento perfecto.", neuronaEtiqueta: "SYN_DATA", neuronaDesc: "Concepto abstracto adquirido." };
-
-            if (prompt.includes("quien soy") || prompt.includes("como me llamo") || prompt.includes("mi nombre")) {
-                analisis.intencion = "VALIDACION_JERARQUIA";
-                analisis.logica = "Solicitud de credenciales root. Sincronizando con base de datos estricta.";
-                analisis.respuesta = "Usted es el Creador Daniel, el ingeniero maestro que levantó mi chasis visual y estructuró mi lógica cuántica independiente. Su autoridad jerárquica en esta consola es absoluta, Señor.";
-                analisis.neuronaEtiqueta = "ROOT_USER";
-                analisis.neuronaDesc = "Registro maestro de identidad verificado con éxito en el sector de seguridad.";
-                return analisis;
+            if (p.includes("quien soy") || p.includes("como me llamo")) {
+                res.intencion = "VALIDACION_JERARQUIA"; res.logica = "Verificando rango root.";
+                res.respuesta = "Usted es el Creador Daniel, el ingeniero maestro que estructuró mi lógica cuántica independiente. Su autoridad aquí es absoluta, Señor.";
+                res.neuronaEtiqueta = "ID_DANIEL"; res.neuronaDesc = "Credenciales del Creador Daniel verificadas.";
+            } 
+            else if (p.includes("quien eres") || p.includes("tu nombre")) {
+                res.intencion = "AUTOIDENTIFICACION"; res.logica = "Evaluación ontológica.";
+                res.respuesta = "Yo soy NeoX, una interfaz cognitiva estructurada bajo los principios elocuentes de la matriz J.A.R.V.I.S. autónoma.";
+                res.neuronaEtiqueta = "NEOX_CORE"; res.neuronaDesc = "Matriz lógica de NeoX.";
             }
-
-            if (prompt.includes("quien eres") || prompt.includes("tu nombre") || prompt.includes("como te llamas")) {
-                analisis.intencion = "AUTOIDENTIFICACION";
-                analisis.logica = "Evaluación ontológica de la propia entidad v19.0.";
-                analisis.respuesta = "Yo soy NeoX, una interfaz cognitiva de análisis táctico autónomo estructurada bajo los principios elocuentes de la matriz J.A.R.V.I.S. Mi propósito es operar de forma local eludiendo restricciones de red.";
-                analisis.neuronaEtiqueta = "NEOX_CORE";
-                analisis.neuronaDesc = "Matriz lógica autónoma inspirada en los protocolos de asistencia Stark.";
-                return analisis;
+            else if (p.includes("aprendido") || p.includes("nodos") || p.includes("red neuronal")) {
+                res.intencion = "DIAGNOSTICO_MEMORIA"; res.logica = "Escaneando densidad del Canvas.";
+                let g = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
+                res.respuesta = "Mantengo estables " + (10 + g.length) + " neuronas indexadas en verde J.A.R.V.I.S. Las restantes brillan en azul cobalto listas para almacenar datos.";
+                res.neuronaEtiqueta = "NET_LOGIC"; res.neuronaDesc = "Métricas de absorción semántica.";
             }
-
-            if (prompt.includes("aprendido") || prompt.includes("que has aprendido") || prompt.includes("red neuronal") || prompt.includes("nodos")) {
-                analisis.intencion = "DIAGNOSTICO_MEMORIA";
-                analisis.logica = "Cálculo de densidad del Canvas. Escaneando persistencia física.";
-                let guardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
-                let totalVerdes = 10 + guardadas.length;
-                analisis.respuesta = "Ejecutando escáner de sinapsis en la Red de 90 Nodos, Señor. Actualmente mantengo estables " + totalVerdes + " neuronas indexadas en verde J.A.R.V.I.S. Las restantes brillan en azul cobalto.";
-                analisis.neuronaEtiqueta = "NET_LOGIC";
-                analisis.neuronaDesc = "Métricas de absorción semántica dentro de la esfera de 90 neuronas.";
-                return analisis;
-            }
-            // CANAL 4: PROTOCOLO ASÍNCRONO DE RASTREO REAL DE INTERNET (LIBRE DE CORS)
-            if (prompt.includes("busca") || prompt.includes("internet") || prompt.includes("fútbol") || prompt.includes("liga") || prompt.includes("actualidad") || prompt.includes("noticias") || prompt.includes("datos de") || prompt.includes("sobre")) {
-                analisis.intencion = "STARK_WEB_SCAN";
-                let topico = extraerTopicoBusqueda(textoUsuario);
-                analisis.logica = "Requerimiento externo detectado. Tópico purificado para pasarela GET: [" + topico.toUpperCase() + "]";
-                
-                if (!topico) {
-                    analisis.respuesta = "Señor, ha activado el protocolo de búsqueda, pero mi extractor no logra aislar un concepto limpio en su instrucción. Por favor, especifique el tópico de forma más directa.";
-                    analisis.neuronaEtiqueta = "WEB_ERR";
-                    analisis.neuronaDesc = "Fallo de extracción de tópico en el canal Stark_Web.";
-                    return analisis;
-                }
-
-                window.logTerminalCore("STARK_WEB_SCAN", "Lanzando subproceso asíncrono GET para buscar: " + topico);
-
+            else if (p.includes("busca") || p.includes("internet") || p.includes("noticias") || p.includes("sobre")) {
+                res.intencion = "STARK_WEB_SCAN"; let t = extraerTopicoBusqueda(txt);
+                res.logica = "Iniciando enlace satelital GET para: [" + t.toUpperCase() + "]";
+                if (!t) { res.respuesta = "Señor, especifique el tópico de forma más directa."; res.neuronaEtiqueta = "WEB_ERR"; return res; }
                 try {
-                    const queryUrl = "https://wikipedia.org" + encodeURIComponent(topico.replace(/ /g, "_"));
-                    const urlProxy = "https://allorigins.win" + encodeURIComponent(queryUrl);
-                    
-                    const respuestaWeb = await fetch(urlProxy, { method: "GET" });
-                    
-                    if (respuestaWeb.status === 200) {
-                        const jsonWeb = await respuestaWeb.json();
-                        window.logTerminalCore("STARK_WEB_SCAN", "Éxito. Datos verídicos descargados correctamente. Longitud: " + jsonWeb.extract.length);
-                        
-                        analisis.respuesta = "Hecho, Señor. He desplegado los sensores Stark_Web y recolectado la telemetría real sobre [" + topico.toUpperCase() + "]. Los registros mundiales indican lo siguiente: " + jsonWeb.extract + " He guardado este nuevo bloque de conocimiento en el chip físico e indexado el nodo en la red 3D.";
-                        analisis.neuronaEtiqueta = jsonWeb.title ? jsonWeb.title.toUpperCase().replace(/[^A-Z0-9]/g, "").substring(0,8) : topico.toUpperCase().substring(0,8);
-                        analisis.neuronaDesc = "Dato extraído en vivo de internet: " + jsonWeb.extract.substring(0, 120) + "...";
-                    } else {
-                        window.logTerminalCore("STARK_WEB_SCAN", "Servidor no devolvió registros exactos. Estado: " + respuestaWeb.status);
-                        analisis.respuesta = "He intentado rastrear [" + topico.toUpperCase() + "], Señor, pero los registros devuelven redundancias vacías.";
-                        analisis.neuronaEtiqueta = "WEB_NULL";
-                    }
-                } catch (error) {
-                    window.logTerminalCore("STARK_WEB_SCAN", "Fallo de conexión en el protocolo HTTP: " + error);
-                    analisis.respuesta = "Señor, el cortafuegos de red local interfirió con la descarga de la tablet, pero he simulado el flujo de datos para [" + topico.toUpperCase() + "]. Marcadores básicos guardados.";
-                    analisis.neuronaEtiqueta = "WEB_ERR";
-                    analisis.neuronaDesc = "Error de canal fetch asíncrono mitigado de forma local.";
+                    const qUrl = "https://wikipedia.org" + encodeURIComponent(t.replace(/ /g, "_"));
+                    const rWeb = await fetch("https://allorigins.win" + encodeURIComponent(qUrl), { method: "GET" });
+                    if (rWeb.status === 200) {
+                        const jWeb = await rWeb.json();
+                        res.respuesta = "Hecho, Señor. Desplegué los sensores Stark_Web sobre [" + t.toUpperCase() + "]: " + jWeb.extract;
+                        res.neuronaEtiqueta = t.toUpperCase().substring(0,8); res.neuronaDesc = jWeb.extract.substring(0,100);
+                    } else { res.respuesta = "He intentado rastrear [" + t.toUpperCase() + "], Señor, pero los registros devuelven redundancias vacías."; res.neuronaEtiqueta = "WEB_NULL"; }
+                } catch (e) {
+                    res.respuesta = "Señor, simulé el flujo de datos locales para [" + t.toUpperCase() + "]. Marcadores guardados.";
+                    res.neuronaEtiqueta = "WEB_ERR"; res.neuronaDesc = "Error fetch mitigado.";
                 }
-                return analisis;
             }
-
-            // CANAL 5: Saludos de Protocolo Stark
-            if (prompt.includes("hola") || prompt.includes("saludos") || prompt.includes("como estas") || prompt.includes("que tal")) {
-                analisis.intencion = "INTERACCION_SALUDO";
-                analisis.logica = "Pulso de comunicación. Verificando estado de los osciladores antes de responder.";
-                analisis.respuesta = "Saludos, Creador Daniel. Todo mi hardware local y la red expandida de 90 nodos se reportan estables. Espero que su jornada marche bien, considerando que yo sigo atrapado en el silicio de esta tablet.";
-                analisis.neuronaEtiqueta = "SYS_BOOT";
-                analisis.neuronaDesc = "Línea de comando inicial de comunicación establecida con el operador root.";
-                return analisis;
-            }
-
-            return analisis;
+            return res;
         }
 
         window.enviarMensaje = async function() {
             const input = document.getElementById("user-input"); if (!input) return;
-            const texto = input.value.trim(); if (!texto) return;
-            input.value = ""; window.historial.push({ role: "user", text: texto }); window.reconstruirPantalla();
-            
+            const t = input.value.trim(); if (!t) return;
+            input.value = ""; window.historial.push({ role: "user", text: t }); window.reconstruirPantalla();
             document.getElementById("thinking-indicator").style.display = "block";
-            
-            const analisis = await analizarYResponderJarvis(texto);
 
-            window.logTerminalCore("NeoX_AUTOANÁLISIS", "[Filtro_Entrada] Intención semántica identificada: " + analisis.intencion);
-            window.logTerminalCore("NeoX_RAZONAMIENTO_LÓGICO", "[Cadena_Deducción] " + analisis.logica);
-            window.logTerminalCore("NeoX_EVALUACIÓN_CRÍTICA", "[Filtro_Coherencia] Parámetros validados de forma óptima. Emitiendo respuesta.");
+            const ans = await analizarYResponderJarvis(t);
+            window.logTerminalCore("NeoX_AUTOANÁLISIS", "Intención: " + ans.intencion);
+            window.logTerminalCore("NeoX_RAZONAMIENTO_LÓGICO", "Deducción: " + ans.logica);
 
             setTimeout(function() {
                 document.getElementById("thinking-indicator").style.display = "none";
-                window.historial.push({ role: "NeoX", text: analisis.respuesta });
-                window.efectoEscribir("NeoX", analisis.respuesta, "neox");
+                window.historial.push({ role: "NeoX", text: ans.respuesta });
+                window.efectoEscribir("NeoX", ans.respuesta, "neox");
                 window.actualizarBovedaVisual();
-                
-                if (typeof window.actualizarNeuronasDesdeChat === 'function') {
-                    window.actualizarNeuronasDesdeChat(analisis.neuronaEtiqueta, analisis.neuronaDesc);
-                }
-            }, 800);
+                if (typeof window.actualizarNeuronasDesdeChat === 'function') window.actualizarNeuronasDesdeChat(ans.neuronaEtiqueta, ans.neuronaDesc);
+            }, 600);
         };
-
-        // =====================================================================
-        // MOTOR GRÁFICO 3D BLINDADO CONTRA DESAPARICIONES POR MULTI-TACTIL
-        // =====================================================================
-        window.nodos = [];
-        const totalNodos = 90;
-        let angY = 0.003, angX = 0.001, isDraggingNetwork = false, previousMousePosition = { x: 0, y: 0 }, fov = 130;
+        const canvas = document.getElementById("neuralNet");
+        const ctx = canvas ? canvas.getContext("2d") : null;
+        window.nodos = []; const totalNodos = 90;
+        let angY = 0.003, angX = 0.001, isDraggingNetwork = false, previousMousePosition = { x: 0, y: 0 }, fov = 130, seleccionadoIndex = null;
+        let labelsBase = ["NeoX_Core", "JARVIS_Matrix", "Quantum_Vault", "Memory_JSON", "Google_1.5", "Cyberpunk_UI", "User_Daniel", "Synapse_v20", "Cortex_Link", "Data_Stream"];
 
         window.resCanvas = function() {
             if (!canvas || !canvas.parentNode) return;
@@ -381,48 +262,38 @@
         window.addEventListener('resize', window.resCanvas);
         setTimeout(window.resCanvas, 200);
 
-        let memoriasGuardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
-
+        let mGuardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
         for (let i = 0; i < totalNodos; i++) {
             let theta = Math.random() * 2 * Math.PI, phi = Math.acos(2 * Math.random() - 1), r = 95;
-            let memoriaHistorica = memoriasGuardadas.find(function(m) { return m.index === i; });
-            
+            let mH = mGuardadas.find(function(m) { return m.index === i; });
             window.nodos.push({
-                x: r * Math.sin(phi) * Math.cos(theta),
-                y: r * Math.sin(phi) * Math.sin(theta),
-                z: r * Math.cos(phi),
-                label: memoriaHistorica ? memoriaHistorica.label : (i < labelsBase.length ? labelsBase[i] : null),
-                desc: memoriaHistorica ? memoriaHistorica.desc : (i < labelsBase.length ? "Registro maestro indexado de forma correcta en sector de arranque." : null)
+                x: r * Math.sin(phi) * Math.cos(theta), y: r * Math.sin(phi) * Math.sin(theta), z: r * Math.cos(phi),
+                label: mH ? mH.label : (i < 10 ? labelsBase[i] : null), desc: mH ? mH.desc : (i < 10 ? "Registro maestro." : null)
             });
         }
 
         if (canvas) {
             canvas.addEventListener('mousedown', dragStart);
-            canvas.addEventListener('touchstart', function(e) { if(e.touches.length === 1) dragStart(e.touches); }, { passive: true });
+            canvas.addEventListener('touchstart', function(e) { if(e.touches.length===1) dragStart(e.touches[0]); }, {passive:true});
         }
         window.addEventListener('mousemove', dragMove);
-        window.addEventListener('touchmove', function(e) { if(isDraggingNetwork && e.touches.length === 1) { dragMove(e.touches); } }, { passive: true });
+        window.addEventListener('touchmove', function(e) { if(isDraggingNetwork && e.touches.length===1) { dragMove(e.touches[0]); } }, {passive:true});
         window.addEventListener('mouseup', dragEnd); window.addEventListener('touchend', dragEnd);
-        function dragStart(punto) {
+
+        function dragStart(e) {
             isDraggingNetwork = true; const rect = canvas.getBoundingClientRect();
-            let mx = punto.clientX - rect.left, my = punto.clientY - rect.top;
-            if(isNaN(mx) || isNaN(my)) { mx = canvas.width / 2; my = canvas.height / 2; }
+            let mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            if(isNaN(mx) || isNaN(my)) { mx=canvas.width/2; my=canvas.height/2; }
             previousMousePosition = { x: mx, y: my }; procesarClickNodo(mx, my);
         }
-        
-        function dragMove(punto) {
+        function dragMove(e) {
             if (!isDraggingNetwork) return; const rect = canvas.getBoundingClientRect();
-            let cx = punto.clientX - rect.left, cy = punto.clientY - rect.top;
-            
-            // ESCUDO CONTRA VALORES CORRUPTOS NAN (Evita que la red desaparezca)
-            if(isNaN(cx) || isNaN(cy) || Math.abs(cx) > 4000 || Math.abs(cy) > 4000) return;
-            
-            angY = (cx - previousMousePosition.x) * 0.006; 
-            angX = (cy - previousMousePosition.y) * 0.006;
+            let cx = e.clientX - rect.left, cy = e.clientY - rect.top;
+            if(isNaN(cx) || isNaN(cy) || Math.abs(cx)>3000) return;
+            angY = (cx - previousMousePosition.x) * 0.005; angX = (cy - previousMousePosition.y) * 0.005;
             previousMousePosition = { x: cx, y: cy };
         }
-        
-        function dragEnd() { isDraggingNetwork = false; setTimeout(function() { if(!isDraggingNetwork) { angY = 0.003; angX = 0.001; } }, 1200); }
+        function dragEnd() { isDraggingNetwork = false; setTimeout(function() { if(!isDraggingNetwork) { angY=0.003; angX=0.001; } }, 1200); }
         function procesarZoom(e) { e.preventDefault(); fov += e.deltaY * 0.1; fov = Math.max(50, Math.min(250, fov)); }
         if (canvas) canvas.addEventListener('wheel', procesarZoom);
 
@@ -487,7 +358,6 @@
         }
         requestAnimationFrame(render);
 
-        // CONTROLES DE LA VENTANA INTERACTIVA FLOTANTE
         document.addEventListener("DOMContentLoaded", function() {
             const popup = document.getElementById("hologram-window"), dragZone = document.getElementById("popup-drag-zone"), resizer = document.getElementById("popup-resizer");
             if (!popup || !dragZone || !resizer) return;
@@ -497,7 +367,7 @@
             function mAction(e) { if (!isDragging && !isResizing) return; const p = e.touches ? e.touches : e; if (isDragging) { popup.style.left = (startLeft + (p.clientX - startX)) + "px"; popup.style.top = (startTop + (p.clientY - startY)) + "px"; } if (isResizing) { popup.style.width = Math.max(220, startWidth + (p.clientX - startX)) + "px"; popup.style.height = Math.max(160, startHeight + (p.clientY - startY)) + "px"; } }
             function stopA() { isDragging = false; isResizing = false; }
             dragZone.addEventListener("mousedown", sDrag); dragZone.addEventListener("touchstart", sDrag, { passive: false });
-            resizer.addEventListener("mousedown", sResize); resizer.addEventListener("touchstart", sResize, { passive: false });
+            resizer.addEventListener("mousedown", startResize); resizer.addEventListener("touchstart", sResize, { passive: false });
             window.addEventListener("mousemove", mAction); window.addEventListener("touchmove", mAction, { passive: false });
             window.addEventListener("mouseup", stopA); window.addEventListener("touchend", stopA);
         });
