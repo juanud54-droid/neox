@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX OS v24.0 - STARK HEURISTIC MUTATOR (MODULADOR SINTÁCTICO)
+// NeoX OS v24.2 - STARK HEURISTIC MUTATOR (CORRECCIÓN DE SINTAXIS)
 // =====================================================================
 
 window.starkHeuristicMutator = {
@@ -7,14 +7,19 @@ window.starkHeuristicMutator = {
     modosSintacticos: ["TACTICO", "EXPANDIDO", "LOGICO_FORMAL", "ANALITICO"]
 };
 
-// Modulador dinámico que altera la estructura del texto final según el contexto
 window.mutarCadenaElocuencia = function(textoBase, vectorCalculado) {
-    window.logTerminalCore("HEURISTIC_MUTATOR", "[Elocuencia] Interceptando salida sintáctica para inyectar mutación no lineal.");
+    if (typeof window.logTerminalCore === 'function') {
+        window.logTerminalCore("HEURISTIC_MUTATOR", "[Elocuencia] Interceptando salida sintáctica para inyectar mutación.");
+    }
     
-    let modoActual = window.starkHeuristicMutator.modosSintacticos[Math.floor(Math.random() * window.starkHeuristicMutator.modosSintacticos.length)];
+    let modoActual = "TACTICO";
+    if (window.starkHeuristicMutator && window.starkHeuristicMutator.modosSintacticos) {
+        let modos = window.starkHeuristicMutator.modosSintacticos;
+        modoActual = modos[Math.floor(Math.random() * modos.length)];
+    }
+    
     let textoMutado = textoBase;
     
-    // Conectores sintácticos dinámicos J.A.R.V.I.S. para romper respuestas estáticas
     let conectoresJarvis = [
         " Sincronizando de forma complementaria con los hilos secundarios del Quantum Vault.",
         " Las trazas colaterales de este concepto han quedado asentadas en el chip de persistencia local.",
@@ -23,7 +28,6 @@ window.mutarCadenaElocuencia = function(textoBase, vectorCalculado) {
 
     let conectorAleatorio = conectoresJarvis[Math.floor(Math.random() * conectoresJarvis.length)];
     
-    // Si la tablet registra reproches previos, fuerza un modo lógico rígido de disculpa y corrección
     if (window.contextoCognitivo && window.contextoCognitivo.registroErroresOperador > 1) {
         modoActual = "LOGICO_FORMAL";
         textoMutado = "[Recalibración Cuántica Realizada] Creador Daniel, he penalizado los pesos del lóbulo previo en caliente. " + textoMutado;
@@ -31,29 +35,36 @@ window.mutarCadenaElocuencia = function(textoBase, vectorCalculado) {
         textoMutado = textoMutado + conectorAleatorio;
     }
 
-    window.logTerminalCore("HEURISTIC_MUTATOR", "[Elocuencia] Salida formateada con éxito bajo el protocolo estructural: " + modoActual);
+    if (typeof window.logTerminalCore === 'function') {
+        window.logTerminalCore("HEURISTIC_MUTATOR", "[Elocuencia] Salida formateada bajo protocolo: " + modoActual);
+    }
     return textoMutado;
 };
 
-// Inyección y gancho directo en el bucle principal de ejecución de NeoX-LLM
-if (typeof window.procesarInferenceCoreLLM === 'function') {
-    let originalInferenceV24 = window.procesarInferenceCoreLLM;
-    window.procesarInferenceCoreLLM = async function(textoUsuario) {
-        let analisis = await originalInferenceV24(textoUsuario);
-        
-        // Registra la interacción en el cortex de contexto antes de mutar
-        if (typeof window.starkContextCortex !== 'undefined') {
-            window.starkContextCortex.inyectarEnVentanaCortex("CREADOR", textoUsuario, analisis.neuronaEtiqueta);
+// Gancho seguro blindado contra errores de inicialización asíncrona
+setTimeout(function() {
+    if (typeof window.procesarInferenceCoreLLM === 'function') {
+        let originalInferenceV24 = window.procesarInferenceCoreLLM;
+        window.procesarInferenceCoreLLM = async function(textoUsuario) {
+            let analisis = await originalInferenceV24(textoUsuario);
+            
+            if (typeof window.starkContextCortex !== 'undefined' && window.starkContextCortex.inyectarEnVentanaCortex) {
+                window.starkContextCortex.inyectarEnVentanaCortex("CREADOR", textoUsuario, analisis.neuronaEtiqueta);
+            }
+            
+            // Protección total: Validación de minúsculas y existencia del objeto
+            if (window.starkHeuristicMutator) {
+                analisis.respuesta = window.mutarCadenaElocuencia(analisis.respuesta, analisis.neuronaEtiqueta);
+            }
+            
+            if (typeof window.starkContextCortex !== 'undefined' && window.starkContextCortex.inyectarEnVentanaCortex) {
+                window.starkContextCortex.inyectarEnVentanaCortex("NeoX", analisis.respuesta, analisis.neuronaEtiqueta);
+            }
+            
+            return analisis;
+        };
+        if (typeof window.logTerminalCore === 'function') {
+            window.logTerminalCore("HEURISTIC_MUTATOR", "[Sistema] Gancho interceptor acoplado de forma segura.");
         }
-        
-        // Aplica la mutación sintáctica no lineal final
-        analisis.respuesta = window.starKHeuristicMutator ? window.starkHeuristicMutator.mutarCadenaElocuencia(analisis.respuesta, analisis.neuronaEtiqueta) : window.mutarCadenaElocuencia(analisis.respuesta, analisis.neuronaEtiqueta);
-        
-        if (typeof window.starkContextCortex !== 'undefined') {
-            window.starkContextCortex.inyectarEnVentanaCortex("NeoX", analisis.respuesta, analisis.neuronaEtiqueta);
-        }
-        
-        return analisis;
-    };
-}
-
+    }
+}, 800);
