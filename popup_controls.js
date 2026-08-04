@@ -1,5 +1,5 @@
 // =====================================================================
-// NeoX OS v21.0 - CONTROLADOR DE VENTANAS HOLOGRÁFICAS DRAGGABLE & RESIZE
+// NeoX OS v22.0 - CONTROLADOR DE VENTANAS HOLOGRÁFICAS DRAGGABLE & RESIZE
 // =====================================================================
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -26,22 +26,22 @@ document.addEventListener("DOMContentLoaded", function() {
         startLeft = popup.offsetLeft; 
         startTop = popup.offsetTop;
     }
-    // Inyectores táctiles directos con captura nativa Hermit/Android
+    // Inyectores táctiles directos con captura nativa para la tablet
     dragZone.addEventListener("touchstart", function(e) {
         if (e.touches.length !== 1) return;
-        startDrag(e.touches);
+        startDrag(e.touches[0]);
     }, { passive: true });
 
     resizer.addEventListener("touchstart", function(e) {
         e.stopPropagation();
         if (e.touches.length !== 1) return;
-        startResize(e.touches);
+        startResize(e.touches[0]);
     }, { passive: true });
 
     window.addEventListener("touchmove", function(e) {
         if (!isDragging && !isResizing) return;
         if (e.touches.length !== 1) return;
-        moveAction(e.touches);
+        moveAction(e.touches[0]);
     }, { passive: true });
 
     window.addEventListener("touchend", stopAction);
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// Despachador para expandir la neurona a pantalla completa
+// Despachador para expandir la neurona a pantalla completa de forma independiente
 window.ampliarNeuronaCompleta = function() {
     const popup = document.getElementById("hologram-window");
     if (!popup) return;
@@ -89,4 +89,5 @@ window.cerrarPopup = function() {
     const b = document.getElementById("floating-node-btn");
     if (p) p.style.display = "none";
     if (b) b.style.display = "none";
+    window.logTerminalCore("HUD_INTERFACE", "Cerrando consolas flotantes y limpiando Canvas.");
 };
