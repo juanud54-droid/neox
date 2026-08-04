@@ -1,11 +1,11 @@
 // =====================================================================
-// NeoX OS v22.0 - MOTOR GRÁFICO 3D EXPANDIDO - PARTE 1 (200 NODOS)
+// NeoX OS v23.0 - MOTOR DE PROYECCIÓN GEOMÉTRICA DE LA IA - PARTE 1
 // =====================================================================
 
 const canvas = document.getElementById("neuralNet");
 const ctx = canvas ? canvas.getContext("2d") : null;
 window.nodos = [];
-const totalNodos = 200; // Escala definitiva de 200 neuronas totales
+const totalNodos = 200; // Capacidad física del enjambre adaptada a NeoX-LLM 1.0
 
 let angY = 0.003, angX = 0.001;
 let isDraggingNetwork = false;
@@ -14,36 +14,26 @@ let fov = 130;
 let seleccionadoIndex = null;
 let multiplicadorVelocidad = 1;
 
-// Bandera centinela para destruir el bucle infinito de reapertura automática
-let bloqueoToqueRedencion = false;
-window.resCanvas = function() {
-    if (!canvas || !canvas.parentNode) return;
-    canvas.width = canvas.parentNode.clientWidth;
-    canvas.height = canvas.parentNode.clientHeight - 40;
-};
-window.addEventListener('resize', window.resCanvas);
-setTimeout(window.resCanvas, 200);
+// Escudo contra el bucle de reapertura fortuita del popup al arrastrar
+let distanciaArrastreTotal = 0;
+// =====================================================================
+// NeoX OS v23.0 - MOTOR DE PROYECCIÓN GEOMÉTRICA DE LA IA - PARTE 1
+// =====================================================================
 
-// Sincronizador de base de datos local para la persistencia en Hermit
-let memoriasGuardadas = localStorage.getItem("neox_persisted_neuronas") ? JSON.parse(localStorage.getItem("neox_persisted_neuronas")) : [];
+const canvas = document.getElementById("neuralNet");
+const ctx = canvas ? canvas.getContext("2d") : null;
+window.nodos = [];
+const totalNodos = 200; // Capacidad física del enjambre adaptada a NeoX-LLM 1.0
 
-// Población de la esfera de 200 nodos integrando de forma nativa las 60 neuronas maestras
-for (let i = 0; i < totalNodos; i++) {
-    let theta = Math.random() * 2 * Math.PI;
-    let phi = Math.acos(2 * Math.random() - 1);
-    let r = 95;
-    
-    let memoriaHistorica = memoriasGuardadas.find(function(m) { return m.index === i; });
-    let esMaestra = i < 60;
-    
-    window.nodos.push({
-        x: r * Math.sin(phi) * Math.cos(theta),
-        y: r * Math.sin(phi) * Math.sin(theta),
-        z: r * Math.cos(phi),
-        label: memoriaHistorica ? memoriaHistorica.label : (esMaestra && window.neuronasMaestras && window.neuronasMaestras[i] ? window.neuronasMaestras[i].label : null),
-        desc: memoriaHistorica ? memoriaHistorica.desc : (esMaestra && window.neuronasMaestras && window.neuronasMaestras[i] ? window.neuronasMaestras[i].desc : (esMaestra ? "Célula analítica maestra." : null))
-    });
-}
+let angY = 0.003, angX = 0.001;
+let isDraggingNetwork = false;
+let previousMousePosition = { x: 0, y: 0 };
+let fov = 130;
+let seleccionadoIndex = null;
+let multiplicadorVelocidad = 1;
+
+// Escudo contra el bucle de reapertura fortuita del popup al arrastrar
+let distanciaArrastreTotal = 0;
 // Activadores unificados con soporte absoluto para PC y Tablet Móvil
 if (canvas) {
     canvas.addEventListener('mousedown', dragStart);
@@ -64,7 +54,7 @@ window.addEventListener('touchend', dragEnd);
 
 function dragStart(punto) {
     isDraggingNetwork = true; 
-    bloqueoToqueRedencion = false; // Resetea el rastreador de arrastre
+    distanciaArrastreTotal = 0; // Reinicia el contador de desplazamiento táctil
     const rect = canvas.getBoundingClientRect();
     let mx = punto.clientX - rect.left; 
     let my = punto.clientY - rect.top;
@@ -82,25 +72,20 @@ function dragMove(punto) {
     let dx = cx - previousMousePosition.x;
     let dy = cy - previousMousePosition.y;
     
-    // Si el dedo se desplaza más de 4 píxeles, se considera rotación y se bloquea el clic fortuito
-    if (Math.sqrt(dx*dx + dy*dy) > 4) {
-        bloqueoToqueRedencion = true;
-    }
+    // Filtro antivibración: Acumula el desplazamiento para diferenciar arrastre de clic
+    distanciaArrastreTotal += Math.sqrt(dx*dx + dy*dy);
     
     angY = dx * 0.005; 
     angX = dy * 0.005;
     previousMousePosition = { x: cx, y: cy };
 }
 
-function dragEnd(e) { 
+function dragEnd() { 
     isDraggingNetwork = false; 
     
-    // Si no fue un arrastre de rotación, procesamos el toque como un clic real en un nodo
-    if (!bloqueoToqueRedencion) {
-        const rect = canvas.getBoundingClientRect();
-        let mx = previousMousePosition.x;
-        let my = previousMousePosition.y;
-        procesarClickNodo(mx, my);
+    // Si el usuario movió el dedo menos de 6 píxeles en total, se procesa como un clic real
+    if (distanciaArrastreTotal < 6) {
+        procesarClickNodo(previousMousePosition.x, previousMousePosition.y);
     }
     
     setTimeout(function() { 
@@ -138,7 +123,6 @@ function procesarClickNodo(mx, my) {
                        '<div><strong>[ETIQUETA] :</strong> ' + (det.label || "DISPONIBLE") + '</div>' +
                        '<div><strong>[REGISTRO] :</strong> ' + (det.desc || "Bahía Stark_Web lista.") + '</div>';
         
-        // Proyección exacta del botón Ampliar en coordenadas 2D junto a la neurona
         if (fBtn) {
             let e = fov / (fov + det.z);
             let nx = cx + det.x * e;
@@ -179,7 +163,7 @@ function rotar() {
             if (!canvas || !ctx) return; if (canvas.width === 0) window.resCanvas();
             ctx.clearRect(0, 0, canvas.width, canvas.height); rotar();
             const cx = canvas.width / 2, cy = canvas.height / 2;
-            ctx.strokeStyle = "rgba(0, 240, 255, 0.12)"; ctx.lineWidth = 1;
+            ctx.strokeStyle = "rgba(0, 240, 255, 0.10)"; ctx.lineWidth = 1;
             
             for (let i = 0; i < window.nodos.length; i++) {
                 for (let j = i + 1; j < window.nodos.length; j++) {
@@ -197,16 +181,16 @@ function rotar() {
                     ctx.fillStyle = "var(--red)";
                 } else if (n.label) {
                     if (idx < 60) {
-                        ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.5) + ")"; // 60 Nodos Maestros Estables (Azul)
+                        ctx.fillStyle = "rgba(0, 136, 255, " + (al + 0.5) + ")"; // 60 Nodos Maestros
                     } else if (n.label.startsWith("ROOT") || n.label.startsWith("ID_")) {
-                        ctx.fillStyle = "rgba(255, 51, 51, " + (al + 0.5) + ")";  // Rojo Crítico (Daniel/Identidad)
+                        ctx.fillStyle = "rgba(255, 51, 51, " + (al + 0.5) + ")";  // Rojo Crítico
                     } else if (n.label.includes("WEB") || n.label.includes("SCAN") || n.label.includes("POL")) {
-                        ctx.fillStyle = "rgba(255, 204, 0, " + (al + 0.5) + ")";   // Amarillo (Internet / Política)
+                        ctx.fillStyle = "rgba(255, 204, 0, " + (al + 0.5) + ")";   // Amarillo
                     } else {
-                        ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")";  // Verde Neón (Nodos Adquiridos)
+                        ctx.fillStyle = "rgba(0, 255, 102, " + (al + 0.4) + ")";  // Verde Neón
                     }
                 } else {
-                    ctx.fillStyle = "rgba(0, 240, 255, " + (al + 0.15) + ")";     // Azul base disponible
+                    ctx.fillStyle = "rgba(0, 240, 255, " + (al + 0.15) + ")";     // Azul base
                 }
                 
                 ctx.beginPath(); ctx.arc(x, y, rd, 0, 2 * Math.PI); ctx.fill();
@@ -219,7 +203,7 @@ function rotar() {
         requestAnimationFrame(render);
 
         // =====================================================================
-        // INTERFACES Y HERRAMIENTAS REALES EXCLUSIVAS DEL MONITOR BRAIN
+        // CONTROLES DE LA CONSOLA DEL MONITOR BRAIN (NeoX-LLM v1.0 INTERFACES)
         // =====================================================================
 
         window.ajustarVelocidadNodos = function() {
